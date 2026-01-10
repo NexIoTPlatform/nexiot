@@ -85,7 +85,7 @@ public class InfluxDBDeviceLogService extends AbstractIoTDeviceLogService {
   @Value("${influxdb.url:http://127.0.0.1:8086}")
   private String url;
 
-  @Value("${influxdb.token}")
+  @Value("${influxdb.token:}")
   private String token;
 
   @Value("${influxdb.org:nexiot}")
@@ -670,22 +670,28 @@ public class InfluxDBDeviceLogService extends AbstractIoTDeviceLogService {
 
       // 1. 先查询总数（pivot后添加计数列，再进行count）
       // 关键：pivot后添加record_count=1列，然后对该列count
-      String countFlux = baseFilterFlux
-          + "  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n"
-          + "  |> group()\n"  // 合并所有分组
-          + "  |> map(fn: (r) => ({r with record_count: 1}))\n"  // 添加计数列
-          + "  |> count(column: \"record_count\")\n";  // 统计记录数
+      String countFlux =
+          baseFilterFlux
+              + "  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n"
+              + "  |> group()\n" // 合并所有分组
+              + "  |> map(fn: (r) => ({r with record_count: 1}))\n" // 添加计数列
+              + "  |> count(column: \"record_count\")\n"; // 统计记录数
       log.debug("InfluxDB查询元数据总数Flux: {}", countFlux);
       List<FluxTable> countTables = queryApi.query(countFlux);
       long total = parseCountResult(countTables);
 
       // 2. 再查询分页数据（包含pivot转换）
       int offset = (logQuery.getPageNum() - 1) * logQuery.getPageSize();
-      String dataFlux = baseFilterFlux
-          + "  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n"
-          + "  |> group()\n"
-          + "  |> sort(columns: [\"_time\"], desc: true)\n"
-          + "  |> limit(n: " + logQuery.getPageSize() + ", offset: " + offset + ")\n";
+      String dataFlux =
+          baseFilterFlux
+              + "  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n"
+              + "  |> group()\n"
+              + "  |> sort(columns: [\"_time\"], desc: true)\n"
+              + "  |> limit(n: "
+              + logQuery.getPageSize()
+              + ", offset: "
+              + offset
+              + ")\n";
       log.debug("InfluxDB查询元数据分页Flux: {}", dataFlux);
       List<FluxTable> dataTables = queryApi.query(dataFlux);
 
@@ -702,17 +708,13 @@ public class InfluxDBDeviceLogService extends AbstractIoTDeviceLogService {
     }
   }
 
-  /**
-   * 构建基础过滤条件（不含pivot、排序和分页）
-   */
+  /** 构建基础过滤条件（不含pivot、排序和分页） */
   private String buildBaseFilterFlux(LogQuery logQuery, String measurement) {
     StringBuilder flux = new StringBuilder();
     flux.append("from(bucket: \"").append(bucket).append("\")\n");
     // 核心改造：适配Unix时间戳的动态时间范围
     flux.append(buildRangeClause(logQuery)).append("\n");
-    flux.append("  |> filter(fn: (r) => r._measurement == \"")
-        .append(measurement)
-        .append("\")\n");
+    flux.append("  |> filter(fn: (r) => r._measurement == \"").append(measurement).append("\")\n");
 
     // 添加过滤条件
     if (StrUtil.isNotBlank(logQuery.getIotId())) {
@@ -739,9 +741,7 @@ public class InfluxDBDeviceLogService extends AbstractIoTDeviceLogService {
     return flux.toString();
   }
 
-  /**
-   * 解析count查询结果，获取总记录数
-   */
+  /** 解析count查询结果，获取总记录数 */
   private long parseCountResult(List<FluxTable> tables) {
     if (tables == null || tables.isEmpty()) {
       log.warn("Count查询返回空结果");

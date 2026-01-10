@@ -17,12 +17,10 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
-import cn.universal.common.constant.IoTConstant;
 import cn.universal.common.constant.IoTConstant.MessageType;
 import cn.universal.core.message.UPRequest;
 import cn.universal.core.metadata.AbstractPropertyMetadata;
 import cn.universal.dm.device.entity.IoTDevicePropertiesBO;
-import cn.universal.dm.device.service.impl.IoTDeviceService;
 import cn.universal.dm.device.service.impl.IoTProductDeviceService;
 import cn.universal.persistence.base.BaseUPRequest;
 import cn.universal.persistence.dto.IoTDeviceDTO;
@@ -37,17 +35,14 @@ import cn.universal.persistence.mapper.IoTDeviceLogMapper;
 import cn.universal.persistence.mapper.IoTDeviceLogMetadataMapper;
 import cn.universal.persistence.mapper.IoTDeviceLogMetadataShardMapper;
 import cn.universal.persistence.mapper.IoTDeviceLogShardMapper;
-import cn.universal.persistence.mapper.IoTDeviceMapper;
 import cn.universal.persistence.query.LogQuery;
 import cn.universal.persistence.query.PageBean;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -61,28 +56,19 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class MysqlDeviceLogService extends AbstractIoTDeviceLogService {
-
   private String storePolicy = "mysql";
-
   @Resource private IoTDeviceLogMapper ioTDeviceLogMapper;
   @Resource private IoTDeviceLogShardMapper ioTDeviceLogShardMapper;
-
   @Resource private IoTDeviceLogMetadataMapper ioTDeviceLogMetadataMapper;
   @Resource private IoTDeviceLogMetadataShardMapper ioTDeviceLogMetadataShardMapper;
-
-  @Resource private IoTDeviceMapper ioTDeviceMapper;
-
-  @Resource private IoTDeviceService iotDeviceService;
-
   @Resource private IoTProductDeviceService iotProductDeviceService;
-  @Resource private StringRedisTemplate stringRedisTemplate;
 
   /** 日志分表是否开启 */
-  @Value("${shard.log.enable}")
+  @Value("${shard.log.enable:true}")
   private Boolean enable;
 
   /** 日志meta分表是否开启 */
-  @Value("${shard.logMeta.enable}")
+  @Value("${shard.logMeta.enable:true}")
   private Boolean metaEnable;
 
   @Override
@@ -124,9 +110,6 @@ public class MysqlDeviceLogService extends AbstractIoTDeviceLogService {
     /** 产品数据存储策略，不为空则保存日志 */
     if (StrUtil.isNotBlank(ioTProduct.getStorePolicy())) {
       try {
-        //        ioTDeviceLog.setPoint(ioTDeviceDTO.getCoordinate());
-        //        ioTDeviceLogMapper.insertSelective(ioTDeviceLog);
-        // 日志分表 暂时双写单读
         if (enable) {
           ioTDeviceLogShardMapper.insertSelective(ioTDeviceLog);
         }
@@ -157,33 +140,9 @@ public class MysqlDeviceLogService extends AbstractIoTDeviceLogService {
                   IoTDeviceLogMetadataBuilder.ext1(ioTDevicePropertiesBO.getPropertyName());
                   IoTDeviceLogMetadataBuilder.ext2(ioTDevicePropertiesBO.getFormatValue());
                   IoTDeviceLogMetadataBuilder.ext3(ioTDevicePropertiesBO.getSymbol());
-                  // 新旧表都改
                   if (metaEnable) {
                     ioTDeviceLogMetadataShardMapper.insertUseGeneratedKeys(
                         IoTDeviceLogMetadataBuilder.build());
-                    Boolean re2 =
-                        stringRedisTemplate
-                            .opsForValue()
-                            .setIfAbsent(
-                                IoTConstant.LOG_META_SHARD_PROPERTY_DELETE_SIGN
-                                    + ":"
-                                    + up.getProductKey()
-                                    + ":"
-                                    + up.getDeviceId(),
-                                "1",
-                                20,
-                                TimeUnit.HOURS);
-                    if (Boolean.TRUE.equals(re2)) {
-                      Integer topId =
-                          ioTDeviceLogMetadataShardMapper.getTopPropertiesRecord(
-                              up.getIotId(),
-                              logStorePolicyDTO.getProperties().get(key).getMaxStorage(),
-                              key);
-                      if (topId != null) {
-                        ioTDeviceLogMetadataShardMapper.deleteTopPropertiesRecord(
-                            up.getIotId(), topId, key);
-                      }
-                    }
                   }
                 }
               });
@@ -199,27 +158,6 @@ public class MysqlDeviceLogService extends AbstractIoTDeviceLogService {
       IoTDeviceLogMetadataBuilder.content(up.getEventName());
       if (metaEnable) {
         ioTDeviceLogMetadataShardMapper.insertUseGeneratedKeys(IoTDeviceLogMetadataBuilder.build());
-        Boolean re2 =
-            stringRedisTemplate
-                .opsForValue()
-                .setIfAbsent(
-                    IoTConstant.LOG_META_SHARD_EVENT_DELETE_SIGN
-                        + ":"
-                        + up.getProductKey()
-                        + ":"
-                        + up.getDeviceId(),
-                    "1",
-                    20,
-                    TimeUnit.HOURS);
-        if (Boolean.TRUE.equals(re2)) {
-          Integer topId =
-              ioTDeviceLogMetadataShardMapper.getTopEventRecord(
-                  up.getIotId(), maxStorage, up.getEvent());
-          if (topId != null) {
-            ioTDeviceLogMetadataShardMapper.deleteTopEventRecord(
-                up.getIotId(), topId, up.getEvent());
-          }
-        }
       }
     }
   }
@@ -248,7 +186,6 @@ public class MysqlDeviceLogService extends AbstractIoTDeviceLogService {
   @Override
   public IoTDeviceLogVO queryById(LogQuery logQuery) {
     IoTDeviceLogVO ioTDeviceLogVO = ioTDeviceLogMapper.queryLogById(logQuery);
-    //    IoTDeviceLogVO ioTDeviceLogVO = BeanUtil.toBean(devLog, IoTDeviceLogVO.class);
     return ioTDeviceLogVO;
   }
 
