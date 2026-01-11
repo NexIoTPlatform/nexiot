@@ -256,9 +256,12 @@
 > 视频【NexIoT小程序，这次很强！】 https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
 
 
-### 🚀 组态集成（研发中）
+### 🚀 组态大屏一体化集成（内测中）
 
-![组态](__MACOSX/shot/1217/zutai.png)
+
+| 大屏                                          | 组态                                            | 
+|---------------------------------------------|-----------------------------------------------|
+| ![组态大屏2](__MACOSX/shot/260109/big-view.png) | ![大屏2](__MACOSX/shot/260109/iot-big-view.png) |
 
 
 ## 📺 视频教程
