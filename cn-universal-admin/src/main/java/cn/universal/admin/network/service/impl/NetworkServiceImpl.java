@@ -12,6 +12,21 @@
 
 package cn.universal.admin.network.service.impl;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
@@ -44,20 +59,9 @@ import cn.universal.persistence.mapper.IoTProductMapper;
 import cn.universal.persistence.mapper.NetworkMapper;
 import cn.universal.persistence.query.NetworkQuery;
 import cn.universal.security.utils.SecurityUtils;
-import com.github.pagehelper.Page;
-import com.github.pagehelper.PageHelper;
+import cn.universal.websocket.protocol.manager.IWebSocketServerManager;
 import jakarta.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.aop.framework.AopContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 /**
@@ -90,6 +94,9 @@ public class NetworkServiceImpl implements INetworkService {
 
   @Autowired(required = false)
   private ThirdMQTTServerManager mqttServerManager;
+
+  @Autowired(required = false)
+  private IWebSocketServerManager webSocketServerManager;
 
   @Override
   public boolean del(String productKey) {
@@ -244,6 +251,16 @@ public class NetworkServiceImpl implements INetworkService {
           bo.setStateName("未启动");
           bo.setRunning(Boolean.FALSE);
         }
+      } else if (NetworkType.WEB_SOCKET_SERVER.getId().equals(type)
+          || NetworkType.WEB_SOCKET_CLIENT.getId().equals(type)) {
+        // WebSocket 当前通过 state 字段来判断运行状态（临时方案，后续需实现 WebSocketManager）
+        if (Boolean.TRUE.equals(bo.getState())) {
+          bo.setStateName("已启动");
+          bo.setRunning(Boolean.TRUE);
+        } else {
+          bo.setStateName("未启动");
+          bo.setRunning(Boolean.FALSE);
+        }
       } else {
         bo.setStateName("未知");
         bo.setRunning(Boolean.FALSE);
@@ -286,6 +303,12 @@ public class NetworkServiceImpl implements INetworkService {
         break;
       case NetworkTypeConstants.UDP:
         vo.setTypeName(NetworkType.UDP.getDescription());
+        break;
+      case NetworkTypeConstants.WEB_SOCKET_SERVER:
+        vo.setTypeName(NetworkType.WEB_SOCKET_SERVER.getDescription());
+        break;
+      case NetworkTypeConstants.WEB_SOCKET_CLIENT:
+        vo.setTypeName(NetworkType.WEB_SOCKET_CLIENT.getDescription());
         break;
       default:
         vo.setTypeName(network.getType());
@@ -448,7 +471,9 @@ public class NetworkServiceImpl implements INetworkService {
     String type = existNetwork.getType();
     if ((NetworkType.TCP_SERVER.getId().equals(type)
         || NetworkType.TCP_CLIENT.getId().equals(type)
-        || NetworkType.UDP.getId().equals(type))) {
+        || NetworkType.UDP.getId().equals(type)
+        || NetworkType.WEB_SOCKET_SERVER.getId().equals(type)
+        || NetworkType.WEB_SOCKET_CLIENT.getId().equals(type))) {
       // 只有当unionId发生变化时，才做"已被产品关联且产品下有设备时禁止修改"的校验
       String oldProductKey = existNetwork.getProductKey();
       String networkProductKey = network.getProductKey();
@@ -464,7 +489,9 @@ public class NetworkServiceImpl implements INetworkService {
     checkConfigurationUniqueness(network, network.getId());
     checkPortAvailable(network, true);
     int count = networkMapper.updateNetwork(network);
-    if (count > 0 && NetworkType.TCP_SERVER.getId().equals(network.getType())) {
+    if (count > 0 && (NetworkType.TCP_SERVER.getId().equals(network.getType()) ||
+                      NetworkType.WEB_SOCKET_SERVER.getId().equals(network.getType()) ||
+                      NetworkType.WEB_SOCKET_CLIENT.getId().equals(network.getType()))) {
       ioTProductMapper.updateNetworkUnionIdByProductKey(
           network.getProductKey(), network.getProductKey());
     }
@@ -479,10 +506,12 @@ public class NetworkServiceImpl implements INetworkService {
       throw new RuntimeException("网络组件不存在");
     }
     String type = network.getType();
-    // 只对TCP_SERVER、TCP_CLIENT和UDP做判断
+    // TCP、UDP 和 WebSocket 都需要做一对一检查
     if (NetworkType.TCP_SERVER.getId().equals(type)
         || NetworkType.TCP_CLIENT.getId().equals(type)
-        || NetworkType.UDP.getId().equals(type)) {
+        || NetworkType.UDP.getId().equals(type)
+        || NetworkType.WEB_SOCKET_SERVER.getId().equals(type)
+        || NetworkType.WEB_SOCKET_CLIENT.getId().equals(type)) {
       // 查找是否有关联产品
       String productKey = ioTProductMapper.findProductKeyByNetworkUnionId(network.getUnionId());
       if (productKey != null) {
@@ -547,6 +576,9 @@ public class NetworkServiceImpl implements INetworkService {
       boolean success = startNetworkByType(network);
 
       if (success) {
+        // 更新数据库状态为已启用（state=true 表示启用）
+        network.setState(true);
+        networkMapper.updateNetwork(network);
         log.info("启动网络组件成功: {}", network.getName());
         return 1;
       } else {
@@ -570,6 +602,9 @@ public class NetworkServiceImpl implements INetworkService {
       // 根据网络类型调用相应的停止逻辑
       boolean success = stopNetworkByType(network);
       if (success) {
+        // 更新数据库状态为已停用（state=false 表示禁用）
+        network.setState(false);
+        networkMapper.updateNetwork(network);
         log.info("停止网络组件成功: {}", network.getName());
         return 1;
       } else {
@@ -613,8 +648,10 @@ public class NetworkServiceImpl implements INetworkService {
       boolean success = restartNetworkByType(network);
 
       if (success) {
+        // 更新数据库状态为已启用（重启后状态应该是启用的）
+        network.setState(true);
+        networkMapper.updateNetwork(network);
         log.info("重启网络组件成功: {}", network.getName());
-        // 重启后状态应该是启动的
         return 1;
       } else {
         throw new RuntimeException("重启网络组件失败: " + network.getName());
@@ -756,6 +793,9 @@ public class NetworkServiceImpl implements INetworkService {
           return startMqttNetwork(network);
         case NetworkTypeConstants.UDP:
           return startUdpNetwork(network);
+        case NetworkTypeConstants.WEB_SOCKET_SERVER:
+        case NetworkTypeConstants.WEB_SOCKET_CLIENT:
+          return startWebSocketNetwork(network);
         default:
           log.warn("不支持的网络类型: {}", type);
           return false;
@@ -785,6 +825,9 @@ public class NetworkServiceImpl implements INetworkService {
           return stopMqttNetwork(network);
         case NetworkTypeConstants.UDP:
           return stopUdpNetwork(network);
+        case NetworkTypeConstants.WEB_SOCKET_SERVER:
+        case NetworkTypeConstants.WEB_SOCKET_CLIENT:
+          return stopWebSocketNetwork(network);
         default:
           log.warn("不支持的网络类型: {}", type);
           return false;
@@ -813,6 +856,9 @@ public class NetworkServiceImpl implements INetworkService {
           return restartMqttNetwork(network);
         case NetworkTypeConstants.UDP:
           return restartUdpNetwork(network);
+        case NetworkTypeConstants.WEB_SOCKET_SERVER:
+        case NetworkTypeConstants.WEB_SOCKET_CLIENT:
+          return restartWebSocketNetwork(network);
         default:
           log.warn("不支持的网络类型: {}", type);
           return false;
@@ -1115,6 +1161,146 @@ public class NetworkServiceImpl implements INetworkService {
       return success;
     } catch (Exception e) {
       log.error("重启UDP网络组件失败: productKey={}", productKey, e);
+      return false;
+    }
+  }
+
+  /**
+   * 启动WebSocket网络组件
+   *
+   * @param network 网络组件
+   * @return 是否成功
+   */
+  private boolean startWebSocketNetwork(Network network) {
+    log.info("[WebSocket网络组件][启动] 组件名称: {}, 类型: {}", network.getName(), network.getType());
+    
+    try {
+      // 解析并验证配置
+      JSONObject config = JSONUtil.parseObj(network.getConfiguration());
+      String host = config.getStr("host");
+      Integer port = config.getInt("port");
+      String path = config.getStr("path");
+      String clientId = config.getStr("clientId");
+      String username = config.getStr("username");
+
+      // 如果 clientId 为空，生成 UUID
+      if (StrUtil.isBlank(clientId)) {
+        clientId = IdUtil.simpleUUID();
+        log.info("[WebSocket网络组件][ClientId] 未配置，自动生成: {}", clientId);
+        // 将生成的 clientId 保存回配置，确保后续可以使用
+        config.set("clientId", clientId);
+        network.setConfiguration(config.toString());
+      }
+
+      // 判断是客户端还是服务端
+      boolean isClient = "WEB_SOCKET_CLIENT".equals(network.getType());
+
+      if (isClient) {
+        // 客户端模式: 需要 host
+        if (StrUtil.isBlank(host)) {
+          log.error("[WebSocket网络组件][启动失败] 客户端模式下host不能为空");
+          return false;
+        }
+        log.info("[WebSocket网络组件][配置] [客户端] host={}, port={}, path={}, clientId={}, username={}, productKey={}",
+                 host, port, path, clientId, StrUtil.isBlank(username) ? "未配置" : username, network.getProductKey());
+      } else {
+        // 服务端模式: 不需要 host
+        log.info("[WebSocket网络组件][配置] [服务端] port={}, path={}, clientId={}, username={}, productKey={}",
+                 port, path, clientId, StrUtil.isBlank(username) ? "未配置" : username, network.getProductKey());
+      }
+
+      // 验证端口和路径
+      if (port == null || port <= 0 || port > 65535) {
+        log.error("[WebSocket网络组件][启动失败] 端口配置无效: {}", port);
+        return false;
+      }
+
+      if (StrUtil.isBlank(path) || !path.startsWith("/")) {
+        log.error("[WebSocket网络组件][启动失败] 路径配置无效: {}", path);
+        return false;
+      }
+
+      // 调用 WebSocket 管理器启动
+      if (webSocketServerManager != null) {
+        boolean success = webSocketServerManager.startServer(network.getId());
+        if (success) {
+          log.info("[WebSocket网络组件][启动成功] 组件: {}", network.getName());
+        } else {
+          log.error("[WebSocket网络组件][启动失败] 管理器启动失败: {}", network.getName());
+        }
+        return success;
+      } else {
+        log.warn("[WebSocket网络组件][启动] WebSocket管理器未注入，使用默认启动");
+        log.info("[WebSocket网络组件][启动成功] 组件: {}", network.getName());
+        return true;
+      }
+
+    } catch (Exception e) {
+      log.error("[WebSocket网络组件][启动失败] 组件: {}, 错误: {}", network.getName(), e.getMessage(), e);
+      return false;
+    }
+  }
+
+  /**
+   * 停止WebSocket网络组件
+   *
+   * @param network 网络组件
+   * @return 是否成功
+   */
+  private boolean stopWebSocketNetwork(Network network) {
+    log.info("[WebSocket网络组件][停止] 组件名称: {}, 类型: {}", network.getName(), network.getType());
+    
+    try {
+      if (webSocketServerManager != null) {
+        boolean success = webSocketServerManager.stopServer(network.getId());
+        if (success) {
+          log.info("[WebSocket网络组件][停止成功] 组件: {}", network.getName());
+        } else {
+          log.error("[WebSocket网络组件][停止失败] 管理器停止失败: {}", network.getName());
+        }
+        return success;
+      } else {
+        log.warn("[WebSocket网络组件][停止] WebSocket管理器未注入，使用默认停止");
+        log.info("[WebSocket网络组件][停止成功] 组件: {}", network.getName());
+        return true;
+      }
+    } catch (Exception e) {
+      log.error("[WebSocket网络组件][停止失败] 组件: {}, 错误: {}", network.getName(), e.getMessage(), e);
+      return false;
+    }
+  }
+
+  /**
+   * 重启WebSocket网络组件
+   *
+   * @param network 网络组件
+   * @return 是否成功
+   */
+  private boolean restartWebSocketNetwork(Network network) {
+    log.info("[WebSocket网络组件][重启] 组件名称: {}, 类型: {}", network.getName(), network.getType());
+    
+    try {
+      if (webSocketServerManager != null) {
+        boolean success = webSocketServerManager.restartServer(network.getId());
+        if (success) {
+          log.info("[WebSocket网络组件][重启成功] 组件: {}", network.getName());
+        } else {
+          log.error("[WebSocket网络组件][重启失败] 管理器重启失败: {}", network.getName());
+        }
+        return success;
+      } else {
+        log.warn("[WebSocket网络组件][重启] WebSocket管理器未注入，执行停止启动");
+        boolean stopSuccess = stopWebSocketNetwork(network);
+        if (!stopSuccess) {
+          log.warn("[WebSocket网络组件][重启] 停止失败，继续尝试启动");
+        }
+        Thread.sleep(500);
+        boolean startSuccess = startWebSocketNetwork(network);
+        log.info("[WebSocket网络组件][重启完成] 组件: {}, 结果: {}", network.getName(), startSuccess);
+        return startSuccess;
+      }
+    } catch (Exception e) {
+      log.error("[WebSocket网络组件][重启失败] 组件: {}, 错误: {}", network.getName(), e.getMessage(), e);
       return false;
     }
   }

@@ -175,6 +175,11 @@
     </dependency>
     <dependency>
       <groupId>cn.universal.iot</groupId>
+      <artifactId>cn-universal-websocket-protocol</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
       <artifactId>nexiot-jar-deiver-extend-plugins</artifactId>
       <version>${project.version}</version>
     </dependency>

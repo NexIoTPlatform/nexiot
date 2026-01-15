@@ -5,7 +5,10 @@
     :wrapper-col="14"
     :visible="open"
     @close="onClose"
-    @after-visible-change="handleDrawerVisibleChange">
+    @after-visible-change="handleDrawerVisibleChange"
+    :keyboard="!editorFullscreen"
+    :mask-closable="!editorFullscreen"
+  >
     <a-spin :spinning="submitLoading" tip="正在保存，请稍候..." size="large">
       <a-divider orientation="left">
         <b>{{ formTitle }}</b>
@@ -155,6 +158,13 @@
         </a-row>
         <a-form-model-item label="插件源码" prop="jscript"
                            v-if="type==='jscript'||type==='magic-script'">
+          <div class="editor-toolbar">
+            <a-button
+              size="small"
+              @click="toggleEditorFullscreen(true)"
+              :disabled="submitLoading"
+            >全屏</a-button>
+          </div>
           <div class="editor-adaptive">
             <CodeEditor
               v-model="form.jscript"
@@ -165,6 +175,25 @@
               @blur="onCodeEditorBlur"
               @focus="onCodeEditorFocus"
             />
+          </div>
+          <!-- 全屏覆盖层 -->
+          <div v-if="editorFullscreen" class="fullscreen-overlay">
+            <div class="fullscreen-toolbar">
+              <a-space>
+                <a-button type="primary" @click="toggleEditorFullscreen(false)">退出全屏</a-button>
+              </a-space>
+            </div>
+            <div class="fullscreen-editor">
+              <CodeEditor
+                v-model="form.jscript"
+                :options="{mode: 'javascript', theme: 'material'}"
+                style="width:100%;height:100%;"
+                @input="onCodeEditorInput"
+                @change="onCodeEditorChange"
+                @blur="onCodeEditorBlur"
+                @focus="onCodeEditorFocus"
+              />
+            </div>
           </div>
         </a-form-model-item>
         <!-- <a-tabs v-model="activeKey" v-if="type">
@@ -209,9 +238,9 @@
 </template>
 
 <script>
-import {addProtocol, allProtocol, getProtocol, listProductsWithoutProtocol, messageCodec, updateProtocol} from '@/api/system/protocol'
-import FileUpload from '@/components/FileUpload'
-import CodeEditor from '@/components/CodeEditor.vue'
+import { addProtocol, getProtocol, listProductsWithoutProtocol, messageCodec, updateProtocol } from '@/api/system/protocol';
+import CodeEditor from '@/components/CodeEditor.vue';
+import FileUpload from '@/components/FileUpload';
 
 export default {
   name: 'CreateForm',
@@ -302,6 +331,7 @@ export default {
         url: [{required: true, message: 'jar包文件不能为空', trigger: 'blur'}]
       },
       submitLoading: false
+      ,editorFullscreen: false
     }
   },
   filters: {},
@@ -387,6 +417,28 @@ var decode = payload => {
   mounted() {
   },
   methods: {
+    // 全屏下拦截 ESC（退出全屏而不是关闭抽屉）
+    onFullscreenKeydown(e) {
+      if (e && (e.key === 'Escape' || e.keyCode === 27)) {
+        e.preventDefault()
+        e.stopPropagation()
+        this.toggleEditorFullscreen(false)
+      }
+    },
+    toggleEditorFullscreen(val) {
+      this.editorFullscreen = val
+      this.$nextTick(() => {
+        // 触发编辑器重绘以适配容器大小变化
+        window.dispatchEvent(new Event('resize'))
+        // 管理全屏状态下的滚动与键盘监听
+        document.body.style.overflow = val ? 'hidden' : ''
+        if (val) {
+          window.addEventListener('keydown', this.onFullscreenKeydown, true)
+        } else {
+          window.removeEventListener('keydown', this.onFullscreenKeydown, true)
+        }
+      })
+    },
     messageCodec() {
       messageCodec({id: this.form.id, payload: this.payload, decode: this.decode}).then(
         response => {
@@ -409,6 +461,12 @@ var decode = payload => {
       if (this.submitLoading) {
         this.$message.warning('正在保存中，请稍候...')
         return
+      }
+      // 关闭抽屉时复位全屏与监听
+      if (this.editorFullscreen) {
+        this.editorFullscreen = false
+        document.body.style.overflow = ''
+        window.removeEventListener('keydown', this.onFullscreenKeydown, true)
       }
       this.reset()
       this.open = false
@@ -620,6 +678,12 @@ var decode = payload => {
           clearTimeout(this.searchTimer)
           this.searchTimer = null
         }
+        // 抽屉隐藏时复位全屏与监听
+        if (this.editorFullscreen) {
+          this.editorFullscreen = false
+          document.body.style.overflow = ''
+          window.removeEventListener('keydown', this.onFullscreenKeydown, true)
+        }
       }
     },
     onCodeEditorInput(value) {
@@ -675,6 +739,36 @@ var decode = payload => {
 .editor-adaptive > * {
   width: 100% !important;
   height: 100% !important;
+}
+
+.editor-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+/* 全屏覆盖层样式 */
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+
+.fullscreen-toolbar {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.fullscreen-editor {
+  flex: 1;
+  min-height: 0; /* 保证子元素可正确撑满剩余空间 */
 }
 
 /* 加载状态下的样式增强 */

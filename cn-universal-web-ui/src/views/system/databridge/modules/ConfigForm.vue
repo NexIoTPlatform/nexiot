@@ -9,6 +9,8 @@
     :style="{ maxWidth: '700px', minWidth: '450px' }"
     :body-style="{ padding: '0', maxHeight: '70vh', overflow: 'auto' }"
     :footer="null"
+    :keyboard="!magicEditorFullscreen"
+    :mask-closable="!magicEditorFullscreen"
     class="config-form-modal"
   >
     <!-- 步骤指示器 -->
@@ -135,7 +137,7 @@
                 style="width: 100%"
                 size="large"
                 allow-clear>
-                <a-select-option v-for="(d, index) in applicationList" :key="index" :value="d.appId">
+                <a-select-option v-for="(d, index) in applicationList" :key="index" :value="d.appUniqueId">
                   {{ d.appName }}
                 </a-select-option>
               </a-select>
@@ -251,7 +253,7 @@
               <div class="form-help-text">
                 <p>模板变量：</p>
                 <ul>
-                  <li><code>{deviceKey}</code> - 设备ID</li>
+                  <li><code>{deviceId}</code> - 设备ID</li>
                   <li><code>{productKey}</code> - 产品KEY</li>
                   <li><code>{messageType}</code> - 消息类型</li>
                   <li><code>{timestamp}</code> - 时间戳</li>
@@ -275,26 +277,38 @@
 
           <div class="form-section">
             <a-form-model-item label="Magic脚本" prop="magicScript" class="form-item-large">
-              <a-textarea
-                v-model="form.magicScript"
-                placeholder="可选：编写脚本以自定义数据处理逻辑（函数：iotToYour / yourToIot）"
-                :rows="8"
-                class="magic-script-textarea"
-              />
+              <div class="editor-toolbar">
+                <a-button size="small" icon="fullscreen" @click="toggleMagicEditorFullscreen(true)">全屏编辑</a-button>
+              </div>
+              <div class="editor-adaptive">
+                <CodeEditor
+                  v-model="form.magicScript"
+                  :options="{mode: 'javascript', theme: 'material'}"
+                  style="width:100%;height:100%;"
+                />
+              </div>
               <div class="form-help-text">
                 <p>Magic脚本用于自定义数据处理逻辑，可选配置：</p>
                 <ul>
-                  <li><code>iotToYour(data, config)</code> - 处理IoT平台到外部系统的数据</li>
-                  <li><code>yourToIot(data, config)</code> - 处理外部系统到IoT平台的数据</li>
+                  <li><code>function iotToYour(data, config)</code> - 处理IoT平台到外部系统的数据，payload 为 request 对象</li>
+                  <li><code>function yourToIot(data,config)</code> - 处理外部系统到IoT平台的数据，payload 为 externalData 对象</li>
                 </ul>
                 <div class="script-example">
-                  <p>示例脚本：</p>
-                  <pre class="code-block">function iotToYour(data, config) {
-  // 自定义数据处理逻辑
+                  <p>示例脚本（推荐写法，已自动转换不兼容语法）：</p>
+                  <pre class="code-block">// iotToYour: IoT平台到外部系统
+function iotToYour(data,config){
   return {
-    deviceId: data.deviceKey,
+    deviceId: data.deviceId,
     timestamp: data.timestamp,
-    properties: data.properties
+    data: data.properties
+  };
+}
+
+// yourToIot: 外部系统到IoT平台
+function yourToIot(data,config){
+  return {
+    deviceKey: data.deviceId,
+    properties: data.data
   };
 }</pre>
                 </div>
@@ -358,16 +372,39 @@
         </a-button>
       </div>
     </div>
+
+    <!-- 全屏编辑覆盖层 -->
+    <div v-if="magicEditorFullscreen" class="fullscreen-overlay">
+      <div class="fullscreen-toolbar">
+        <div class="toolbar-left">
+          <span>Magic脚本 全屏编辑</span>
+        </div>
+        <div class="toolbar-right">
+          <a-button icon="fullscreen-exit" @click="toggleMagicEditorFullscreen(false)">退出全屏</a-button>
+        </div>
+      </div>
+      <div class="fullscreen-editor">
+        <CodeEditor
+          v-model="form.magicScript"
+          :options="{mode: 'javascript', theme: 'material'}"
+          style="width:100%;height:100%;"
+        />
+      </div>
+    </div>
   </a-modal>
 </template>
 
 <script>
-import {listProduct} from '@/api/system/dev/product'
-import {listApplication} from '@/api/application/application'
-import DataBridgeMappings from '@/utils/databridge-mappings'
+import { listApplication } from '@/api/application/application';
+import { listProduct } from '@/api/system/dev/product';
+import CodeEditor from '@/components/CodeEditor.vue';
+import DataBridgeMappings from '@/utils/databridge-mappings';
 
 export default {
   name: 'ConfigForm',
+  components: {
+    CodeEditor
+  },
   props: {
     visible: {
       type: Boolean,
@@ -386,6 +423,7 @@ export default {
     return {
       confirmLoading: false,
       currentStep: 1, // 当前步骤
+      magicEditorFullscreen: false,
       form: {
         name: '',
         sourceScope: 'ALL_PRODUCTS',
@@ -437,6 +475,9 @@ export default {
       if (val) {
         this.initForm()
         this.loadData()
+      } else {
+        // 关闭弹窗时，确保退出全屏状态
+        this.magicEditorFullscreen = false
       }
     },
     formData: {
@@ -444,12 +485,56 @@ export default {
         this.initForm()
       },
       deep: true
+    },
+    // 当进入步骤3（处理配置）时，触发一次编辑器刷新，避免首次显示不渲染
+    currentStep(newVal) {
+      if (newVal === 3) {
+        this.$nextTick(() => {
+          window.dispatchEvent(new Event('resize'))
+        })
+      }
     }
   },
   methods: {
+    // 简单的 HTML 实体反解码，防止脚本中的符号被转义
+    decodeHtmlEntities(text) {
+      if (!text || typeof text !== 'string') return text
+      return text
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+    },
+    // 全屏下的键盘拦截（ESC 退出全屏而不是关闭弹窗）
+    onFullscreenKeydown(e) {
+      if (e && (e.key === 'Escape' || e.keyCode === 27)) {
+        e.preventDefault()
+        e.stopPropagation()
+        this.toggleMagicEditorFullscreen(false)
+      }
+    },
+    // 切换 Magic 脚本编辑器全屏
+    toggleMagicEditorFullscreen(isFullscreen) {
+      this.magicEditorFullscreen = !!isFullscreen
+      // 进入全屏时，监听 ESC；退出时，移除监听
+      if (this.magicEditorFullscreen) {
+        window.addEventListener('keydown', this.onFullscreenKeydown, true)
+      } else {
+        window.removeEventListener('keydown', this.onFullscreenKeydown, true)
+      }
+      this.$nextTick(() => {
+        // 触发编辑器尺寸更新
+        window.dispatchEvent(new Event('resize'))
+      })
+    },
     initForm() {
       if (this.formData && Object.keys(this.formData).length > 0) {
         this.form = {...this.formData}
+        // 反解码后端返回可能转义的脚本内容
+        if (this.form.magicScript) {
+          this.form.magicScript = this.decodeHtmlEntities(this.form.magicScript)
+        }
         // 处理数组字段
         if (this.form.sourceProductKeys && typeof this.form.sourceProductKeys === 'string') {
           try {
@@ -512,6 +597,10 @@ export default {
           return
         }
         this.currentStep = 3
+        // 进入步骤3后刷新编辑器，避免首次显示不渲染
+        this.$nextTick(() => {
+          window.dispatchEvent(new Event('resize'))
+        })
       }
     },
 
@@ -654,6 +743,10 @@ export default {
 
           // 处理数组字段
           const formData = {...this.form}
+          // 确保提交前脚本未被 HTML 转义
+          if (formData.magicScript) {
+            formData.magicScript = this.decodeHtmlEntities(formData.magicScript)
+          }
           if (formData.sourceProductKeys && Array.isArray(formData.sourceProductKeys)) {
             formData.sourceProductKeys = JSON.stringify(formData.sourceProductKeys)
           }
@@ -665,6 +758,11 @@ export default {
     },
 
     handleCancel() {
+      // 关闭弹窗时重置全屏状态和监听
+      if (this.magicEditorFullscreen) {
+        this.magicEditorFullscreen = false
+        window.removeEventListener('keydown', this.onFullscreenKeydown, true)
+      }
       this.$emit('cancel')
     }
   }
@@ -926,9 +1024,25 @@ export default {
   line-height: 1.4;
 }
 
+/* 编辑器适配样式 */
+.editor-adaptive {
+  width: 100%;
+  height: 300px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 编辑器工具栏 */
+.editor-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
 /* 文本域样式 */
 .template-textarea,
-.magic-script-textarea,
 .config-textarea {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 13px;
@@ -1039,5 +1153,41 @@ export default {
 .ant-form-item-has-error .scope-card.active {
   border-color: #ff4d4f;
   background: #fff2f0;
+}
+
+/* 全屏覆盖层样式 */
+.fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0f0f0f;
+  z-index: 10000; /* 高于模态框 */
+}
+
+.fullscreen-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #1f1f1f;
+  color: #fff;
+  z-index: 10001;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.fullscreen-editor {
+  position: fixed;
+  top: 48px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
 }
 </style>

@@ -177,7 +177,7 @@ public class IoTDeviceProtocolController extends BaseController {
   public AjaxResult remove(@PathVariable String[] ids) {
     IoTDeviceProtocol ioTDeviceProtocol =
         devProtocolService.selectDevProtocolById(
-            ids[0], loginIoTUnionUser(SecurityUtils.getUnionId()).getUnionId());
+            ids[0], null);
     if (ObjectUtil.isNull(ioTDeviceProtocol)) {
       throw new IoTException("该协议没有操作权限！");
     }

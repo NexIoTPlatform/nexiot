@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import {UserLayout} from '@/layouts'
+import { UserLayout } from '@/layouts'
 /**
  * Note: 路由配置项
  *
@@ -247,6 +247,19 @@ export const otherRouterMap = [
       hidden: true,
       selected: ['Mqtt'],      // 选中"MQTT服务"子菜单
       open: ['Network']        // 展开"通信组件"父菜单
+    },
+    hidden: true
+  },
+  {
+    path: '/system/network/websocket/detail/:id',
+    name: 'WebSocketNetworkDetail',
+    component: 'WebSocketNetworkDetail',
+    meta: {
+      title: 'WebSocket网络组件详情',
+      noCache: true,
+      hidden: true,
+      selected: ['WebSocket'],  // 选中"WebSocket服务"子菜单
+      open: ['Network']         // 展开"通信组件"父菜单
     },
     hidden: true
   },

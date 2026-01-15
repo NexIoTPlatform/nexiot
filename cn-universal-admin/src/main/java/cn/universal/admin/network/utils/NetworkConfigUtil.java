@@ -153,6 +153,11 @@ public class NetworkConfigUtil {
       case "MQTT_CLIENT":
       case "MQTT_SERVER":
         return validateMqttConfig(network.getConfiguration());
+      case "WEB_SOCKET_SERVER":
+      case "WEB_SOCKET_CLIENT":
+        return validateWebSocketConfig(network.getConfiguration());
+      case "UDP":
+        return validateUdpConfig(network.getConfiguration());
       default:
         return false;
     }
@@ -240,5 +245,112 @@ public class NetworkConfigUtil {
       log.warn("格式化配置失败: {}", e.getMessage());
       return config;
     }
+  }
+
+  /**
+   * 验证WebSocket配置
+   *
+   * @param configuration 配置JSON字符串
+   * @return 是否有效
+   */
+  private static boolean validateWebSocketConfig(String configuration) {
+    try {
+      JSONObject config = JSONUtil.parseObj(configuration);
+      
+      // host 字段 - 客户端必填，服务端不需要（通过 type 无法判断，暂不严格校验）
+      // 如果存在则验证不为空
+      String host = config.getStr("host");
+      if (host != null && StrUtil.isBlank(host)) {
+        log.warn("WebSocket配置验证失败: host不能为空字符串");
+        return false;
+      }
+      
+      // 端口号必填且有效
+      Integer port = config.getInt("port");
+      if (port == null || port <= 0 || port > 65535) {
+        log.warn("WebSocket配置验证失败: 端口号无效 - {}", port);
+        return false;
+      }
+      
+      // 路径必填且必须以/开头
+      String path = config.getStr("path");
+      if (StrUtil.isBlank(path)) {
+        log.warn("WebSocket配置验证失败: 路径不能为空");
+        return false;
+      }
+      if (!path.startsWith("/")) {
+        log.warn("WebSocket配置验证失败: 路径必须以/开头 - {}", path);
+        return false;
+      }
+      
+      // clientId 可选，如果存在则验证不为空字符串
+      String clientId = config.getStr("clientId");
+      if (clientId != null && StrUtil.isBlank(clientId)) {
+        log.warn("WebSocket配置验证失败: clientId不能为空字符串");
+        return false;
+      }
+      
+      // username 和 password 可选，不做验证
+      
+      return true;
+    } catch (Exception e) {
+      log.warn("WebSocket配置验证失败: 解析异常 - {}", e.getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * 验证UDP配置
+   *
+   * @param configuration 配置JSON字符串
+   * @return 是否有效
+   */
+  private static boolean validateUdpConfig(String configuration) {
+    try {
+      JSONObject config = JSONUtil.parseObj(configuration);
+      Integer port = config.getInt("port");
+      
+      // 端口号必填且有效
+      if (port == null || port <= 0 || port > 65535) {
+        log.warn("UDP配置验证失败: 端口号无效 - {}", port);
+        return false;
+      }
+      
+      return true;
+    } catch (Exception e) {
+      log.warn("UDP配置验证失败: 解析异常 - {}", e.getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * 获取WebSocket默认配置
+   *
+   * @return 默认WebSocket配置
+   */
+  public static String getDefaultWebSocketConfig() {
+    JSONObject config = new JSONObject();
+    config.set("host", ""); // 客户端必填，服务端不需要
+    config.set("port", 9001);
+    config.set("path", "/ws");
+    config.set("clientId", ""); // 可选，不填则自动生成UUID
+    config.set("username", ""); // 可选
+    config.set("password", ""); // 可选
+    config.set("maxConnections", 1000);
+    config.set("allowOrigins", true);
+    return config.toString();
+  }
+
+  /**
+   * 获取UDP默认配置
+   *
+   * @return 默认UDP配置
+   */
+  public static String getDefaultUdpConfig() {
+    JSONObject config = new JSONObject();
+    config.set("host", "0.0.0.0");
+    config.set("port", 8889);
+    config.set("bufferSize", 2048);
+    return config.toString();
   }
 }

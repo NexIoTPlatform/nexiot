@@ -15,6 +15,7 @@
     <!-- 设备插件 -->
     <module>cn-universal-mqtt-protocol</module>
     <module>cn-universal-http-protocol</module>
+    <module>cn-universal-websocket-protocol</module>
   </modules>
 
   <build>

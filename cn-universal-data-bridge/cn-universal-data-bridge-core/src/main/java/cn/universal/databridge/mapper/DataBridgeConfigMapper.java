@@ -35,6 +35,13 @@ public interface DataBridgeConfigMapper extends BaseMapper<DataBridgeConfig> {
     List<DataBridgeConfig> selectActiveConfigsByProductKey(@Param("productKey") String productKey);
 
     /**
+     * 根据应用ID获取活跃配置
+     * @param applicationId
+     * @return
+     */
+    List<DataBridgeConfig> selectActiveConfigsByApplication(@Param("applicationId") String applicationId);
+
+    /**
      * 根据桥接类型获取配置
      *
      * @param bridgeType 桥接类型

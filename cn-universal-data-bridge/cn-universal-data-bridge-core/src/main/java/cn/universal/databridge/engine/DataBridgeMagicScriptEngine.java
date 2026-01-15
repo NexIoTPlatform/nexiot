@@ -12,20 +12,18 @@
 
 package cn.universal.databridge.engine;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.springframework.stereotype.Component;
-
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import cn.universal.core.engine.MagicScript;
 import cn.universal.core.engine.MagicScriptContext;
 import cn.universal.databridge.entity.DataBridgeConfig;
 import cn.universal.databridge.entity.ResourceConnection;
 import cn.universal.persistence.base.BaseUPRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 数据桥接Magic脚本引擎 适配ProtocolCodecMagic到数据桥接场景
@@ -273,7 +271,7 @@ public class DataBridgeMagicScriptEngine {
 
     /**
      * 包装脚本，添加必要的函数调用
-     * 
+     * <p>
      * 处理以下场景：
      * 1. 脚本只定义函数，无调用 -> 自动添加调用语句
      * 2. 脚本已有顶层 return 调用 -> 直接返回
@@ -281,23 +279,23 @@ public class DataBridgeMagicScriptEngine {
      */
     private String wrapScript(String script, String method) {
         String trimmed = script.trim();
-        
+
         // 检查脚本是否为函数定义（var/function iotToYour/yourToIot）
         boolean isFunctionDef = trimmed.matches("(?s).*(var|function)\\s+" + method + "\\s*[=(].*");
-        
+
         // 检查是否已有顶层的函数调用 return 语句
         boolean hasTopLevelReturn = trimmed.matches("(?s).*\\breturn\\s+" + method + "\\s*\\(.*");
-        
+
         // 如果是函数定义且没有调用，添加调用
         if (isFunctionDef && !hasTopLevelReturn) {
             return script + "\nreturn " + method + "(request, config, connection);";
         }
-        
+
         // 如果已有顶层 return 调用，直接返回
         if (hasTopLevelReturn) {
             return script;
         }
-        
+
         // 默认场景：脚本是纯逻辑，需要包装调用
         return switch (method) {
             case "iotToYour" -> script + "\nreturn iotToYour(request, config, connection);";

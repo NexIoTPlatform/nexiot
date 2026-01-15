@@ -16,8 +16,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 通用处理器执行器
@@ -128,7 +130,10 @@ public class ProcessorExecutor {
       return success;
 
     } catch (Exception e) {
-      log.error("[{}] 处理器 {} 执行异常: {}", chainName, processor.getName(), e.getMessage(), e);
+      log.error("[{}] 处理器 {} 执行失败", chainName, processor.getName());
+      log.error("异常类型: {}", e.getClass().getName());
+      log.error("异常信息: {}", e.getMessage());
+      log.error("完整堆栈: ", e);
       return false;
     }
   }
