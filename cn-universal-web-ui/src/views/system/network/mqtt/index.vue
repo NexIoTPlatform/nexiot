@@ -151,15 +151,15 @@
             </div>
             <div class="card-actions">
               <div class="action-btn start-btn"
-                   @click="!item.state || item.running || !isMqttConfigured(item) ? null : handleStart(item)"
+                   @click="item.running ? null : handleStart(item)"
                    v-hasPermi="['network:mqtt:start']"
-                   :class="{ disabled: !item.state || item.running || !isMqttConfigured(item) }">
+                   :class="{ disabled: item.running }">
                 <a-icon type="play-circle"/>
               </div>
               <div class="action-btn stop-btn"
-                   @click="!item.state || !item.running || !isMqttConfigured(item) ? null : handleStop(item)"
+                   @click="!item.running ? null : handleStop(item)"
                    v-hasPermi="['network:mqtt:stop']"
-                   :class="{ disabled: !item.state || !item.running || !isMqttConfigured(item) }">
+                   :class="{ disabled: !item.running }">
                 <a-icon type="pause-circle"/>
               </div>
               <div class="action-btn edit-btn"
@@ -247,10 +247,10 @@
 </template>
 
 <script>
-import {delNetwork, delNetworkBatch, listNetwork, startNetwork, stopNetwork} from '@/api/system/network'
-import {listProduct} from '@/api/system/dev/product'
-import CreateForm from '../modules/CreateForm'
-import {parseTime} from '@/utils/ruoyi'
+import { listProduct } from '@/api/system/dev/product';
+import { delNetwork, delNetworkBatch, listNetwork, startNetwork, stopNetwork } from '@/api/system/network';
+import { parseTime } from '@/utils/ruoyi';
+import CreateForm from '../modules/CreateForm';
 
 export default {
   name: 'MqttNetwork',

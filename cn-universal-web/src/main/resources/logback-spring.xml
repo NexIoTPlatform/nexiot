@@ -125,6 +125,20 @@
     </encoder>
   </appender>
 
+  <!-- WEBSOCKET协议日志 -->
+  <appender name="WEBSOCKET_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/wesocket.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/websocket.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
   <!-- 第三方平台协议日志 (CTAIOT, ONENET, IMOULIFE, EZVIZ等) -->
   <appender name="THIRD_PARTY_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>${log.path}/third-party.log</file>
@@ -163,6 +177,16 @@
     </encoder>
     <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
       <level>INFO</level>
+    </filter>
+  </appender>
+
+  <appender name="DEBUG_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${console.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>DEBUG</level>
     </filter>
   </appender>
 
@@ -213,6 +237,13 @@
       <appender-ref ref="HTTP_LOG"/>
       <appender-ref ref="ALL_LOG"/>
       <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="ERROR_LOG"/>
+    </logger>
+
+    <logger name="cn.universal.websocket.protocol" level="DEBUG" additivity="false">
+      <appender-ref ref="WEBSOCKET_LOG"/>
+      <appender-ref ref="ALL_LOG"/>
+      <appender-ref ref="DEBUG_CONSOLE"/>
       <appender-ref ref="ERROR_LOG"/>
     </logger>
 
@@ -430,6 +461,11 @@
     <!-- HTTP协议日志 -->
     <logger name="cn.universal.http.protocol" level="INFO" additivity="false">
       <appender-ref ref="HTTP_LOG"/>
+      <appender-ref ref="ALL_LOG"/>
+      <appender-ref ref="ERROR_LOG"/>
+    </logger>
+
+    <logger name="cn.universal.databridge" level="DEBUG" additivity="false">
       <appender-ref ref="ALL_LOG"/>
       <appender-ref ref="ERROR_LOG"/>
     </logger>

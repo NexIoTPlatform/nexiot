@@ -118,9 +118,8 @@ public class MagicScript extends CompiledScript {
     if (this.accessRuntime != null) {
       return this.accessRuntime;
     }
-    if (nodes.size() == 1 && nodes.get(0) instanceof Return) {
-      Return returnNode = (Return) nodes.get(0);
-      if (returnNode.getReturnValue() instanceof VariableAccess) {
+    if (nodes.size() == 1 && nodes.getFirst() instanceof Return returnNode) {
+        if (returnNode.getReturnValue() instanceof VariableAccess) {
         return this.accessRuntime =
             new MagicScriptVariableAccessRuntime(
                 ((VariableAccess) returnNode.getReturnValue()).getVarIndex().getName());
@@ -130,8 +129,8 @@ public class MagicScript extends CompiledScript {
       MagicScriptCompiler compiler = new MagicScriptCompiler(this.varIndices, this.debug);
       nodes.forEach(node -> node.visitMethod(compiler));
       // 如果只是一个表达式
-      if (nodes.size() == 1 && nodes.get(0) instanceof Expression) {
-        Node node = nodes.get(0);
+      if (nodes.size() == 1 && nodes.getFirst() instanceof Expression) {
+        Node node = nodes.getFirst();
         compiler.loadVars();
         compiler.compile(new Return(node.getSpan(), node));
       } else {
@@ -184,9 +183,8 @@ public class MagicScript extends CompiledScript {
     Bindings bindings = context.getBindings(ScriptContext.ENGINE_SCOPE);
     if (bindings.containsKey(CONTEXT_ROOT)) {
       Object root = bindings.get(CONTEXT_ROOT);
-      if (root instanceof MagicScriptContext) {
-        MagicScriptContext rootContext = (MagicScriptContext) root;
-        return execute(rootContext);
+      if (root instanceof MagicScriptContext rootContext) {
+          return execute(rootContext);
       } else {
         throw new MagicScriptException("参数不正确！");
       }

@@ -44,6 +44,16 @@
         ORDER BY create_time DESC
     </select>
 
+    <select id="selectActiveConfigsByApplication" parameterType="string" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM iot_data_bridge_config
+        WHERE status = 1
+        and source_application_id = #{applicationId}
+        AND source_scope = 'APPLICATION'
+        ORDER BY create_time DESC
+    </select>
+
     <!-- 根据桥接类型获取配置 -->
     <select id="selectConfigsByBridgeType" parameterType="string" resultMap="BaseResultMap">
         SELECT

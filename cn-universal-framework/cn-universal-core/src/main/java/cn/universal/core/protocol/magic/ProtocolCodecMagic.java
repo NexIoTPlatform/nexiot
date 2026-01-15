@@ -88,7 +88,6 @@ public class ProtocolCodecMagic extends ProtocolCodecSupportWrapper
       Map<String, Object> config = definition.getConfiguration();
       // JS原始代码
       String location =
-          (String)
               Optional.ofNullable(config.get("location"))
                   .map(String::valueOf)
                   .orElseThrow(
@@ -98,7 +97,6 @@ public class ProtocolCodecMagic extends ProtocolCodecSupportWrapper
                       });
       // 获取提供者,产品唯一
       String provider =
-          (String)
               Optional.ofNullable(config.get("provider"))
                   .map(String::valueOf)
                   .map(String::trim)
@@ -107,38 +105,18 @@ public class ProtocolCodecMagic extends ProtocolCodecSupportWrapper
                         return new CodecException("provider 不能为空");
                       });
       // magic 方法调用必须使用return 方法名(参数);
-      switch (codecMethod) {
-        case decode:
-          location = location + "  \n return decode(payload,context);";
-          break;
-        case encode:
-          location = location + "  \n return encode(payload,context);";
-          break;
-        case preDecode:
-          location = location + "  \n return preDecode(payload,context);";
-          break;
-        case codecAdd:
-          location = location + "  \n return codecAdd(payload,context);";
-          break;
-        case codecDelete:
-          location = location + "  \n return codecDelete(payload,context);";
-          break;
-        case codecUpdate:
-          location = location + "  \n return codecUpdate(payload,context);";
-          break;
-        case codecQuery:
-          location = location + "  \n return codecQuery(payload,context);";
-          break;
-        case iotToYour:
-          location = location + "  \n return iotToYour(payload,context);";
-          break;
-        case yourToIot:
-          location = location + "  \n return yourToIot(payload,context);";
-          break;
-        default:
-          location = location + "  \n return encode(payload,context);";
-          break;
-      }
+        location = switch (codecMethod) {
+            case decode -> location + "  \n return decode(payload,context);";
+            case encode -> location + "  \n return encode(payload,context);";
+            case preDecode -> location + "  \n return preDecode(payload,context);";
+            case codecAdd -> location + "  \n return codecAdd(payload,context);";
+            case codecDelete -> location + "  \n return codecDelete(payload,context);";
+            case codecUpdate -> location + "  \n return codecUpdate(payload,context);";
+            case codecQuery -> location + "  \n return codecQuery(payload,context);";
+            case iotToYour -> location + "  \n return iotToYour(payload,context);";
+            case yourToIot -> location + "  \n return yourToIot(payload,context);";
+            default -> location + "  \n return encode(payload,context);";
+        };
       // 初始化
       long t = System.currentTimeMillis();
       MagicScript script = MagicScript.create(location, null);
@@ -311,20 +289,14 @@ public class ProtocolCodecMagic extends ProtocolCodecSupportWrapper
 
   @Override
   public boolean isLoaded(String provider, CodecMethod codecMethod) {
-    switch (codecMethod) {
-      case decode:
-        return magicDecoderProvider.containsKey(provider);
-      case encode:
-        return magicEncoderProvider.containsKey(provider);
-      case preDecode:
-        return magicPreDecoderProvider.containsKey(provider);
-      case iotToYour:
-        return magicEncoderProvider.containsKey(provider); // 使用encode的provider
-      case yourToIot:
-        return magicDecoderProvider.containsKey(provider); // 使用decode的provider
-      default:
-        return false;
-    }
+      return switch (codecMethod) {
+          case decode -> magicDecoderProvider.containsKey(provider);
+          case encode -> magicEncoderProvider.containsKey(provider);
+          case preDecode -> magicPreDecoderProvider.containsKey(provider);
+          case iotToYour -> magicEncoderProvider.containsKey(provider); // 使用encode的provider
+          case yourToIot -> magicDecoderProvider.containsKey(provider); // 使用decode的provider
+          default -> false;
+      };
   }
 
   @Override

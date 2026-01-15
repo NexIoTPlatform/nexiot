@@ -1,9 +1,9 @@
 // eslint-disable-next-line
-import {getRouters} from '@/api/menu'
-import {otherRouterMap} from '@/config/router.config'
+import { getRouters } from '@/api/menu'
+import { otherRouterMap } from '@/config/router.config'
 import allIcon from '@/core/icons'
-import {validURL} from '@/utils/validate'
-import {BlankLayout, PageView, UserLayout} from '@/layouts'
+import { BlankLayout, PageView, UserLayout } from '@/layouts'
+import { validURL } from '@/utils/validate'
 
 // 菜单标题翻译映射
 const menuTitleMap = {
@@ -28,6 +28,7 @@ const menuTitleMap = {
   '网络组件': 'menu.network',
   'MQTT服务': 'menu.network.mqtt',
   'TCP服务': 'menu.network.tcp',
+  'WebSocket服务': 'menu.network.websocket',
   '证书管理': 'menu.network.cert',
   '视频监控': 'menu.video',
   '乐橙云': 'menu.video.imoulife',
@@ -95,6 +96,9 @@ const constantRouterComponents = {
   // MQTT网络组件
   'MqttNetwork': () => import('@/views/system/network/mqtt/index'),
   'MqttNetworkDetail': () => import('@/views/system/network/mqtt/detail'),
+  // WebSocket网络组件
+  'WebSocketNetwork': () => import('@/views/system/network/websocket/index'),
+  'WebSocketNetworkDetail': () => import('@/views/system/network/websocket/detail'),
   // 证书管理组件
   'CertificateManager': () => import('@/views/system/network/certificate/CertificateManager.vue'),
   // 通知管理组件

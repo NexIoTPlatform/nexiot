@@ -105,6 +105,11 @@
                class="operation-btn">
               <a-icon type="pause"/>
               {{ $t('button.stop') }}</a>
+            <a-divider type="vertical" v-if="record.status === 'stopped'" v-hasPermi="['rulego:chain:deploy']"/>
+            <a @click="handleStart(record)" v-if="record.status === 'stopped'" v-hasPermi="['rulego:chain:deploy']"
+               class="operation-btn">
+              <a-icon type="caret-right"/>
+              {{ $t('button.start') }}</a>
             <a-divider type="vertical" v-hasPermi="['rulego:chain:sync']"/>
             <a @click="handleSync(record)" v-hasPermi="['rulego:chain:sync']" class="operation-btn">
               <a-icon type="reload"/>
@@ -391,6 +396,19 @@ export default {
           return stopChain(row.id).then(() => {
             this.getList();
             this.$message.success("停止成功");
+          });
+        }
+      });
+    },
+    /** 开始按钮操作（规则链停止时调用部署API重新启动） */
+    handleStart(row) {
+      this.$confirm({
+        title: '确认启动规则链?',
+        content: '是否确认启动规则链"' + row.chainName + '"？',
+        onOk: () => {
+          return deployChain(row.id).then(() => {
+            this.getList();
+            this.$message.success("启动成功");
           });
         }
       });

@@ -77,6 +77,166 @@
             ProductKey: {{ productKeyProxy }}
           </div>
         </a-form-model-item>
+        <a-form-model-item v-if="isWebSocket" :label="$t('compound.productProductKey')" prop="productKey"
+                           style="margin-bottom: 12px;">
+          <a-select
+            v-model="productKeyProxy"
+            placeholder="请选择或搜索产品名称"
+            show-search
+            :filter-option="false"
+            :loading="productSearchLoading"
+            @search="handleProductNameSearch"
+            @focus="handleProductNameFocus"
+            allow-clear
+            style="width: 100%"
+            @change="handleProductNameChange"
+          >
+            <a-select-option
+              v-for="product in productSearchList"
+              :key="product.productKey"
+              :value="String(product.productKey)"
+              :title="product.name"
+              :disabled="usedProductKeys.includes(product.productKey)"
+            >
+              <div class="product-search-option">
+                <div class="product-search-name">{{ product.name }}</div>
+                <div class="product-search-key">
+                  {{ product.productKey }}
+                  <span v-if="usedProductKeys.includes(product.productKey)"
+                        style="color:#f5222d;font-size:12px;margin-left:8px;">已占用</span>
+                </div>
+              </div>
+            </a-select-option>
+          </a-select>
+          <div v-if="productKeyProxy" class="product-key-selected ellipsis">
+            产品名称: {{ getSelectedProductName() }}<br>
+            ProductKey: {{ productKeyProxy }}
+          </div>
+        </a-form-model-item>
+        <!-- WebSocket 配置字段 -->
+        <template v-if="isWebSocket">
+          <a-row :gutter="16" v-if="isWebSocketClient">
+            <a-col :span="24">
+              <a-form-model-item label="服务器地址" required style="margin-bottom: 12px;">
+                <a-input
+                  v-model="wsConfig.host"
+                  style="width:100%"
+                  placeholder="如: 192.168.1.100 或 ws://example.com"
+                  :disabled="submitLoading"
+                >
+                  <a-icon slot="prefix" type="global"/>
+                </a-input>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item :label="isWebSocketClient ? '服务器端口' : '监听端口'" required style="margin-bottom: 12px;">
+                <a-input-number
+                  v-model="wsConfig.port"
+                  style="width:100%"
+                  placeholder="请输入端口号"
+                  :min="1"
+                  :max="65535"
+                  :disabled="submitLoading"
+                />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="路径" required style="margin-bottom: 12px;">
+                <a-input
+                  v-model="wsConfig.path"
+                  style="width:100%"
+                  placeholder="如: /ws"
+                  :disabled="submitLoading"
+                >
+                  <a-icon slot="prefix" type="link"/>
+                </a-input>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item label="ClientId" style="margin-bottom: 12px;">
+                <a-input
+                  v-model="wsConfig.clientId"
+                  style="width:100%"
+                  placeholder="不填则自动生成UUID"
+                  :disabled="submitLoading"
+                >
+                  <a-icon slot="prefix" type="idcard"/>
+                </a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="最大连接数" style="margin-bottom: 12px;">
+                <a-input-number
+                  v-model="wsConfig.maxConnections"
+                  style="width:100%"
+                  placeholder="默认1000"
+                  :min="1"
+                  :disabled="submitLoading"
+                />
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row :gutter="16">
+            <a-col :span="12">
+              <a-form-model-item label="用户名" style="margin-bottom: 12px;">
+                <a-input
+                  v-model="wsConfig.username"
+                  style="width:100%"
+                  placeholder="可选"
+                  :disabled="submitLoading"
+                >
+                  <a-icon slot="prefix" type="user"/>
+                </a-input>
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="密码" style="margin-bottom: 12px;">
+                <a-input-password
+                  v-model="wsConfig.password"
+                  style="width:100%"
+                  placeholder="可选"
+                  :disabled="submitLoading"
+                >
+                  <a-icon slot="prefix" type="lock"/>
+                </a-input-password>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-form-model-item v-if="isWebSocketClient" label="子协议" style="margin-bottom: 12px;">
+            <a-input
+              v-model="wsConfig.subProtocol"
+              style="width:100%"
+              placeholder="可选，如: mqtt, stomp, wamp等"
+              :disabled="submitLoading"
+            >
+              <a-icon slot="prefix" type="api"/>
+            </a-input>
+            <div style="font-size: 12px; color: #999; margin-top: 4px;">
+              WebSocket子协议（Sec-WebSocket-Protocol），MQTT服务需填写"mqtt"
+            </div>
+          </a-form-model-item>
+          <a-form-model-item v-if="isWebSocketClient" label="订阅主题" style="margin-bottom: 12px;">
+            <a-input
+              v-model="wsConfig.topics"
+              style="width:100%"
+              placeholder="多个主题用逗号分隔，如: sensor/temperature,sensor/humidity,device/status"
+              :disabled="submitLoading"
+            >
+              <a-icon slot="prefix" type="tags"/>
+            </a-input>
+            <div style="font-size: 12px; color: #999; margin-top: 4px;">
+              可选字段，适用于 MQTT over WebSocket，支持通配符，多个主题用逗号分隔
+            </div>
+          </a-form-model-item>
+          <a-form-model-item label="允许跨域" style="margin-bottom: 12px;">
+            <a-switch v-model="wsConfig.allowOrigins" :disabled="submitLoading" />
+            <span style="margin-left: 8px; color: #999;">允许所有来源的跨域请求</span>
+          </a-form-model-item>
+        </template>
         <a-form-model-item label="组件名称" prop="name" style="margin-bottom: 12px;">
           <a-input
             v-model="form.name"
@@ -164,9 +324,9 @@
 </template>
 
 <script>
-import {addNetwork, updateNetwork, validateNetwork} from '@/api/system/network'
-import {queryProductList} from '@/api/system/dev/product'
-import CodeEditor from '@/components/CodeEditor.vue'
+import { queryProductList } from '@/api/system/dev/product';
+import { addNetwork, updateNetwork, validateNetwork } from '@/api/system/network';
+import CodeEditor from '@/components/CodeEditor.vue';
 
 export default {
   name: 'CreateForm',
@@ -214,7 +374,32 @@ export default {
       // 配置模板相关
       configTemplateVisible: false,
       templateActiveKey: 'tcp_server',
+      // WebSocket 配置
+      wsConfig: {
+        host: '',
+        port: 9001,
+        path: '/ws',
+        clientId: '',
+        username: '',
+        password: '',
+        subProtocol: '', // 子协议（如mqtt, stomp等）
+        topics: '',
+        maxConnections: 1000,
+        allowOrigins: true
+      },
       // 配置模板
+      webSocketTemplate: `{
+  "host": "",
+  "port": 9001,
+  "path": "/ws",
+  "clientId": "",
+  "username": "",
+  "password": "",
+  "subProtocol": "",
+  "topics": "",
+  "maxConnections": 1000,
+  "allowOrigins": true
+}`,
       tcpServerTemplate: `{
   "allIdleTime": 0,
   "allowInsert": false,
@@ -292,6 +477,12 @@ export default {
     isMQTT() {
       return this.form.type === 'MQTT_CLIENT' || this.form.type === 'MQTT_SERVER'
     },
+    isWebSocket() {
+      return this.form.type === 'WEB_SOCKET_SERVER' || this.form.type === 'WEB_SOCKET_CLIENT'
+    },
+    isWebSocketClient() {
+      return this.form.type === 'WEB_SOCKET_CLIENT'
+    },
     productKeyProxy: {
       get() {
         return (typeof this.form.productKey === 'string' || typeof this.form.productKey
@@ -363,6 +554,18 @@ export default {
       // 如果是TCP类型，自动加载默认配置
       if (this.isTCP) {
         this.loadDefaultConfig()
+      } else if (this.isWebSocket) {
+        // WebSocket 初始化配置
+        this.wsConfig = {
+          port: 9001,
+          path: '/ws',
+          clientId: '',
+          username: '',
+          password: '',
+          maxConnections: 1000,
+          allowOrigins: true
+        }
+        this.syncWsConfigToForm()
       }
     },
     handleProductChange(value) {
@@ -404,6 +607,10 @@ export default {
           break
         case 'MQTT_CLIENT':
           template = this.mqttClientTemplate
+          break
+        case 'WEB_SOCKET_SERVER':
+        case 'WEB_SOCKET_CLIENT':
+          template = this.webSocketTemplate
           break
       }
 
@@ -546,6 +753,11 @@ export default {
         try {
           const config = JSON.parse(this.form.configuration)
           this.form.configuration = JSON.stringify(config, null, 2)
+          
+          // 如果是 WebSocket 类型，解析配置到 wsConfig
+          if (this.isWebSocket) {
+            this.parseWsConfigFromForm()
+          }
         } catch (error) {
           // 如果解析失败，保持原样
         }
@@ -687,6 +899,43 @@ export default {
         item => String(item.productKey) === String(value))
       this.form.productKey = value ? String(value) : ''
       this.form.productName = selected ? selected.name : ''
+    },
+    // WebSocket 配置同步到表单
+    syncWsConfigToForm() {
+      this.form.configuration = JSON.stringify(this.wsConfig, null, 2)
+    },
+    // 从表单配置解析到 WebSocket 配置
+    parseWsConfigFromForm() {
+      if (this.isWebSocket && this.form.configuration) {
+        try {
+          const config = JSON.parse(this.form.configuration)
+          this.wsConfig = {
+            host: config.host || '',
+            port: config.port || 9001,
+            path: config.path || '/ws',
+            clientId: config.clientId || '',
+            username: config.username || '',
+            password: config.password || '',
+            subProtocol: config.subProtocol || '',
+            topics: config.topics || '',
+            maxConnections: config.maxConnections || 1000,
+            allowOrigins: config.allowOrigins !== undefined ? config.allowOrigins : true
+          }
+        } catch (error) {
+          console.error('解析 WebSocket 配置失败:', error)
+        }
+      }
+    }
+  },
+  watch: {
+    // 监听 WebSocket 配置变化，自动同步到表单
+    wsConfig: {
+      handler(val) {
+        if (this.isWebSocket && this.open) {
+          this.syncWsConfigToForm()
+        }
+      },
+      deep: true
     }
   }
 }
