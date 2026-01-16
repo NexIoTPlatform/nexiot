@@ -22,10 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import cn.universal.common.constant.IoTConstant;
 import cn.universal.dm.device.service.AbstratIoTService;
 import cn.universal.dm.device.service.impl.IoTDeviceShadowService;
 import cn.universal.persistence.base.BaseUPRequest;
@@ -202,14 +204,13 @@ public class PassthroughWebSocketCodecProcessor extends AbstratIoTService
     }
   }
 
-  /** 转换编解码器结果 */
+  /** 转换编解码器结果 - 对标MQTT实现，处理设备存在和不存在两种情况 */
   private BaseUPRequest convertCodecResult(WebSocketUPRequest request, WebSocketUPRequest codecResult) {
     try {
       if (codecResult == null) {
         return null;
       }
       IoTDeviceDTO deviceDTO = request.getIoTDeviceDTO();
-      BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = getBaseUPRequest(deviceDTO);
 
       // 关键修复：使用编解码器返回的payload，而不是原始请求的payload
       // 编解码器已经将原始数据转换为包含properties/data的JSON结构
@@ -225,9 +226,46 @@ public class PassthroughWebSocketCodecProcessor extends AbstratIoTService
           codecResult.getPayload() != null ? codecResult.getPayload().length() : 0,
           messageJson != null && messageJson.containsKey("properties"));
       
-      buildCodecNotNullBean(messageJson, deviceDTO, codecResult, builder);
-
-      BaseUPRequest upRequest = builder.build();
+      BaseUPRequest upRequest;
+      
+      if (deviceDTO != null) {
+        // 设备存在：使用标准的buildCodecNotNullBean方法
+        BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = getBaseUPRequest(deviceDTO);
+        buildCodecNotNullBean(messageJson, deviceDTO, codecResult, builder);
+        upRequest = builder.build();
+      } else {
+        // 设备不存在：构建简化的BaseUPRequest，不调用会访问deviceDTO的方法
+        log.warn("[{}] 设备信息未填充，将生成不含设备详情的BaseUPRequest。productKey={}, iotId={}",
+                getName(), request.getProductKey(), request.getIotId());
+        
+        BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = BaseUPRequest.builder()
+                .iotId(codecResult.getIotId() != null ? codecResult.getIotId() : request.getIotId())
+                .productKey(request.getProductKey())
+                .deviceName(request.getDeviceName())
+                .messageType(codecResult.getMessageType() != null ? codecResult.getMessageType() : IoTConstant.MessageType.PROPERTIES);
+        
+        // 直接设置编解码器返回的properties和data，不调用buildCodecNotNullBean
+        if (codecResult.getProperties() != null && !codecResult.getProperties().isEmpty()) {
+          builder.properties(codecResult.getProperties());
+        } else if (messageJson != null && messageJson.containsKey("properties")) {
+          builder.properties(messageJson.getJSONObject("properties"));
+        }
+        
+        if (codecResult.getData() != null && !codecResult.getData().isEmpty()) {
+          builder.data(codecResult.getData());
+        } else if (messageJson != null && messageJson.containsKey("data")) {
+          builder.data(messageJson.getJSONObject("data"));
+        }
+        
+        // 设置时间戳
+        if (codecResult.getTs() != null && NumberUtil.isLong(codecResult.getTs())) {
+          builder.time(Long.parseLong(codecResult.getTs()));
+        } else {
+          builder.time(System.currentTimeMillis());
+        }
+        
+        upRequest = builder.build();
+      }
 
       log.debug("[{}] 编解码器结果转换成功，消息类型: {}, data字段: {}, properties字段: {}", 
           getName(), upRequest.getMessageType(), 
