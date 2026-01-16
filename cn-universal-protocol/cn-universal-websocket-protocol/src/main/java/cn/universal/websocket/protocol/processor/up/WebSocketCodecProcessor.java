@@ -22,13 +22,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import cn.universal.common.constant.IoTConstant;
 import cn.universal.core.message.UPRequest;
 import cn.universal.dm.device.service.AbstratIoTService;
 import cn.universal.persistence.base.BaseUPRequest;
 import cn.universal.persistence.dto.IoTDeviceDTO;
+import cn.universal.persistence.query.IoTDeviceQuery;
 import cn.universal.websocket.protocol.entity.WebSocketUPRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -140,10 +143,15 @@ public class WebSocketCodecProcessor extends AbstratIoTService implements WebSoc
 
     /**
      * 尝试使用产品编解码器解码
+     * 
+     * 基于MQTT的处理逻辑改进：
+     * 1. 首先尝试使用消息中提取的productKey
+     * 2. 如果协议定义不存在，则尝试通过设备标识查询真实的productKey
      */
     private List<BaseUPRequest> tryProductCodec(WebSocketUPRequest request) {
         try {
             String productKey = request.getProductKey();
+            String deviceId = request.getIotId();
             
             // 如果没有productKey，跳过产品编解码器
             if (StrUtil.isBlank(productKey)) {
@@ -154,7 +162,21 @@ public class WebSocketCodecProcessor extends AbstratIoTService implements WebSoc
             String payload = request.getPayload();
             long codecStartTime = System.currentTimeMillis();
             
-            log.debug("[{}] 尝试产品编解码器解码 - ProductKey: {}", getName(), productKey);
+            log.debug("[{}] 尝试产品编解码器解码 - ProductKey: {}, DeviceId: {}", getName(), productKey, deviceId);
+
+            // 改进：首先检查协议定义是否存在
+            // 如果不存在，尝试通过设备标识查询真实的productKey（对标MQTT的处理方式）
+            String resolvedProductKey = productKey;
+            if (getProtocolDefinitionNoScript(productKey) == null && StrUtil.isNotBlank(deviceId)) {
+                log.debug("[{}] 协议定义未找到 productKey: {}，尝试通过设备标识查询真实productKey - deviceId: {}",
+                        getName(), productKey, deviceId);
+                resolvedProductKey = resolveProductKeyByDevice(deviceId, productKey);
+                if (!resolvedProductKey.equals(productKey)) {
+                    log.debug("[{}] 通过设备标识解析到真实productKey: {} → {}", getName(), productKey, resolvedProductKey);
+                    request.setProductKey(resolvedProductKey);
+                    productKey = resolvedProductKey;
+                }
+            }
 
             // 调用产品编解码器（使用UPRequest基类）
             List<UPRequest> decodedList = decode(productKey, payload, request.getCodecContext(), UPRequest.class);
@@ -227,40 +249,72 @@ public class WebSocketCodecProcessor extends AbstratIoTService implements WebSoc
     }
 
     /**
-     * 转换编解码器结果 - 对标MQTT实现，使用buildCodecNotNullBean()设置properties和data
+     * 转换编解码器结果 - 对标MQTT实现，处理设备存在和不存在两种情况
+     * 
+     * 修复：即使设备不存在（deviceDTO=null），也应生成BaseUPRequest，让后续处理器有机会处理
+     * 这样可以支持自动注册流程中的消息处理
      */
     private BaseUPRequest convertCodecResult(WebSocketUPRequest request, UPRequest codecResult) {
         try {
             IoTDeviceDTO deviceDTO = request.getIoTDeviceDTO();
             
-            // 防御性检查：deviceDTO不能为null（对标MQTT处理逻辑）
-            if (deviceDTO == null) {
-                log.error("[{}] 设备信息未填充，无法转换编解码结果。productKey={}, iotId={}",
-                        getName(), request.getProductKey(), request.getIotId());
-                return null;
-            }
-            
-            BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = BaseUPRequest.builder()
-                    .iotId(StrUtil.isNotBlank(codecResult.getDeviceId()) ? codecResult.getDeviceId() : request.getIotId())
-                    .productKey(request.getProductKey())
-                    .deviceName(request.getDeviceName());
-
-            // 关键修复：使用编解码器返回的payload（包含转换后的properties/data）
+            // 使用编解码器返回的payload（包含转换后的properties/data）
             String payloadForParsing = codecResult.getPayload() != null 
                     ? codecResult.getPayload() 
                     : request.getPayload();
             JSONObject messageJson = parseJsonPayload(payloadForParsing);
 
             // 诊断日志
-            log.debug("[{}] 转换编解码结果 - messageType: {}, codecResult.properties: {}, messageJson中是否有properties: {}",
+            log.debug("[{}] 转换编解码结果 - messageType: {}, codecResult.properties: {}, messageJson中是否有properties: {}, deviceDTO: {}",
                     getName(), codecResult.getMessageType(),
                     codecResult.getProperties() != null ? codecResult.getProperties().size() + "字段" : "null",
-                    messageJson != null && messageJson.containsKey("properties"));
+                    messageJson != null && messageJson.containsKey("properties") ? "有" : "无",
+                    deviceDTO != null ? "已填充" : "null");
 
-            // 调用buildCodecNotNullBean方法设置properties和data（对标MQTT实现）
-            buildCodecNotNullBean(messageJson, deviceDTO, codecResult, builder);
-
-            BaseUPRequest upRequest = builder.build();
+            BaseUPRequest upRequest;
+            
+            if (deviceDTO != null) {
+                // 设备存在：使用标准的buildCodecNotNullBean方法
+                BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = BaseUPRequest.builder()
+                        .iotId(StrUtil.isNotBlank(codecResult.getDeviceId()) ? codecResult.getDeviceId() : request.getIotId())
+                        .productKey(request.getProductKey())
+                        .deviceName(request.getDeviceName());
+                buildCodecNotNullBean(messageJson, deviceDTO, codecResult, builder);
+                upRequest = builder.build();
+            } else {
+                // 设备不存在：构建简化的BaseUPRequest，不调用会访问deviceDTO的方法
+                log.warn("[{}] 设备信息未填充，将生成不含设备详情的BaseUPRequest。productKey={}, iotId={}",
+                        getName(), request.getProductKey(), request.getIotId());
+                
+                BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = BaseUPRequest.builder()
+                        .iotId(StrUtil.isNotBlank(codecResult.getDeviceId()) ? codecResult.getDeviceId() : request.getIotId())
+                        .productKey(request.getProductKey())
+                        .deviceName(request.getDeviceName())
+                        .messageType(codecResult.getMessageType() != null ? codecResult.getMessageType() : IoTConstant.MessageType.PROPERTIES);
+                
+                // 直接设置编解码器返回的properties和data，不调用buildCodecNotNullBean
+                if (codecResult.getProperties() != null && !codecResult.getProperties().isEmpty()) {
+                    builder.properties(codecResult.getProperties());
+                } else if (messageJson != null && messageJson.containsKey("properties")) {
+                    builder.properties(messageJson.getJSONObject("properties"));
+                }
+                
+                if (codecResult.getData() != null && !codecResult.getData().isEmpty()) {
+                    builder.data(codecResult.getData());
+                } else if (messageJson != null && messageJson.containsKey("data")) {
+                    builder.data(messageJson.getJSONObject("data"));
+                }
+                
+                // 设置时间戳
+                if (codecResult.getTs() != null && NumberUtil.isLong(codecResult.getTs())) {
+                    builder.time(Long.parseLong(codecResult.getTs()));
+                } else {
+                    builder.time(System.currentTimeMillis());
+                }
+                
+                upRequest = builder.build();
+            }
+            
             log.debug("[{}] 编解码器结果转换成功 - messageType: {}, data: {}, properties: {}",
                     getName(), upRequest.getMessageType(),
                     upRequest.getData() != null ? upRequest.getData().size() + "字段" : "null",
@@ -345,4 +399,56 @@ public class WebSocketCodecProcessor extends AbstratIoTService implements WebSoc
             return false;
         }
     }
-}
+    /**
+     * 获取协议定义（不含脚本） - 用于检查协议是否存在
+     * 基于MQTT的处理方式，从 iotProductDeviceService 查询协议定义
+     */
+    private Object getProtocolDefinitionNoScript(String productKey) {
+        try {
+            return iotProductDeviceService.selectProtocolDefNoScript(productKey);
+        } catch (Exception e) {
+            log.debug("[{}] 查询协议定义异常 - productKey: {}, 异常: {}", getName(), productKey, e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * 通过设备标识解析真实的productKey
+     * 对标MQTT的处理逻辑：当消息中的productKey不存在或协议定义为null时，
+     * 通过设备标识查询设备信息，获取真实的productKey
+     * 
+     * @param deviceId 设备标识
+     * @param fallbackProductKey 备用的productKey（消息中的productKey）
+     * @return 解析到的真实productKey，如果失败则返回原productKey
+     */
+    private String resolveProductKeyByDevice(String deviceId, String fallbackProductKey) {
+        try {
+            if (StrUtil.isBlank(deviceId)) {
+                return fallbackProductKey;
+            }
+
+            // 通过设备ID查询设备信息（使用AbstratIoTService提供的受保护方法）
+            IoTDeviceQuery query = new IoTDeviceQuery();
+            query.setDeviceId(deviceId);
+            IoTDeviceDTO device = getIoTDeviceDTO(query);
+
+            if (device != null) {
+                String realProductKey = device.getProductKey();
+                
+                if (StrUtil.isNotBlank(realProductKey)) {
+                    log.info("[{}] 通过设备标识成功解析productKey - deviceId: {}, 原productKey: {}, 真实productKey: {}",
+                            getName(), deviceId, fallbackProductKey, realProductKey);
+                    return realProductKey;
+                }
+            }
+
+            log.debug("[{}] 未找到设备信息 - deviceId: {}, 使用备用productKey: {}", 
+                    getName(), deviceId, fallbackProductKey);
+            return fallbackProductKey;
+
+        } catch (Exception e) {
+            log.warn("[{}] 解析设备productKey失败 - deviceId: {}, 异常: {}, 使用备用productKey: {}",
+                    getName(), deviceId, e.getMessage(), fallbackProductKey);
+            return fallbackProductKey;
+        }
+    }}
