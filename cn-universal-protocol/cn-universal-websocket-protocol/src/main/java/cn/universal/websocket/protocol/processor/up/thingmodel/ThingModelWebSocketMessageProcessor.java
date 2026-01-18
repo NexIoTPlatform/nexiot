@@ -76,15 +76,33 @@ public class ThingModelWebSocketMessageProcessor extends AbstratIoTService
       // 1. 获取消息JSON
       JSONObject messageJson = (JSONObject) request.getContextValue("messageJson");
       if (messageJson == null) {
-        log.error("[{}] 消息JSON为空", getName());
-        return ProcessorResult.ERROR;
+        log.warn("[{}] 消息JSON为空，将使用原始请求列表或创建默认请求", getName());
+        // 改进：即使消息JSON为空，也不直接返回错误
+        // 而是尝试使用已有的请求列表，或创建默认请求以支持消息入库
+        List<BaseUPRequest> upRequestList = request.getUpRequestList();
+        if (CollUtil.isNotEmpty(upRequestList)) {
+          log.debug("[{}] 使用已有的请求列表，数量: {}", getName(), upRequestList.size());
+          return ProcessorResult.CONTINUE;
+        }
+        // 创建默认请求以确保消息入库
+        upRequestList = createDefaultRequest(request);
+        if (CollUtil.isNotEmpty(upRequestList)) {
+          request.setUpRequestList(upRequestList);
+          return ProcessorResult.CONTINUE;
+        }
+        return ProcessorResult.SKIP;
       }
 
       // 2. 根据主题类型转换消息
       List<BaseUPRequest> upRequestList = convertThingModelMessage(request, messageJson);
       if (upRequestList == null || upRequestList.isEmpty()) {
-        log.error("[{}] 消息转换失败", getName());
-        return ProcessorResult.ERROR;
+        log.warn("[{}] 消息转换失败，将创建默认请求以支持入库", getName());
+        // 改进：如果消息转换失败，也尝试创建默认请求而不是直接返回错误
+        upRequestList = createDefaultRequest(request);
+        if (CollUtil.isEmpty(upRequestList)) {
+          log.error("[{}] 无法创建默认请求", getName());
+          return ProcessorResult.ERROR;
+        }
       }
 
       // 3. 设置转换结果
@@ -190,5 +208,45 @@ public class ThingModelWebSocketMessageProcessor extends AbstratIoTService
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  /**
+   * 创建默认请求 - 当物模型消息解析失败时，作为降级方案
+   * 这样可以支持即使物模型未定义也能入库消息
+   */
+  private List<BaseUPRequest> createDefaultRequest(WebSocketUPRequest request) {
+    try {
+      List<BaseUPRequest> upRequestList = new ArrayList<>();
+      
+      if (request.getIoTDeviceDTO() == null) {
+        log.warn("[{}] 设备信息为空，无法创建默认请求", getName());
+        return upRequestList;
+      }
+
+      // 创建默认的属性消息请求
+      BaseUPRequest upRequest = getBaseUPRequest(request.getIoTDeviceDTO()).build();
+      upRequest.setMessageType(MessageType.PROPERTIES);
+      
+      // 尝试从原始payload中提取数据
+      String payload = request.getPayload();
+      if (cn.hutool.core.util.StrUtil.isNotBlank(payload)) {
+        try {
+          JSONObject payloadJson = cn.hutool.json.JSONUtil.parseObj(payload);
+          upRequest.setProperties(payloadJson);
+        } catch (Exception e) {
+          log.debug("[{}] 原始payload解析失败，设置为data: {}", getName(), e.getMessage());
+          // 如果不是JSON，设置为data字段
+          upRequest.setData(new cn.hutool.json.JSONObject().set("raw", payload));
+        }
+      }
+
+      upRequestList.add(upRequest);
+      log.info("[{}] 创建默认请求以支持消息入库，iotId: {}", getName(), upRequest.getIotId());
+      return upRequestList;
+
+    } catch (Exception e) {
+      log.error("[{}] 创建默认请求异常: ", getName(), e);
+      return new ArrayList<>();
+    }
   }
 }

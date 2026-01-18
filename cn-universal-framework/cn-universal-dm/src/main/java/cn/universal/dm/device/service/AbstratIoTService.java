@@ -12,6 +12,11 @@
 
 package cn.universal.dm.device.service;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -39,10 +44,7 @@ import cn.universal.persistence.entity.IoTDeviceSubscribe;
 import cn.universal.persistence.entity.IoTProduct;
 import cn.universal.persistence.query.IoTDeviceQuery;
 import jakarta.annotation.Resource;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * IoT设备服务抽象基类
@@ -266,13 +268,20 @@ public abstract class AbstratIoTService extends IoTDownAdapter {
     }
     // 编解码覆盖原始消息
     messageProAndData(jsonObject, codec);
+    
+    // 【关键修复】确保messageType总是被设置，无论是PROPERTIES还是EVENT
+    if (codec.getMessageType() != null) {
+      builder.messageType(codec.getMessageType());
+    } else {
+      builder.messageType(MessageType.PROPERTIES);  // 默认为属性消息
+    }
+    
     if (MessageType.EVENT.equals(codec.getMessageType())) {
       String event = codec.getEvent();
       if (StrUtil.isBlank(event)) {
         event = jsonObject.getStr("event");
       }
       builder.event(event);
-      builder.messageType(codec.getMessageType());
       if ("offline".equals(event)) {
         ioTDeviceActionAfterService.offline(
             ioTDeviceDTO.getProductKey(), ioTDeviceDTO.getDeviceId());

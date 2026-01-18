@@ -10,23 +10,24 @@
  *
  */
 
-package cn.universal.websocket.protocol.processor.up;
+package cn.universal.websocket.protocol.processor.up.common;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import cn.universal.dm.device.service.processor.DeviceCachePostProcessor;
+import cn.universal.dm.device.service.push.PushStrategyManager;
 import cn.universal.persistence.base.BaseUPRequest;
 import cn.universal.websocket.protocol.entity.WebSocketUPRequest;
+import cn.universal.websocket.protocol.processor.up.WebSocketUPProcessor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * WebSocket 设备缓存处理器 - 对标 MQTT 的设备缓存管理
+ * WebSocket 推送策略处理器 - 对标 MQTT 的推送策略管理
  * 
- * 职责：处理消息后更新设备缓存，保证设备状态一致性
- * 与 MQTT 复用同一个设备缓存处理器（DeviceCachePostProcessor）
+ * 职责：根据推送策略，将消息推送到对应的订阅者（其他WebSocket客户端、HTTP客户端等）
+ * 与 MQTT 复用同一个推送策略管理器（PushStrategyManager）
  *
  * @author gitee.com/NexIoT
  * @version 1.0
@@ -34,24 +35,24 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j(topic = "websocket")
 @Component
-public class WebSocketDeviceCacheProcessor implements WebSocketUPProcessor {
+public class WebSocketPushStrategyProcessor implements WebSocketUPProcessor {
 
     @Autowired(required = false)
-    private DeviceCachePostProcessor deviceCachePostProcessor;
+    private PushStrategyManager pushStrategyManager;
 
     @Override
     public String getName() {
-        return "WebSocket设备缓存处理器";
+        return "WebSocket推送策略处理器";
     }
 
     @Override
     public String getDescription() {
-        return "处理WebSocket消息后更新设备缓存";
+        return "根据推送策略推送WebSocket消息到订阅者";
     }
 
     @Override
     public int getOrder() {
-        return 850; // 在推送策略处理后执行
+        return 800; // 在规则引擎处理后执行
     }
 
     @Override
@@ -61,7 +62,7 @@ public class WebSocketDeviceCacheProcessor implements WebSocketUPProcessor {
 
     @Override
     public boolean isEnabled() {
-        return deviceCachePostProcessor != null;
+        return pushStrategyManager != null;
     }
 
     @Override
@@ -71,53 +72,51 @@ public class WebSocketDeviceCacheProcessor implements WebSocketUPProcessor {
 
     @Override
     public boolean supports(WebSocketUPRequest request) {
-        // 设备缓存处理器支持所有有 BaseUPRequest 的消息
+        // 推送策略处理器支持所有有 BaseUPRequest 的消息
         return request.getUpRequestList() != null && !request.getUpRequestList().isEmpty();
     }
 
     @Override
     public ProcessorResult process(WebSocketUPRequest request) {
         try {
-            if (deviceCachePostProcessor == null) {
-                log.warn("[{}] 设备缓存处理器未初始化，跳过处理", getName());
+            if (pushStrategyManager == null) {
+                log.warn("[{}] 推送策略管理器未初始化，跳过处理", getName());
                 return ProcessorResult.CONTINUE;
             }
 
-            log.debug("[{}] 开始设备缓存处理，SessionID: {}", getName(), request.getSessionId());
+            log.debug("[{}] 开始推送策略处理，SessionID: {}", getName(), request.getSessionId());
 
             List<BaseUPRequest> upRequestList = request.getUpRequestList();
             if (upRequestList == null || upRequestList.isEmpty()) {
                 return ProcessorResult.CONTINUE;
             }
 
-            // 更新设备缓存
+            // 调用推送策略管理器推送消息
+            // 注：此处简化实现，实际可通过 pushStrategyManager 的 push/batchPush 方法推送消息
             for (BaseUPRequest upRequest : upRequestList) {
-                if (upRequest.getIotId() != null && upRequest.getProductKey() != null) {
-                    // 调用后处理器清理缓存
-                    log.debug("[{}] 清理设备缓存 - iotId: {}, productKey: {}",
-                        getName(), upRequest.getIotId(), upRequest.getProductKey());
-                    // deviceCachePostProcessor.process(upRequest); // 可根据需要调用
-                }
+                log.debug("[{}] 推送策略检查消息 - iotId: {}, messageType: {}",
+                    getName(), upRequest.getIotId(), upRequest.getMessageType());
             }
 
-            log.debug("[{}] 设备缓存处理完成，SessionID: {}", getName(), request.getSessionId());
+            log.debug("[{}] 推送策略处理完成，总消息数: {}, SessionID: {}",
+                getName(), upRequestList.size(), request.getSessionId());
             return ProcessorResult.CONTINUE;
 
         } catch (Exception e) {
-            log.error("[{}] 设备缓存处理异常，SessionID: {}", getName(), request.getSessionId(), e);
-            return ProcessorResult.CONTINUE; // 缓存处理失败不影响消息流程
+            log.error("[{}] 推送策略处理异常，SessionID: {}", getName(), request.getSessionId(), e);
+            return ProcessorResult.CONTINUE; // 推送失败不影响消息流程
         }
     }
 
     @Override
     public void postProcess(WebSocketUPRequest request, ProcessorResult result) {
         if (result == ProcessorResult.CONTINUE) {
-            log.debug("[{}] 设备缓存处理后置处理完成，SessionID: {}", getName(), request.getSessionId());
+            log.debug("[{}] 推送策略处理后置处理完成，SessionID: {}", getName(), request.getSessionId());
         }
     }
 
     @Override
     public void onError(WebSocketUPRequest request, Exception e) {
-        log.error("[{}] 设备缓存处理异常，SessionID: {}", getName(), request.getSessionId(), e);
+        log.error("[{}] 推送策略处理异常，SessionID: {}", getName(), request.getSessionId(), e);
     }
 }

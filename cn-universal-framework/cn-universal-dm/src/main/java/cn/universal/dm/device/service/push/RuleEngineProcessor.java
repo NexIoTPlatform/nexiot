@@ -12,12 +12,14 @@
 
 package cn.universal.dm.device.service.push;
 
-import cn.universal.persistence.base.BaseUPRequest;
-import cn.universal.persistence.dto.IoTDeviceDTO;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
+
+import cn.universal.persistence.base.BaseUPRequest;
+import cn.universal.persistence.dto.IoTDeviceDTO;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 规则引擎处理器 - 消息过滤和规则检查
@@ -73,22 +75,26 @@ public class RuleEngineProcessor implements UPProcessor<BaseUPRequest> {
 
     // 规则1：设备必须存在且有效
     if (deviceDTO == null) {
-      log.debug("[规则引擎] 设备不存在，过滤消息: {}", request.getIotId());
+      log.warn("[规则引擎] 【规则1-设备不存在】过滤消息，IotId: {}", request.getIotId());
       return false;
     }
 
     // 规则2：应用必须启用
     if (deviceDTO.isAppDisable()) {
-      log.debug("[规则引擎] 应用已禁用，过滤消息: {}", request.getIotId());
+      log.warn("[规则引擎] 【规则2-应用已禁用】过滤消息，IotId: {}, AppId: {}", 
+               request.getIotId(), deviceDTO.getApplicationId());
       return false;
     }
 
     // 规则3：设备必须在线
     if (deviceDTO.getState() == null || !deviceDTO.getState()) {
-      log.debug("[规则引擎] 设备离线，过滤消息: {}", request.getIotId());
+      log.warn("[规则引擎] 【规则3-设备离线】过滤消息，IotId: {}, DeviceState: {}", 
+               request.getIotId(), deviceDTO.getState());
       return false;
     }
 
+    log.debug("[规则引擎] ✅ 消息通过所有规则检查，IotId: {}, AppId: {}, DeviceState: {}", 
+             request.getIotId(), deviceDTO.getApplicationId(), deviceDTO.getState());
     return true;
   }
 }

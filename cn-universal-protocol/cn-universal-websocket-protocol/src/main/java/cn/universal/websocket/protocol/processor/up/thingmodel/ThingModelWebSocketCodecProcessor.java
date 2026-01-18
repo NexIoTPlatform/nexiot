@@ -82,7 +82,14 @@ public class ThingModelWebSocketCodecProcessor extends AbstratIoTService
     if (productInfo instanceof java.util.Map) {
       java.util.Map<String, Object> info = (java.util.Map<String, Object>) productInfo;
       String thingModel = (String) info.get("thingModel");
-      return StrUtil.isNotBlank(thingModel);
+      // 如果定义了物模型，优先使用物模型编解码
+      if (StrUtil.isNotBlank(thingModel)) {
+        return true;
+      }
+      // 即使物模型未定义，也作为降级选项尝试处理
+      // 这样可以支持消息的入库
+      log.debug("[{}] 物模型未定义，物模型编解码器将作为备选方案", getName());
+      return true;
     }
 
     return false;
