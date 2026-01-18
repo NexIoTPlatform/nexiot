@@ -10,11 +10,12 @@
  *
  */
 
-package cn.universal.websocket.protocol.processor.up;
+package cn.universal.websocket.protocol.processor.up.common;
 
 import org.springframework.stereotype.Component;
 
 import cn.universal.websocket.protocol.entity.WebSocketUPRequest;
+import cn.universal.websocket.protocol.processor.up.WebSocketUPProcessor;
 import lombok.extern.slf4j.Slf4j;
 
 /**

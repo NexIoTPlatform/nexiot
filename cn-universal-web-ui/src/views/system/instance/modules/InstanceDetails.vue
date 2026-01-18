@@ -652,27 +652,27 @@
   </div>
 </template>
 <script>
-import {getInstance} from '@/api/system/dev/instance'
-import {getProByKey} from '@/api/system/dev/product'
-import {devListShadow, getDeviceShadow} from '@/api/system/dev/shadow'
-import {getEventTotal} from '@/api/system/dev/deviceLog'
+import { getEventTotal } from '@/api/system/dev/deviceLog'
+import { getInstance } from '@/api/system/dev/instance'
+import { getProByKey } from '@/api/system/dev/product'
+import { devListShadow, getDeviceShadow } from '@/api/system/dev/shadow'
+import { toDate } from '@/utils/date'
+import AMapLoader from '@amap/amap-jsapi-loader'
+import { Modal } from 'ant-design-vue'
 import JsonViewer from 'vue-json-viewer'
-import LogManage from './logManage'
-import Subscribe from './Subscribe'
-import DeviceDataTrend from './DeviceDataTrend'
-import MapTrackModal from './MapTrackModal'
+import ChildDevice from './ChildDevice'
 import CreateForm from './CreateForm'
+import DeviceDataTrend from './DeviceDataTrend'
+import DeviceDebugging from './DeviceDebugging'
 import FunctionDown from './FunctionDown'
+import GatewayPollingConfig from './GatewayPollingConfig'
+import LogManage from './logManage'
+import MapTrackModal from './MapTrackModal'
 import metadata from './metadata'
 import metadataShow from './metadataShow'
-import DeviceDebugging from './DeviceDebugging'
-import SIMCard from './SIMCard'
-import AMapLoader from '@amap/amap-jsapi-loader'
-import ChildDevice from './ChildDevice'
 import ModbusSubDeviceList from './ModbusSubDeviceList'
-import GatewayPollingConfig from './GatewayPollingConfig'
-import {Modal} from 'ant-design-vue'
-import {formatTimeValue, toDate} from '@/utils/date'
+import SIMCard from './SIMCard'
+import Subscribe from './Subscribe'
 
 export default {
   name: 'InstanceDetails',
@@ -1019,7 +1019,7 @@ export default {
     // 初始化地图
     initMap() {
       AMapLoader.load({
-        key: "ebeb9911ac6faf1c7269809bb6ba03c4", // 申请好的Web端开发者Key，首次调用 load 时必填
+        key: "76aa92312d6a00bcf0a92e2c11b509e0", // 申请好的Web端开发者Key，首次调用 load 时必填
         version: "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
         plugins: ["AMap.Geocoder", "AMap.AutoComplete", "AMap.Scale"], // 需要使用的的插件列表，如比例尺'AMap.Scale'等
         AMapUI: {
@@ -1621,13 +1621,13 @@ export default {
   justify-content: center;
   transition: all 0.2s ease;
   color: #64748b;
+}
 
-  &:hover {
-    background: #e2e8f0;
-    border-color: #1966ff;
-    color: #1966ff;
-    transform: scale(1.05);
-  }
+.back-btn:hover {
+  background: #e2e8f0;
+  border-color: #1966ff;
+  color: #1966ff;
+  transform: scale(1.05);
 }
 
 .page-title h1 {
@@ -1673,13 +1673,13 @@ export default {
   color: #0369a1;
   transition: all 0.2s ease;
   cursor: pointer;
+}
 
-  &:hover {
-    background: #e0f2fe;
-    border-color: #7dd3fc;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(3, 105, 161, 0.15);
-  }
+.smart-tip:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.15);
 }
 
 .tip-icon {
@@ -1698,48 +1698,48 @@ export default {
   background: #fef3c7;
   border-color: #fbbf24;
   color: #92400e;
+}
 
-  .tip-icon {
-    color: #f59e0b;
-  }
+.smart-tip[data-type="noData"] .tip-icon {
+  color: #f59e0b;
+}
 
-  &:hover {
-    background: #fde68a;
-    border-color: #f59e0b;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
-  }
+.smart-tip[data-type="noData"]:hover {
+  background: #fde68a;
+  border-color: #f59e0b;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
 }
 
 .smart-tip[data-type="dataTypeMismatch"] {
   background: #fef2f2;
   border-color: #f87171;
   color: #991b1b;
+}
 
-  .tip-icon {
-    color: #ef4444;
-  }
+.smart-tip[data-type="dataTypeMismatch"] .tip-icon {
+  color: #ef4444;
+}
 
-  &:hover {
-    background: #fee2e2;
-    border-color: #ef4444;
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
-  }
+.smart-tip[data-type="dataTypeMismatch"]:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
 }
 
 .smart-tip[data-type="jsonError"] {
   background: #fdf4ff;
   border-color: #e879f9;
   color: #7c2d12;
+}
 
-  .tip-icon {
-    color: #d946ef;
-  }
+.smart-tip[data-type="jsonError"] .tip-icon {
+  color: #d946ef;
+}
 
-  &:hover {
-    background: #fae8ff;
-    border-color: #d946ef;
-    box-shadow: 0 2px 8px rgba(217, 70, 239, 0.15);
-  }
+.smart-tip[data-type="jsonError"]:hover {
+  background: #fae8ff;
+  border-color: #d946ef;
+  box-shadow: 0 2px 8px rgba(217, 70, 239, 0.15);
 }
 
 .custom-tabs-nav {
@@ -2307,27 +2307,31 @@ export default {
   border-top: none;
   border-radius: 0 0 12px 12px;
   overflow: hidden;
+}
 
-  :deep(.metadata-container) {
-    background: transparent;
-    min-height: auto;
-    padding: 0;
+/* :deep 选择器需要 SCSS，暂时注释 */
+/* :deep(.metadata-container) */
+.metadata-container {
+  background: transparent;
+  min-height: auto;
+  padding: 0;
+}
 
-    .metadata-tabs {
-      :deep(.ant-tabs-bar) {
-        background: #f8fafc;
-        margin: 0;
-        border-radius: 0;
-        border: none;
-      }
-    }
+.metadata-tabs {
+  /* 需要 SCSS 的 :deep 选择器 */
+}
 
-    .tab-content {
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
-    }
-  }
+.ant-tabs-bar {
+  background: #f8fafc;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+}
+
+.tab-content {
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 </style>
 

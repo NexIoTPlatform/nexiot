@@ -12,6 +12,16 @@
 
 package cn.universal.rule.scene.deviceUp;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.util.CollectionUtils;
+
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONArray;
@@ -29,15 +39,7 @@ import cn.universal.rule.express.ExpressTemplate;
 import cn.universal.rule.model.ExeRunContext;
 import cn.universal.rule.scene.deviceDown.SenceIoTDeviceDownService;
 import jakarta.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.util.CollectionUtils;
 
 @Slf4j
 public abstract class AbstractDeviceUp implements DeviceUp {
@@ -54,20 +56,47 @@ public abstract class AbstractDeviceUp implements DeviceUp {
 
   @Override
   public void consumer(UPRequest upRequest, IoTDeviceDTO ioTDeviceDTO) {
+    // 防御性编程：验证输入数据完整性
+    if (upRequest == null || ioTDeviceDTO == null) {
+      log.warn("[场景联动消费器] 输入参数为空，跳过处理");
+      return;
+    }
+    
+    if (upRequest.getProductKey() == null || upRequest.getDeviceId() == null) {
+      log.warn("[场景联动消费器] 产品Key或设备ID为空，跳过处理");
+      return;
+    }
+    
+    log.debug("[场景联动消费器] 开始处理消息，产品Key: {}, 设备ID: {}, 消息类型: {}", 
+        upRequest.getProductKey(), upRequest.getDeviceId(), upRequest.getMessageType());
+    
     doTestTrigger(upRequest, ioTDeviceDTO);
   }
 
   /** 判断触发条件是否满足 */
   public void doTestTrigger(UPRequest upRequest, IoTDeviceDTO ioTDeviceDTO) {
-    // 查询启用的规则
-    List<SceneLinkage> sceneLinkageList =
-        sceneLinkageMapper.selectSceneLinkageListByProductKeyAndDeviceId(
-            ioTDeviceDTO.getProductKey(), ioTDeviceDTO.getDeviceId());
-    // 是否存在该设备的场景联动
-    if (CollectionUtils.isEmpty(sceneLinkageList)) {
-      log.info("场景联动结束，未能匹配到设备,设备id:{}", ioTDeviceDTO.getDeviceId());
+    List<SceneLinkage> sceneLinkageList = null;
+    
+    try {
+      // 查询启用的规则
+      sceneLinkageList =
+          sceneLinkageMapper.selectSceneLinkageListByProductKeyAndDeviceId(
+              ioTDeviceDTO.getProductKey(), ioTDeviceDTO.getDeviceId());
+      
+      // 是否存在该设备的场景联动
+      if (CollectionUtils.isEmpty(sceneLinkageList)) {
+        log.debug("[场景联动] 未找到设备的场景联动配置，设备ID: {}, 产品Key: {}", 
+            ioTDeviceDTO.getDeviceId(), ioTDeviceDTO.getProductKey());
+        return;
+      }
+      
+      log.info("[场景联动] 找到 {} 个场景联动配置，设备ID: {}", 
+          sceneLinkageList.size(), ioTDeviceDTO.getDeviceId());
+    } catch (Exception e) {
+      log.error("[场景联动] 查询场景联动配置异常，设备ID: {}", ioTDeviceDTO.getDeviceId(), e);
       return;
     }
+    
     List<IoTDeviceRuleLog> logRules = new ArrayList<>();
     sceneLinkageList.forEach(
         sceneLinkage -> {
@@ -88,12 +117,11 @@ public abstract class AbstractDeviceUp implements DeviceUp {
                     "scene-trigger-sleep:%s:%s", sceneLinkage.getId(), ioTDeviceDTO.getDeviceId());
             if (StringUtils.isNotEmpty(stringRedisTemplate.opsForValue().get(sleepKey))) {
               log.info(
-                  "场景联动结束，该场景联动处于沉默周期内,场景联动id:{},设备id:{}",
+                  "[场景联动] 场景联动处于沉默周期内，场景ID: {}, 设备ID: {}",
                   sceneLinkage.getId(),
                   ioTDeviceDTO.getDeviceId());
               logRule.setCStatus(RunStatus.error.code);
               logRule.setContent("处于沉默周期中");
-              //          logRules.add(logRule);
               return;
             }
             // 是否满足触发条件
@@ -109,12 +137,18 @@ public abstract class AbstractDeviceUp implements DeviceUp {
                       TimeUnit.SECONDS);
             }
             if (!isTouch) {
-              log.info(
-                  "场景联动结束，不满足触发条件,场景联动id:{},设备id:{}",
+              log.debug(
+                  "[场景联动] 不满足触发条件，场景ID: {}, 设备ID: {}",
                   sceneLinkage.getId(),
                   ioTDeviceDTO.getDeviceId());
               return;
             }
+            
+            log.info(
+                "[场景联动] 触发条件满足，开始执行动作，场景ID: {}, 设备ID: {}",
+                sceneLinkage.getId(),
+                ioTDeviceDTO.getDeviceId());
+            
             // 执行动作，返回结果
             List<ExeRunContext> runContexts =
                 senceIoTDeviceDownService.doIoTDeviceFunction(upRequest, sceneLinkage);
@@ -126,17 +160,22 @@ public abstract class AbstractDeviceUp implements DeviceUp {
           } catch (Exception e) {
             e.printStackTrace();
             log.error(
-                "执行场景联动触发条件判断错误，sceneId:{},deviceId:{}",
+                "[场景联动] 执行触发条件判断异常，场景ID: {}, 设备ID: {}, 异常信息: ",
                 sceneLinkage.getId(),
                 ioTDeviceDTO.getDeviceId(),
-                e.getCause());
+                e);
             logRule.setCStatus(RunStatus.error.code);
-            logRule.setContent("执行场景联动触发条件判断错误");
+            logRule.setContent("执行场景联动触发条件判断错误: " + e.getMessage());
             logRules.add(logRule);
           }
         });
     if (CollectionUtil.isNotEmpty(logRules)) {
-      ioTDeviceRuleLogMapper.insertList(logRules);
+      try {
+        ioTDeviceRuleLogMapper.insertList(logRules);
+        log.info("[场景联动] 场景联动日志保存成功，共 {} 条日志", logRules.size());
+      } catch (Exception e) {
+        log.error("[场景联动] 保存场景联动日志异常", e);
+      }
     }
   }
 

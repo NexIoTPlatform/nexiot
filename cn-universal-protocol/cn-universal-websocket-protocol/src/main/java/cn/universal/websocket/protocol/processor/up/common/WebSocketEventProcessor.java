@@ -10,7 +10,7 @@
  *
  */
 
-package cn.universal.websocket.protocol.processor.up;
+package cn.universal.websocket.protocol.processor.up.common;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import cn.universal.websocket.protocol.entity.WebSocketSession;
 import cn.universal.websocket.protocol.entity.WebSocketUPRequest;
+import cn.universal.websocket.protocol.processor.up.WebSocketUPProcessor;
 import cn.universal.websocket.protocol.service.WebSocketSessionManager;
 import lombok.extern.slf4j.Slf4j;
 

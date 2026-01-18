@@ -240,6 +240,7 @@ public class PassthroughWebSocketCodecProcessor extends AbstratIoTService
         
         BaseUPRequest.BaseUPRequestBuilder<?, ?> builder = BaseUPRequest.builder()
                 .iotId(codecResult.getIotId() != null ? codecResult.getIotId() : request.getIotId())
+                .deviceId(codecResult.getDeviceId() != null ? codecResult.getDeviceId() : request.getDeviceId())
                 .productKey(request.getProductKey())
                 .deviceName(request.getDeviceName())
                 .messageType(codecResult.getMessageType() != null ? codecResult.getMessageType() : IoTConstant.MessageType.PROPERTIES);

@@ -6,61 +6,11 @@
         <a-form layout="inline">
           <a-row :gutter="24">
             <a-col :lg="6" :md="8" :sm="12" :xs="24">
-              <a-form-item label="网络类型" prop="type">
-                <a-select placeholder="请选择网络类型" style="width: 100%" v-model="queryParam.type"
-                          allow-clear>
-                  <a-select-option value="TCP_CLIENT">
-                    <span class="type-cell">
-                      <a-icon type="user" style="color: #1890ff; margin-right: 8px;"/>
-                      <span>TCP客户端</span>
-                    </span>
-                  </a-select-option>
-                  <a-select-option value="TCP_SERVER">
-                    <span class="type-cell">
-                      <a-icon type="cloud-server" style="color: #52c41a; margin-right: 8px;"/>
-                      <span>TCP服务端</span>
-                    </span>
-                  </a-select-option>
-                  <a-select-option value="UDP">
-                    <span class="type-cell">
-                      <a-icon type="wifi" style="color: #722ed1; margin-right: 8px;"/>
-                      <span>UDP服务</span>
-                    </span>
-                  </a-select-option>
-                  <a-select-option value="WEB_SOCKET_SERVER">
-                    <span class="type-cell">
-                      <a-icon type="swap" style="color: #fa8c16; margin-right: 8px;"/>
-                      <span>WebSocket服务</span>
-                    </span>
-                  </a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :lg="8" :md="8" :sm="12" :xs="12">
-              <a-form-item :label="$t('compound.productProductKey')" prop="productKey">
-                <a-select
-                  v-model="queryParam.productKey"
-                  placeholder="请选择|搜索"
-                  show-search
-                  :filter-option="false"
-                  :loading="productSearchLoading"
-                  @search="handleProductKeySearch"
-                  @focus="handleProductKeyFocus"
-                  allow-clear
-                  style="width: 100%"
-                >
-                  <a-select-option
-                    v-for="product in productSearchList"
-                    :key="product.productKey"
-                    :value="product.name"
-                    :title="product.productKey"
-                  >
-                    <div class="product-search-option">
-                      <div class="product-search-name">{{ product.name }}</div>
-                      <div class="product-search-key">{{ product.productKey }}</div>
-                    </div>
-                  </a-select-option>
-                </a-select>
+              <a-form-item label="组件名称" prop="name">
+                <a-input v-model.trim="queryParam.name" placeholder="请输入WebSocket组件名称"
+                         allow-clear>
+                  <a-icon slot="prefix" type="tag"/>
+                </a-input>
               </a-form-item>
             </a-col>
             <a-col :lg="6" :md="8" :sm="12" :xs="24">
@@ -78,6 +28,7 @@
                 </a-select>
               </a-form-item>
             </a-col>
+
             <a-col :lg="6" :md="8" :sm="12" :xs="24">
               <span class="table-page-search-submitButtons">
                 <a-button type="primary" @click="handleQuery" icon="search">{{ $t('button.query') }}</a-button>
@@ -91,17 +42,16 @@
       <div class="table-operations">
         <a-space>
           <a-button type="primary" @click="$refs.createForm.handleAdd()"
-                    v-hasPermi="['network:tcp:add']" icon="plus">
+                    v-hasPermi="['network:websocket:add']" icon="plus">
             {{ $t('button.add') }}</a-button>
           <a-button
             type="danger"
-            :disabled="multiple"
             @click="handleDelete"
-            v-hasPermi="['network:tcp:remove']"
+            v-hasPermi="['network:websocket:remove']"
             ghost
             icon="delete">
             {{ $t('button.delete') }}</a-button>
-          <a-button @click="handleExport" v-hasPermi="['network:tcp:export']" icon="export">
+          <a-button @click="handleExport" v-hasPermi="['network:websocket:export']" icon="export">
             {{ $t('button.export') }}</a-button>
         </a-space>
         <a-button
@@ -113,23 +63,25 @@
           class="refresh-btn"
         />
       </div>
-      <create-form ref="createForm" :networkTypeOptions="tcpTypeOptions"
-                   :productOptions="productOptions" @ok="getList"
-                   :usedProductKeys="list.map(item => String(item.productKey)).filter(Boolean)"/>
+      <!-- 增加修改 -->
+      <create-form
+        ref="createForm"
+        :networkTypeOptions="websocketTypeOptions"
+        :productOptions="productOptions"
+        :usedProductKeys="list.map(item => String(item.productKey)).filter(Boolean)"
+        @ok="getList"
+      />
 
       <!-- 空状态 -->
-      <a-empty v-if="!loading && list.length === 0" description="暂无TCP网络组件数据"/>
+      <a-empty v-if="!loading && list.length === 0" description="暂无WebSocket网络组件数据"/>
 
       <!-- 卡片网格 -->
       <a-row :gutter="16">
         <a-col :span="6" v-for="item in list" :key="item.id">
           <a-card hoverable class="network-card">
-            <!-- TCP类型标识 - 右上角 -->
-            <div class="tcp-type-badge">
-              <span v-if="item.type === 'TCP_SERVER'" class="tcp-badge-server">服务端</span>
-              <span v-if="item.type === 'TCP_CLIENT'" class="tcp-badge-client">客户端</span>
-              <span v-if="item.type === 'UDP'" class="tcp-badge-udp">UDP</span>
-              <span v-if="item.type === 'WEB_SOCKET_SERVER'" class="tcp-badge-websocket">WebSocket</span>
+            <!-- WebSocket类型标识 - 右上角 -->
+            <div class="websocket-type-badge">
+              <span class="websocket-badge">WebSocket</span>
             </div>
 
             <div class="card-header">
@@ -145,7 +97,7 @@
             <div class="card-body">
               <div class="card-row">
                 <a-icon type="api" style="margin-right:4px;"/>
-                {{ $t('common.running.status') }}：
+                端口：
                 <a-tooltip :title="getConfigValue(item, 'port')">{{
                     getConfigValue(item, 'port')
                   }}
@@ -153,18 +105,34 @@
               </div>
               <div class="card-row">
                 <a-icon type="link" style="margin-right:4px;"/>
-                {{ $t('device.bindProduct') }}：<span class="product-count-inline"><a-button
-                v-if="item.type === 'TCP_SERVER' && item.bindTcpServerProducts"
+                路径：
+                <a-tooltip :title="getConfigValue(item, 'path', '未配置')">{{
+                    getConfigValue(item, 'path', '未配置')
+                  }}
+                </a-tooltip>
+              </div>
+              <div class="card-row">
+                <a-icon type="idcard" style="margin-right:4px;"/>
+                ClientId：
+                <a-tooltip :title="getConfigValue(item, 'clientId', '自动生成')">{{
+                    getConfigValue(item, 'clientId', '自动生成')
+                  }}
+                </a-tooltip>
+              </div>
+              <div class="card-row">
+                <a-icon type="link" style="margin-right:4px;"/>
+                绑定产品：<span class="product-count-inline"><a-button
+                v-if="item.productKey"
                 type="link" size="small" @click="showBindProduct(item)"
                 class="product-count-btn">
-                    {{ item.bindTcpServerProductCount || 0 }} 个
-                  </a-button><span v-else class="no-bind-text">
-                    {{ item.type === 'TCP_SERVER' ? '0 个' : '-' }}
-                  </span></span>
+                  1 个
+                </a-button><span v-else class="no-bind-text">
+                  0 个（未绑定）
+                </span></span>
               </div>
               <div class="card-row">
                 <a-icon type="poweroff" style="margin-right:4px;"/>
-               {{$t('common.status')}}：
+                {{$t('common.status')}}：
                 <span :class="getStatusClass(item)">
                   {{ getStatusText(item) }}
                 </span>
@@ -172,25 +140,25 @@
             </div>
             <div class="card-actions">
               <div class="action-btn start-btn"
-                   @click="!item.state || item.running ? null : handleStart(item)"
-                   v-hasPermi="['network:tcp:start']"
-                   :class="{ disabled: !item.state || item.running }">
+                   @click="!isWebSocketConfigured(item) || item.running ? null : handleStart(item)"
+                   v-hasPermi="['network:websocket:start']"
+                   :class="{ disabled: !isWebSocketConfigured(item) || item.running }">
                 <a-icon type="play-circle"/>
               </div>
               <div class="action-btn stop-btn"
-                   @click="!item.state || !item.running ? null : handleStop(item)"
-                   v-hasPermi="['network:tcp:stop']"
-                   :class="{ disabled: !item.state || !item.running }">
+                   @click="!isWebSocketConfigured(item) || !item.running ? null : handleStop(item)"
+                   v-hasPermi="['network:websocket:stop']"
+                   :class="{ disabled: !isWebSocketConfigured(item) || !item.running }">
                 <a-icon type="pause-circle"/>
               </div>
               <div class="action-btn edit-btn"
                    @click="$refs.createForm.handleUpdate(item)"
-                   v-hasPermi="['network:tcp:edit']">
+                   v-hasPermi="['network:websocket:edit']">
                 <a-icon type="edit"/>
               </div>
               <div class="action-btn delete-btn"
                    @click="handleDelete(item)"
-                   v-hasPermi="['network:tcp:remove']">
+                   v-hasPermi="['network:websocket:remove']">
                 <a-icon type="delete"/>
               </div>
             </div>
@@ -205,56 +173,58 @@
         show-quick-jumper
         :current="queryParam.pageNum"
         :total="total"
-        :page-size="queryParam.pageSize || 8"
-        :pageSizeOptions="['4','8','12','16']"
-        :showTotal="total => `共 ${total} 条`"
-        @showSizeChange="onShowSizeChange"
+        :page-size="queryParam.pageSize"
+        :pageSizeOptions="['12', '24', '36', '48']"
         @change="changeSize"
+        @showSizeChange="onShowSizeChange"
       />
 
       <!-- 绑定产品弹窗 -->
       <a-modal
-        :title="`${currentNetwork.name} - {{ $t('device.bindProduct') }}`"
-        :visible="bindProductVisible"
+        v-model="bindProductsVisible"
+        title="绑定产品"
         :footer="null"
-        @cancel="bindProductVisible = false"
         width="600px">
-        <div v-if="currentBindProduct">
-          <div style="display: flex; gap: 16px;">
-            <div style="flex: 1;">
-              <a-descriptions :column="1" size="small">
-                <a-descriptions-item :label="$t('product.name')">
-                  {{ currentBindProduct.name }}
-                </a-descriptions-item>
-                <a-descriptions-item label="ProductKey">
-                  {{ currentBindProduct.productKey }}
-                </a-descriptions-item>
-                <a-descriptions-item label="产品描述" v-if="currentBindProduct.description">
-                  {{ currentBindProduct.description }}
-                </a-descriptions-item>
-                <a-descriptions-item label="公司简称" v-if="currentBindProduct.companyNo">
-                  {{ currentBindProduct.companyNo }}
-                </a-descriptions-item>
-                <a-descriptions-item :label="$t('device.node')" v-if="currentBindProduct.deviceNode">
-                  {{ currentBindProduct.deviceNode }}
-                </a-descriptions-item>
-                <a-descriptions-item :label="$t('device.accessMethod')" v-if="currentBindProduct.thirdPlatform">
-                  {{ currentBindProduct.thirdPlatform }}
-                </a-descriptions-item>
-              </a-descriptions>
-            </div>
-            <div
-              style="width: 150px; height: 150px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-              <div v-if="getProductImage(currentBindProduct)"
-                   style="width: 100%; height: 100%; border: 1px solid #d9d9d9; border-radius: 8px; overflow: hidden;">
-                <img :src="getProductImage(currentBindProduct)"
-                     style="width: 100%; height: 100%; object-fit: cover;"/>
+        <div v-if="currentBindProducts && currentBindProducts.length > 0">
+          <div v-for="(item, index) in currentBindProducts" :key="index" style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 16px;">
+              <div style="flex: 1;">
+                <a-descriptions :column="1" size="small">
+                  <a-descriptions-item :label="$t('product.name')">
+                    {{ item.name }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label="ProductKey">
+                    {{ item.productKey }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label="产品描述" v-if="item.description">
+                    {{ item.description }}
+                  </a-descriptions-item>
+                  <a-descriptions-item label="公司简称" v-if="item.companyNo">
+                    {{ item.companyNo }}
+                  </a-descriptions-item>
+                  <a-descriptions-item :label="$t('device.node')" v-if="item.deviceNode">
+                    {{ item.deviceNode }}
+                  </a-descriptions-item>
+                  <a-descriptions-item :label="$t('device.accessMethod')" v-if="item.thirdPlatform">
+                    {{ item.thirdPlatform }}
+                  </a-descriptions-item>
+                </a-descriptions>
               </div>
-              <div v-else
-                   style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 8px;">
-                <a-icon type="appstore" style="color: #d9d9d9; font-size: 48px;"/>
+              <div
+                style="width: 150px; height: 150px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                <div v-if="getProductImage(item)"
+                     style="width: 100%; height: 100%; border: 1px solid #d9d9d9; border-radius: 8px; overflow: hidden;">
+                  <img :src="getProductImage(item)"
+                       style="width: 100%; height: 100%; object-fit: cover;"/>
+                </div>
+                <div v-else
+                     style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f5f5f5; border: 1px solid #d9d9d9; border-radius: 8px;">
+                  <a-icon type="appstore" style="color: #d9d9d9; font-size: 48px;"/>
+                </div>
               </div>
             </div>
+            <div v-if="index < currentBindProducts.length - 1"
+                 style="margin-top: 16px; border-bottom: 1px solid #f0f0f0;"></div>
           </div>
         </div>
         <a-empty v-else description="暂无绑定产品"/>
@@ -270,7 +240,7 @@ import { parseTime } from '@/utils/ruoyi';
 import CreateForm from '../modules/CreateForm';
 
 export default {
-  name: 'TcpNetwork',
+  name: 'WebSocketNetwork',
   components: {
     CreateForm
   },
@@ -288,18 +258,16 @@ export default {
       advanced: false,
       // 总条数
       total: 0,
-      // TCP网络组件表格数据
+      // WebSocket网络组件表格数据
       list: [],
       // 弹出层标题
       title: '',
       // 是否显示弹出层
       open: false,
-      // TCP类型选项
-      tcpTypeOptions: [
-        // {dictValue: 'TCP_CLIENT', dictLabel: 'TCP客户端'},
-        {dictValue: 'TCP_SERVER', dictLabel: 'TCP服务端'},
-        {dictValue: 'UDP', dictLabel: 'UDP服务'},
-        {dictValue: 'WEB_SOCKET_SERVER', dictLabel: 'WebSocket服务端'}
+      // WebSocket类型选项
+      websocketTypeOptions: [
+        {dictValue: 'WEB_SOCKET_SERVER', dictLabel: 'WebSocket服务端'},
+        {dictValue: 'WEB_SOCKET_CLIENT', dictLabel: 'WebSocket客户端'},
       ],
       // 产品选项
       productOptions: [],
@@ -311,6 +279,10 @@ export default {
       bindProductVisible: false,
       currentNetwork: {},
       currentBindProduct: null,
+      // 绑定产品弹窗
+      bindProductsVisible: false,
+      currentNetwork: {},
+      currentBindProducts: [],
       // 查询参数
       queryParam: {
         pageNum: 1,
@@ -354,32 +326,33 @@ export default {
     }
   },
   created() {
-    this.getProductOptions().then(() => {
-      this.getList()
-    })
+    this.getList()
+    this.getProductOptions()
   },
   methods: {
     parseTime,
-    /** 查询TCP网络组件列表 */
+    /** 查询WebSocket网络组件列表 */
     getList() {
       this.loading = true
-      // 只查询TCP类型的网络组件
+      // 只查询WebSocket类型的网络组件
       const params = {...this.queryParam}
       if (!params.type) {
-        params.type = ['TCP_CLIENT', 'TCP_SERVER', 'UDP', 'WEB_SOCKET_SERVER']
+        params.type = ['WEB_SOCKET_CLIENT', 'WEB_SOCKET_SERVER']
       }
 
       listNetwork(params).then(response => {
-        this.list = response.rows
-        this.total = response.total
+        this.list = response.rows || []
+        this.total = response.total || 0
         this.loading = false
+        // 强制更新视图
+        this.$forceUpdate()
       }).catch(() => {
         this.loading = false
       })
     },
     /** 获取产品选项 */
     getProductOptions() {
-      return listProduct({pageSize: 1000}).then(response => {
+      listProduct({pageSize: 1000}).then(response => {
         this.productOptions = response.rows.map(item => ({
           value: item.productKey,
           label: item.name
@@ -395,7 +368,7 @@ export default {
     resetQuery() {
       this.queryParam = {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 12,
         type: undefined,
         name: undefined,
         productKey: undefined,
@@ -419,14 +392,63 @@ export default {
       this.single = selectedRowKeys.length !== 1
       this.multiple = !selectedRowKeys.length
     },
+    /** 启动WebSocket网络组件 */
+    handleStart(row) {
+      this.$confirm({
+        title: '确认操作',
+        content: `确定要启动WebSocket网络组件"${row.name}"吗？`,
+        onOk: () => {
+          startNetwork(row.id).then(response => {
+            this.$message.success('启动成功')
+            // 延迟一下再刷新，确保后端状态已更新
+            setTimeout(() => {
+              this.getList()
+            }, 500)
+          }).catch(error => {
+            this.$message.error(error.msg || '启动失败')
+          })
+        }
+      })
+    },
+    /** 停止WebSocket网络组件 */
+    handleStop(row) {
+      this.$confirm({
+        title: '确认操作',
+        content: `确定要停止WebSocket网络组件"${row.name}"吗？`,
+        onOk: () => {
+          stopNetwork(row.id).then(response => {
+            this.$message.success('停止成功')
+            // 延迟一下再刷新，确保后端状态已更新
+            setTimeout(() => {
+              this.getList()
+            }, 500)
+          }).catch(error => {
+            this.$message.error(error.msg || '停止失败')
+          })
+        }
+      })
+    },
     /** 删除按钮操作 */
     handleDelete(row) {
+      // 如果没有传递row参数，说明是顶部删除按钮被点击
+      if (!row) {
+        this.$message.info('请使用卡片上的删除按钮来删除WebSocket组件')
+        return
+      }
+
       const ids = row.id || this.ids
       const names = row.name || this.list.filter(item => this.ids.includes(item.id)).map(
         item => item.name).join(',')
+
+      // 验证是否有选中的项目
+      if (!ids || (Array.isArray(ids) && ids.length === 0)) {
+        this.$message.warning('请先选择要删除的WebSocket组件')
+        return
+      }
+
       this.$confirm({
         title: '确认删除',
-        content: `确定要删除TCP网络组件"${names}"吗？`,
+        content: `确定要删除WebSocket网络组件"${names}"吗？`,
         onOk: () => {
           const api = Array.isArray(ids) ? delNetworkBatch : delNetwork
           const params = Array.isArray(ids) ? ids.join(',') : ids
@@ -439,68 +461,11 @@ export default {
     },
     /** 查看详情 */
     handleView(row) {
-      this.$router.push(`/system/network/tcp/detail/${row.id}`)
+      this.$router.push(`/system/network/websocket/detail/${row.id}`)
     },
     /** 导出按钮操作 */
     handleExport() {
       this.$message.info('导出功能待实现')
-    },
-    typeShortLabel(item) {
-      if (item.type === 'TCP_CLIENT') {
-        return 'Client连接'
-      }
-      if (item.type === 'TCP_SERVER') {
-        return 'Server监听'
-      }
-      return item.type
-    },
-    typeFullLabel(item) {
-      if (item.type === 'TCP_CLIENT') {
-        return 'TCP客户端'
-      }
-      if (item.type === 'TCP_SERVER') {
-        return 'TCP服务端'
-      }
-      return item.type
-    },
-    typeTagStyle(item) {
-      if (item.type === 'TCP_CLIENT') {
-        return {
-          background: '#e6f7ff',
-          color: '#1890ff',
-          borderRadius: '12px',
-          fontSize: '11px',
-          border: 'none',
-          padding: '0 10px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px'
-        }
-      }
-      if (item.type === 'TCP_SERVER') {
-        return {
-          background: '#f6ffed',
-          color: '#52c41a',
-          borderRadius: '12px',
-          fontSize: '11px',
-          border: 'none',
-          padding: '0 10px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '4px'
-        }
-      }
-      return {
-        background: '#fafafa',
-        color: '#999',
-        borderRadius: '12px',
-        fontSize: '11px',
-        border: 'none',
-        padding: '0 10px',
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: '4px'
-      }
     },
     getDisplayName(item) {
       // 如果产品名称不为空，显示产品名称，否则显示组件名称
@@ -519,112 +484,21 @@ export default {
         return '配置错误'
       }
     },
-    getTcpPort(item) {
-      return this.getConfigValue(item, 'port')
-    },
-    getTcpHost(item) {
-      return this.getConfigValue(item, 'host')
-    },
-    /** 产品Key搜索 */
-    handleProductKeySearch(value) {
-      // 如果搜索值为空，显示所有产品
-      if (!value || value.trim() === '') {
-        this.loadAllProducts()
-        return
-      }
-
-      // 如果当前没有产品列表，先加载
-      if (this.allProductsList.length === 0) {
-        this.loadAllProducts()
-      } else {
-        // 在现有列表中过滤
-        this.filterProducts(value.trim())
-      }
-    },
-    /** 在现有产品列表中过滤 */
-    filterProducts(searchValue) {
-      if (!this.allProductsList || this.allProductsList.length === 0) {
-        return
-      }
-
-      // 从原始数据中过滤
-      const filteredList = this.allProductsList.filter(product => {
-        const name = (product.name || '').toLowerCase()
-        const productKey = (product.productKey || '').toLowerCase()
-        const search = searchValue.toLowerCase()
-
-        return name.includes(search) || productKey.includes(search)
-      })
-
-      // 更新显示列表
-      this.productSearchList = filteredList
-    },
-    /** 产品Key搜索框获得焦点 */
-    handleProductKeyFocus() {
-      // 获得焦点时加载所有产品列表
-      this.loadAllProducts()
-    },
-    /** 加载所有产品列表 */
-    loadAllProducts() {
-      this.productSearchLoading = true
-      return listProduct({
-        pageSize: 100
-      }).then(response => {
-        this.allProductsList = response.rows || []
-        this.productSearchList = [...this.allProductsList] // 复制一份用于显示
-        return this.productSearchList
-      }).catch(() => {
-        this.allProductsList = []
-        this.productSearchList = []
-        return []
-      }).finally(() => {
-        this.productSearchLoading = false
-      })
-    },
-    /** 启动TCP网络组件 */
-    handleStart(row) {
-      this.$confirm({
-        title: '确认操作',
-        content: `确定要启动TCP网络组件"${row.name}"吗？`,
-        onOk: () => {
-          startNetwork(row.id).then(response => {
-            this.$message.success('启动成功')
-            this.getList()
-          }).catch(error => {
-            this.$message.error(error.msg || '启动失败')
-          })
-        }
-      })
-    },
-    /** 停止TCP网络组件 */
-    handleStop(row) {
-      this.$confirm({
-        title: '确认操作',
-        content: `确定要停止TCP网络组件"${row.name}"吗？`,
-        onOk: () => {
-          stopNetwork(row.id).then(response => {
-            this.$message.success('停止成功')
-            this.getList()
-          }).catch(error => {
-            this.$message.error(error.msg || '停止失败')
-          })
-        }
-      })
-    },
     /** 显示绑定产品 */
-    showBindProduct(item) {
+    showBindProducts(item) {
       this.currentNetwork = item
-      this.currentBindProduct = item.bindTcpServerProducts
-      this.bindProductVisible = true
+      this.currentBindProducts = item.bindWebSocketProducts || []
+      this.bindProductsVisible = true
     },
-    /** 检查TCP配置是否完整 */
-    isTcpConfigured(item) {
+    /** 检查WebSocket配置是否完整 */
+    isWebSocketConfigured(item) {
       if (!item.configuration) return false
       try {
         const config = typeof item.configuration === 'string'
           ? JSON.parse(item.configuration)
           : item.configuration
-        return !!config.port
+        // WebSocket 必须配置 port 和 path
+        return !!(config.port && config.path)
       } catch (e) {
         return false
       }
@@ -633,7 +507,7 @@ export default {
     getStatusText(item) {
       if (item.running) {
         return '运行中'
-      } else if (this.isTcpConfigured(item)) {
+      } else if (this.isWebSocketConfigured(item)) {
         return '已停止'
       } else {
         return '未配置'
@@ -643,7 +517,7 @@ export default {
     getStatusClass(item) {
       if (item.running) {
         return 'status-running'
-      } else if (this.isTcpConfigured(item)) {
+      } else if (this.isWebSocketConfigured(item)) {
         return 'status-stopped'
       } else {
         return 'status-unconfigured'
@@ -670,6 +544,21 @@ export default {
       }
 
       return null
+    },
+    /** 显示绑定产品 */
+    showBindProduct(item) {
+      if (!item.productKey) return
+      
+      // 查找对应的产品信息
+      const product = this.productOptions.find(p => p.value === item.productKey)
+      if (product) {
+        this.currentNetwork = item
+        this.currentBindProduct = {
+          name: product.label,
+          productKey: product.value
+        }
+        this.bindProductVisible = true
+      }
     }
   }
 }
@@ -756,7 +645,7 @@ export default {
 }
 
 .card-body {
-  margin: 12px 0 0 0;
+  margin: 12px 0 8px 0;
 }
 
 .card-row {
@@ -847,49 +736,6 @@ export default {
   color: #ff4d4f;
 }
 
-// TCP类型标识样式 - 右上角
-.tcp-type-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 1;
-}
-
-.tcp-badge-server,
-.tcp-badge-client,
-.tcp-badge-udp {
-  display: inline-block;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 500;
-  color: #666666;
-  line-height: 1.2;
-  background: #f5f5f5;
-  border: 1px solid #e8e8e8;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.tcp-badge-server {
-  color: #8c8c8c;
-  background: #fafafa;
-}
-
-.tcp-badge-client {
-  color: #8c8c8c;
-  background: #fafafa;
-}
-
-.tcp-badge-udp {
-  color: #8c8c8c;
-  background: #fafafa;
-}
-
-.tcp-badge-websocket {
-  color: #8c8c8c;
-  background: #fafafa;
-}
-
 .product-count-btn {
   padding: 0;
   height: auto;
@@ -925,21 +771,6 @@ export default {
   font-weight: 500;
 }
 
-
-@media (max-width: 768px) {
-  .network-card {
-    margin-bottom: 12px;
-  }
-
-  .card-actions {
-    gap: 6px;
-
-    .ant-btn-link {
-      padding: 6px 10px;
-    }
-  }
-}
-
 .breath-badge {
   animation: breath-scale 1.2s infinite ease-in-out;
 }
@@ -956,22 +787,24 @@ export default {
   }
 }
 
-/* 产品搜索选项样式 */
-.product-search-option {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+// WebSocket类型标识样式 - 低调设计
+.websocket-type-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
 
-  .product-search-name {
-    font-size: 14px;
-    color: #333;
-    font-weight: 500;
-  }
-
-  .product-search-key {
-    font-size: 12px;
-    color: #666;
-    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-  }
+.websocket-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #8c8c8c;
+  line-height: 1.2;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 </style>

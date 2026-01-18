@@ -50,7 +50,13 @@ public class ThingModelWebSocketDeviceInfoProcessor extends BaseWebSocketDeviceI
       java.util.Map<String, Object> info = (java.util.Map<String, Object>) productInfo;
       String thingModel = (String) info.get("thingModel");
       // 如果产品配置了物模型，支持物模型处理
-      return cn.hutool.core.util.StrUtil.isNotBlank(thingModel);
+      if (cn.hutool.core.util.StrUtil.isNotBlank(thingModel)) {
+        return true;
+      }
+      // 即使物模型未定义，也应该尝试作为降级方案处理消息
+      // 这样可以支持无物模型定义场景的消息入库
+      log.debug("[{}] 物模型未定义，但将作为降级方案处理消息，productKey: {}", 
+          getMessageType(), request.getProductKey());
     }
 
     // 或者检查消息格式是否符合物模型规范
@@ -59,15 +65,27 @@ public class ThingModelWebSocketDeviceInfoProcessor extends BaseWebSocketDeviceI
       try {
         com.fasterxml.jackson.databind.JsonNode node =
             new com.fasterxml.jackson.databind.ObjectMapper().readTree(payload);
-        // 物模型消息通常包含 method, params 等字段
-        return node.has("method") || node.has("properties") || node.has("events");
+        // 物模型消息通常包含 method, params 等字段，但即使没有这些字段
+        // 也应该作为通用消息处理以支持入库
+        boolean isStandardThingModel = node.has("method") || node.has("properties") || node.has("events");
+        if (isStandardThingModel) {
+          return true;
+        }
+        // 降级处理：即使不是标准物模型格式，如果是JSON格式也尝试处理
+        // 这样可以支持灵活的消息格式
+        log.debug("[{}] 消息非标准物模型格式，但将作为通用消息处理，productKey: {}", 
+            getMessageType(), request.getProductKey());
+        return true;
       } catch (Exception e) {
-        // JSON 解析失败，不是物模型格式
-        return false;
+        // JSON 解析失败，仍然作为文本消息尝试处理
+        log.debug("[{}] 消息解析异常，但将继续尝试处理，productKey: {}", 
+            getMessageType(), request.getProductKey());
+        return true;
       }
     }
 
-    return false;
+    // 即使是非JSON格式，也应该尝试处理（作为透传消息）
+    return true;
   }
 
   @Override
