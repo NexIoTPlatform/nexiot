@@ -184,13 +184,13 @@
 
 #### 📺 产品管理
 
-|                                                         |                                                                |
-|---------------------------------------------------------|----------------------------------------------------------------|
-| ![产品列表](/__MACOSX/shot/260118/product/list.png)         | ![产品详情](/__MACOSX/shot/260118/product/create.png)              |
-| ![标准物模型](/__MACOSX/shot/260118/product/metadata-01.png) | ![物模型字段](/__MACOSX/shot/260118/product/metadata-02.png)        |
-| ![物模型搜索](/__MACOSX/shot/260118/product/create-metadata.png)     | ![功能创建](/__MACOSX/shot/260118/product/create-metadata-fun.png) |
-| ![连接信息](/__MACOSX/shot/260118/product/connect.png)          | ![网络管理](/__MACOSX/shot/260118/product/connect-mqtt.png)    |
-| ![报警管理](/__MACOSX/shot/260118/product/stand-metadata-2.png) | ![产品详情](/__MACOSX/shot/260118/product/stand-metadata-1.png)        |
+|                                                         |                                                             |
+|---------------------------------------------------------|-------------------------------------------------------------|
+| ![产品列表](/__MACOSX/shot/260118/product/list.png)         | ![产品详情](/__MACOSX/shot/260118/product/detail.png)           |
+| ![标准物模型](/__MACOSX/shot/260118/product/create.png) | ![物模型字段](/__MACOSX/shot/260118/product/metadata-01.png)     |
+| ![物模型搜索](/__MACOSX/shot/260118/product/create-metadata.png)     | ![功能创建](/__MACOSX/shot/260118/product/metadata-02.png)      |
+| ![连接信息](/__MACOSX/shot/260118/product/connect.png)          | ![网络管理](/__MACOSX/shot/260118/product/connect-mqtt.png)     |
+| ![报警管理](/__MACOSX/shot/260118/product/stand-metadata-2.png) | ![产品详情](/__MACOSX/shot/260118/product/stand-metadata-1.png) |
 
 #### 📺 设备管理
 
