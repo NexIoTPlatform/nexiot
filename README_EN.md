@@ -19,7 +19,6 @@
 
 **English | [中文](README-zh.md)**
 
-
 </div>
 
 ## ✨ Platform Overview
@@ -66,7 +65,6 @@
 
 > **🔧 For real device demos, please add WeChat, thank you!!**
 
-
 ## 📈 Current Progress
 
 ### Recent Roadmap
@@ -76,9 +74,6 @@
 - **🚀 Hikvision Integrated Security Management Platform**: Integration using Hikvision platform product series `(No environment, delayed)`
 - **📱 Mobile Application (Planned Dec 2025)**: Paid Tuniao Ding mini-program with instruction control, attributes, alarm viewing, lightweight, multi-administrator `✅ (Beta completed in December 2025)`
 - **📱 SCADA Integration (Planned Mar 2026)**: Integration of SCADA with NexIoT
-
-
-
 
 ## 🚀 Quick Start
 
@@ -95,7 +90,7 @@
 - **📖 Documentation**: <https://docs.nexiot.cc/>
 
 ## 📊 Feature Details
- 
+
 > **For differences between open-source and enterprise versions, click [Version Comparison](https://docs.nexiot.cc/versions/comparison.html/ "Version Comparison")** to view
 
 - [x] Based on JDK21, virtual threads, supports RBAC, completed security fixes, passed third-level security protection; **open-source supports clustering**
@@ -172,12 +167,9 @@
 
 ## 📸 Platform Interface Showcase
 
-
-
 |          🏗️ System Architecture                            |           🚀 Cloud-native Deployment Architecture                              |
 |---------------------------------------|-----------------------------------------|
 | ![System Architecture](/__MACOSX/shot/dataflow.png) |![Cloud-native Deployment](/__MACOSX/shot/deploy.jpg)  |
-
 
 ### 🖥️ Intelligent Function Showcase
 
@@ -207,7 +199,6 @@
 |----------------------------------------------|----------------------------------------------|
 | ![Breakpoint](/__MACOSX/shot/260118/protocol/02.png) | ![Execution](/__MACOSX/shot/260118/protocol/03.png) |
 
-
 #### 🔄 Rule Orchestration and Engine
 
 |                                                     |                                                          |
@@ -216,7 +207,6 @@
 | ![Data Bridge](/__MACOSX/shot/260118/other/qiaojie-02.png) | ![Rule Engine](/__MACOSX/shot/260118/other/cert.png)            |
 | ![Linkage](/__MACOSX/shot/260118/other/liandong-01.png)  | ![Rule Engine](/__MACOSX/shot/260118/other/liandong-result.png) |
 | ![Linkage](/__MACOSX/shot/260118/other/tz01.png)         | ![Rule Engine](/__MACOSX/shot/260118/other/tz02.png)            |
-
 
 ### 🛠️ Network Components
 
@@ -230,15 +220,12 @@
 |--------------------------------------------|---------------------------------------------|--------------------------------------------|
 | ![AK/SK](/__MACOSX/shot/260118/app/01.png) | ![mqtt detail](/__MACOSX/shot/260118/app/03.png) | ![tcp binding](/__MACOSX/shot/260118/app/02.png) |
 
-
-
 ### 🎯 Data Analysis and Trends
 
 |                                                      |                                                  |                                                    |
 |------------------------------------------------------|--------------------------------------------------|----------------------------------------------------|
 | ![Thing Model List Data](/__MACOSX/shot/260109/logmeta-tubiao.png) | ![Show Trend](/__MACOSX/shot/260109/logmeta-qushi.png) | ![Export Thing Model](/__MACOSX/shot/260109/logmeta-export.png) |
 | ![Data Management 1](/__MACOSX/shot/260118/platform/dt.png) | ![Data Management 2](/__MACOSX/shot/260118/platform/d2.png)                       | ![Device Management](/__MACOSX/shot/260118/other/zhuapai.png) |
-
 
 ### 🎯 wvp-GB28281-wvp+Hikvision ISC+Dahua ICC
 
@@ -250,11 +237,9 @@
 |  ![National Standard Real-time](/__MACOSX/shot/260118/platform/gbss.png)            | ![Recording](/__MACOSX/shot/260118/platform/lsbf.png)     |![Device Recording Playback](/__MACOSX/shot/260118/platform/lxhf.png) |
 |        |
 
-
 #### 🌐 China Telecom Product Access
 
 ![China Telecom Product Access](__MACOSX/shot/260118/99.gif)
-
 
 ### 🚀 SCADA Dashboard Integrated Integration (Beta)
 
@@ -266,7 +251,6 @@
 | ![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/02.png) | ![Dashboard 2](__MACOSX/shot/260118/zutai/03.png) |
 | ![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/05.png) | ![Dashboard 2](__MACOSX/shot/260118/zutai/06.png) |
 | ![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/07.png) | ![Dashboard 2](__MACOSX/shot/260118/zutai/08.png) |
-
 
 ### 🎯 Mobile/Mobile Applets
 
@@ -298,10 +282,72 @@ More videos, please follow Bilibili and Douyin
 |:---:|:---|:---|
 | 1 | Arbitrary Topic and Full Process Integration Tutorial | [📺 Bilibili View](https://www.bilibili.com/video/BV1q1UZBmEHS/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
 
-```
+### 📢 Important Notice
 
-```
+- **Self-media Reposting**: Welcome to repost project information, please follow the AGPL3.0 open-source license
+- **Enterprise Authorization**: Commercial use requires authorization, enterprise authorization information retained
+- **Legal Liability**: If institutional misuse causes legal consequences, liability reserved
 
-```
+### 🌐 Community Contact Methods
 
-```
+|WeChat                            | Bilibili                              | Douyin                               | Mini Program                           |
+|-------------------------------|---------------------------------|----------------------------------|-------------------------------|
+|  ![WeChat](/__MACOSX/shot/wx.png) | ![Bilibili](/__MACOSX/shot/bzhan.jpg) | ![Douyin](/__MACOSX/shot/douyin.jpg) | ![wx](/__MACOSX/shot/wxq.png) |
+
+## 🛠️ Technical Support and Services
+
+We provide comprehensive technical support services, from basic Q&A to enterprise-level solutions, meeting different levels of needs. Charging is to provide better service and greater motivation for the authors!
+
+### 📋 Service Type Comparison
+
+| Service Type          | Service Content                                 | Price           | Applicable Scenarios      | Contact Method                                                         |
+|---------------|--------------------------------------|--------------|-----------|--------------------------------------------------------------|
+| **🆓 Community Technical Q&A** | • Basic problem Q&A<br>• Usage guidance<br>• Community exchange         | **Free**       | Learning, Usage     | QQ Group, WeChat Group                                                      |
+| **📚 Technical Documentation**   | • Technical documentation<br>• Practice guides<br>• Video tutorials           | **Free**       | Self-learning, Reference     | [Documentation](https://docs.nexiot.cc/) |
+| **☁️ Online Deployment Service** | • Customer provides hardware<br>• Complete system deployment<br>• Cloud service deployment      | **¥199**     | Rapid launch, cloud deployment  | Contact Technical                                                         |
+| **🔧 Exclusive Technical Support** | • Various integration support<br>• Usage guidance<br>• Deployment solutions<br>• Solutions | **¥600/4 hours** | Remote support      | Contact Technical                                                         |
+| **⚡ Device Access Service**  | • IDE source code analysis<br>• Product configuration export<br>• Customized access     | **¥1000/day**  | Complex device access, custom development | Contact Customer Service                                                         |
+| **🏢 Enterprise Peace of Mind Service** | • Commercial version local deployment<br>• Proxy O&M service<br>• 5×8 technical support    | **¥9,999/year** | -         | Contact Customer Service                                                         |
+
+---
+
+## 📄 Open Source License and Authorization
+
+Please follow the AGPL3.0 open-source license, commercial use requires authorization
+
+### 📜 Detailed Authorization Terms
+
+#### ✅ Authorized User Rights
+
+1. **Internal Use**: Authorized users may indefinitely use internally
+    - Enterprise authorization: Does not include subsidiaries, branch companies and third-party companies
+    - Individual authorization: For personal use only, cannot be used for employed company or third party
+2. **Development Permissions**: Authorized users may conduct secondary source code development through project form
+    - Customized software must be encrypted and packaged before customer delivery
+    - If source code delivery required, customers must purchase corresponding commercial authorization
+
+#### ❌ Authorization Restrictions
+
+1. **Prohibition of Transfer**: Cannot distribute or transfer authorized source code to third parties
+    - Whether paid or free transfer
+    - Cannot apply for software copyright containing this project
+2. **Closed-source Content**
+
+ **TCP**, **UDP**, **China Telecom IoT ctaiot** modules. Self-secondary development expansion possible, commercial use requires project sponsorship, authorization required.
+
+### 🙏 Acknowledgments
+
+Thanks to the following open-source projects and technology platforms:
+
+- **Open-source Frameworks**: RuoYi, Antdv, jetlink, ssssssss-team
+- **Cloud Platforms**: Alibaba Cloud, Huawei Cloud, Tencent Cloud, AEP, OneNet and other IoT platforms
+- **Community Support**: Support and feedback from all contributors and users
+
+### Client Situations
+
+- **City/District Level Smart City IoT Platform**
+- **Hong Kong Metro**
+- **Listed Companies**
+- **Enterprise Parks**
+- **Intelligent Projects**
+- **Other Industry Clients**
