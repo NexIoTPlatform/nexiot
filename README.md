@@ -211,12 +211,12 @@
 
 #### 🔄 规则编排和引擎
 
-|                                               |                                           |
+|                                                     |                                                          |
 |-----------------------------------------------------|----------------------------------------------------------|
 | ![规则编排](/__MACOSX/shot/260118/other/rule-01.png)    | ![规则引擎](/__MACOSX/shot/260118/other/qiaojie-01.png)      |
-| ![数据桥接](/__MACOSX/shot/260118/other/qiaojie-01.png) | ![规则引擎](/__MACOSX/shot/260118/other/qiaojie-02.png)      |
+| ![数据桥接](/__MACOSX/shot/260118/other/qiaojie-02.png) | ![规则引擎](/__MACOSX/shot/260118/other/cert.png)            |
 | ![联动](/__MACOSX/shot/260118/other/liandong-01.png)  | ![规则引擎](/__MACOSX/shot/260118/other/liandong-result.png) |
-| ![联动](/__MACOSX/shot/260118/other/tz01.png)      | ![规则引擎](/__MACOSX/shot/260118/other/tz02.png)            |
+| ![联动](/__MACOSX/shot/260118/other/tz01.png)         | ![规则引擎](/__MACOSX/shot/260118/other/tz02.png)            |
 
 
 ### 🛠️ 网络组件
