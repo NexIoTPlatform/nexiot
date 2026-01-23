@@ -1,4 +1,4 @@
-# 🤖 NexIoT AI IoT Platform
+# 🤖 NexIoT AI物联网平台
 
 <div align="center">
 
@@ -11,297 +11,370 @@
 ![ClickHouse](https://img.shields.io/badge/ClickHouse-Supported-yellow.svg)
 ![AI](https://img.shields.io/badge/AI-Enabled-purple.svg)
 
-## 🎯 Innovative "True Zero Code Intrusion" IoT Platform
+## 🎯 创新的"真·零代码侵入"物联网平台
 
-> **💡 Breaking traditional IoT platform design concepts · Device drivers completely externalized · One-click export and use · Zero code intrusion**
+> **💡 突破传统物联网平台设计思路 · 设备驱动完全外置 · 一键导出即用 · 零代码侵入**
 
-[📖 Documentation](https://nexiotplatform.github.io/universal-iot-docs/) | [🌐 Online Demo](http://iot.192886.xyz:81/) | [🔧 AI Debugging IDE](http://iot.192886.xyz:81/magic/debug/index.html)
+[📖 文档地址](https://nexiotplatform.github.io/universal-iot-docs/) | [🌐 在线演示](http://iot.192886.xyz:81/) | [🔧 AI调试IDE](http://iot.192886.xyz:81/magic/debug/index.html)
 
-**English | [中文](README-zh.md)**
+**中文 | [English](README_EN.md)**
 
 
 </div>
 
-## ✨ Platform Overview
+## ✨ 平台简介
 
-**NexIoT AI IoT Platform** is an enterprise-level IoT platform with innovative architecture design featuring **True Zero Code Intrusion**.
+**NexIoT AI物联网平台** 是一款采用创新架构设计的**真·零代码侵入**企业级物联网平台。
 
-### 🎯 Core Highlights
+### 🎯 核心亮点
 
-> **🚀 What can this project do for you?**
+> **🚀 这个项目能为你做什么？**
 
-- 🏢 **Suitable for Medium and Large Enterprises**: **IoT Infrastructure Center, Unified Device Data Access**, for those developing their own products or B|G projects
-- 🔓 **No More Vendor Lock-in**: No longer held hostage by device suppliers or software providers charging exorbitant prices
-- 🎓 **Easy to Learn**: Non-Java developers can complete device integration; university students can easily use the debugger, saving significant R&D, testing, and O&M costs
-- 🤝 **Ecosystem Co-construction**: Products, thing models, and driver content can be exported with one click, enabling ecosystem co-construction and sharing
-- ⚡ **Real-time Hot Deployment**: **Real-time hot deployment** takes effect; from 0 to 100 device integrations, no service restarts needed for years
-- 🚀 **High Availability Cluster**: Open-source version supports clustering, millions of devices, no problem
+- 🏢 **适合中大型企业**：**IoT基础能力中心，统一的设备数据接入**，想做自己产品的，做B｜G项目
+- 🔓 **不再被卡脖子**：不再被某一个设备供应商、软件提供商卡脖子，漫天要价
+- 🎓 **上手简单**：不会Java也能完成设备接入，调试器大学生就能上手，节省大量研发、测试、运维
+- 🤝 **生态共建**：产品、物模型、驱动内容，一键导出，生态共建共享
+- ⚡ **实时热部署**：**实时热部署**生效，0款到100款设备对接，几年都不用重启服务
+- 🚀 **高可用集群**：开源版支持集群，千万设备，不再话下
 
-## 🌟 Platform Features
+## 🌟 平台亮点
 
-- ✅ **Zero Code Intrusion**: Externalized device drivers, no platform code modification required, no recompilation or redeployment needed, zero coupling with platform core code, truly zero intrusion
-- ✅ **Full Protocol Support**: Industrial protocols and IoT protocols such as TCP, Modbus RTU/TCP, MQTT, HTTP
-- ✅ **Cloud Platform Integration**: Integration with Tianyi IoT, Mobile OneNet, WVP GB28281 National Standard Video, and other platforms
-- ✅ **Multi-database Support**: Supports **MySQL 8.0+**, **IoTDB**, **ClickHouse**, **InfluxDB**, and other relational and time-series databases
+- ✅ **零代码侵入**：设备驱动外置、无需修改平台代码，无需重新编译部署，与平台核心代码零耦合，真正的零侵入
+- ✅ **全协议支持**：TCP、Modbus RTU/TCP、MQTT、HTTP等工业协议和物联网协议
+- ✅ **云平台对接**：天翼物联、移动OneNet、WVPGB28281国标视频等平台集成
+- ✅ **多数据库支持**：支持 **MySQL 8.0+**、**IoTDB**、**ClickHouse**、**InfluxDB**、 等关系和时序数据库
 
-## 🏗️ Technical Architecture
+## 🏗️ 技术架构
 
-### 🛠️ Technology Stack
+### 🛠️ 技术栈
 
-#### 🚀 Core Framework (Minimal Lightweight)
+#### 🚀 核心框架（极简轻量）
 
-- **Backend Framework**: `Java 21` `SpringBoot 3.5` `Tk.Mybatis 5.0.1` 
-- **Frontend Technology**: Built on `RuoYi-Antdv`, thanks to the open-source community!
-- **Log Storage**: **IoTDB** / **ClickHouse** / **InfluxDB** / MySQL / None (product-level seamless dynamic switching)
+- **后端框架**：`Java 21` `SpringBoot 3.5` `Tk.Mybatis 5.0.1` 
+- **前端技术**：基于`RuoYi-Antdv`构建，感谢开源社区！
+- **日志存储**：**IoTDB** / **ClickHouse** / **InfluxDB** / MySQL / None（产品级无感动态切换）
 
-## 🧭 Deployment and Startup (One-click Startup)
+## 🧭 部署与启动（一键启动）
 
-### Images are December 5, 2025 enterprise version images (preview), containing closed-source access protocols!
-
-- **One-click startup**: `docker-compose up -d`
-- **Access addresses**:
-  - Backend `http://localhost:80` (default `nexiot/nexiot@123321`)
-  - IDE Debugger `http://localhost:9092/magic/debug/index.html` (same password as backend)
-  - EMQX Management `http://localhost:18083` (default `admin/public`)
-
-> **🔧 For real device demos, please add WeChat, thank you!!**
+### 镜像为2025年12月5日企业版镜像（预览），含闭源的接入协议！
 
 
-## 📈 Current Progress
+- **一键启动**：`docker-compose up -d`
+- **访问地址**：
+  - 后台 `http://localhost:80`（默认 `nexiot/nexiot@123321`）
+  - IDE调试器 `http://localhost:9092/magic/debug/index.html` (密码同后台）
+  - EMQX 管理 `http://localhost:18083`（默认 `admin/public`）
 
-### Recent Roadmap
-
-- **🚀 WVP Video Platform Integration (Planned Jan 2026)**: Integration with WVP video platform series `✅ (Completed in December 2025)`
-- **🚀 Dahua ICC Series Products**: Integration with Dahua ICC product series `(No environment, delayed)`
-- **🚀 Hikvision Integrated Security Management Platform**: Integration using Hikvision platform product series `(No environment, delayed)`
-- **📱 Mobile Application (Planned Dec 2025)**: Paid Tuniao Ding mini-program with instruction control, attributes, alarm viewing, lightweight, multi-administrator `✅ (Beta completed in December 2025)`
-- **📱 SCADA Integration (Planned Mar 2026)**: Integration of SCADA with NexIoT
+> **🔧 真实设备演示请加微信，感谢！！**
 
 
+## 📈 正在推进
+
+###  近期规划（roadmap)
+
+- **🚀 WVP视频平集成（计划26年1月）**：与WVP视频平台系列集成 `✅（202512月已完成）`
+- **🚀 大华ICC系列产品**：与大华ICC产品系列集成`（无环境，延期中）`
+- **🚀 海康综合安防管理平台**：使用海康平台产品系列集成`（无环境，延期中）`
+- **📱 移动端应用（计划25年12月）**：付费图鸟定小程序，具备指令控制、属性、告警查看，轻量化、多管理员`✅（202512月beta已完成）`
+- **📱 组态集成（计划26年3月）**：组态与nexiot集成
 
 
-## 🚀 Quick Start
 
-### 🎯 Demo Address (Latest Version)
 
-> **✨ All real devices, open source driver code, all transparently visible!**
+## 🚀 快速开始
 
-> **💎 Exclusively sponsored by [Aeolian Cloud](https://www.aeoliancloud.com/cart/goodsList.htm) for NexIoT online demo server**
+### 🎯 演示地址（最新版本）
 
-- **🌐 Demo Address**: <http://demo.nexiot.cc/>
-- **🔧 Debug IDE**: <http://demo.nexiot.cc/magic/debug/index.html>
-- **👤 Demo Account**: `test`
-- **🔑 Demo Password**: `nexiot@123321`
-- **📖 Documentation**: <https://docs.nexiot.cc/>
+> **✨ 全部真实设备，驱动源码开放，全部透明可见！**
 
-## 📊 Feature Details
+> **💎 由 [风铃云](https://www.aeoliancloud.com/cart/goodsList.htm) 独家赞助 NexIoT 在线演示服务器**
+
+- **🌐 演示地址**：<http://demo.nexiot.cc/>
+- **🔧 调试IDE**：<http://demo.nexiot.cc/magic/debug/index.html>
+- **👤 演示账号**：`test`
+- **🔑 演示密码**：`nexiot@123321`
+- **📖 文档地址**：<https://docs.nexiot.cc/>
+
+## 📊 功能详解
  
-> **For differences between open-source and enterprise versions, click [Version Comparison](https://docs.nexiot.cc/versions/comparison.html/ "Version Comparison")** to view
+> **开源与企业版本区别，请点击 [版本区别](https://docs.nexiot.cc/versions/comparison.html/ "版本区别")** 查看
 
-- [x] Based on JDK21, virtual threads, supports RBAC, completed security fixes, passed third-level security protection; **open-source supports clustering**
-- [x] Supports WEB-IDE product driver writing, truly "zero" code intrusion protocol-oriented
-- [x] Hot updates and zero intrusion: Product drivers/protocols externalized, one-click import/export for immediate use, hot deployment
-- [x] Multi-protocol access: **No code changes** support for arbitrary TCP protocols, arbitrary MQTT Topics and message formats for device access, supports configurable and extensible packet sticking/unpacking, read/write timeouts, parser types via page configuration
-- [x] Third-party MQTT compatibility: Supports binding/unbinding external MQTT Brokers, custom downward topics, extending access limits
-- [x] Data strategy: Automatic registration, independent retention by attributes/events, configurable hex/string send/receive, log storage None/MySQL/ClickHouse/IoTDB/**InfluxDB** seamless switching
-- [x] Product Management
-    - [x] Supports thing model definition (properties, events, functions), import, export
-    - [x] Supports setting offline thresholds for different product devices
-    - [x] Supports setting product documentation addresses, product image uploads
-    - [x] **Supports configuring data receive/send types (hexadecimal, string)**
-- [x] **Supports enabling device active registration**
-- [x] **Supports setting TCP packet sticking, unpacking, read/write timeout, parser type strategies**
-- [x] Supports data retention strategies (independent storage by attributes or events for BI data analysis)
-- [x] **Supports defining additional device registration parameters (such as security codes, keys)**
-- [x] **Supports third-party MQTT downward topics**, HTTP service addresses
-- [x] **Supports using third-party MQTT service components, binding/unbinding**
-- [x] **Product drivers support IDE (Magic), JAR (local packaging and remote URI), JavaScript, SpringBean methods for driver writing**
-- [x] **Zero code intrusion** device access
-    - [x] Supports access to arbitrary TCP protocols (demo site has over 50 devices including RenTashi DTU gateways, JT808, DLT645-2007 meters, etc.)
-    - [x] Supports access to arbitrary MQTT protocols and topics regardless of complex signature interactions or simple data reporting
-    - [x] Supports complete device lifecycle management
-    - [x] Supports one gateway accessing **various different sub-devices**
-    - [x] Supports simultaneous two or more northbound application data pushes (HTTP, MQTT)
-    - [x] Supports independent data subscription, rule forwarding
-    - [x] Supports gateway, gateway sub-device topology relationships
-    - [x] Gateway sub-devices support **direct function instruction call initiation**, unified standard
-    - [x] Supports real-time device status viewing, historical data, visualization charts, location map tracks and complete log recording
-    - [x] Supports device shadows, supports property expected value writing (arbitrary tags and data storage)
-    - [x] **Supports instruction calls (including API) and device response message matching**, execution success rather than platform call success
-- [x] Application Management (similar to multi-tenant)
-    - [x] Supports creating multiple applications
-    - [x] Supports applications generating independent AK/SK, independent northbound data addresses
-    - [x] Supports OAuth2 standard authorization, supports (Maven) Java standard SDK
-    - [x] **Any ordinary user supports unlimited tenant mini-programs**; mini-programs support multi-management, add, delete, query, modify, function calls, various permission controls
-    - [x] Mini-programs `support theme colors`, `names`, `LOGOs` and other remote configuration
-    - [x] Supports `H5`, `Android`, `IOS`
-- [x] Notification Management
-    - [x] Supports notification channel management (including DingTalk, SMS, voice, Feishu, email, etc.)
-    - [x] Supports device data template filling
-    - [x] Supports arbitrary notification template format definition, whether WEBHOOK or email, high flexibility, template replacement rendering
-- [x] Supports **China Telecom IoT (CTAIOT)** perfect integration; products and devices all managed uniformly in `nexiot`
-- [x] Supports seamless dynamic switching of log storage methods, supports None(not storing) / Mysql / ClickHouse / IoTDB / InfluxDB, **most comprehensive in the industry**
-- [x] Supports product export, one-click import (including thing models, device drivers, etc.) truly realizing driver ecosystem sharing, **you export drivers, I import and use**
-- [x] Video Capabilities
-    - [x] Supports national standard GB2828-2016/2022 video access, supports **NVR**
-    - [x] Supports LeCheng cloud video access
-    - [x] **Unified thing model calls for video APIs and ordinary devices**
+- [x] 基于 JDK21、虚拟线程，支持 RBAC，完成安全修复，通过三级等保；**开源支持集群**
+- [x] 支持 WEB-IDE 产品驱动编写，真正“零”代码侵入面向协议
+- [x] 热更新与零侵入：产品驱动/协议外置，一键导入导出即可使用，热部署
+- [x] 多协议接入：**不改代码**支持任意 TCP 协议、任意 MQTT Topic主题和任意格式消息设备接入，支持粘包/分包、读写超时、解析器类型全部页面可配和扩展
+- [x] 第三方 MQTT 兼容：支持绑定/解绑外部 MQTT Broker，自定义下行主题，扩展接入上限
+- [x] 数据策略：自动注册、按属性/事件独立留存，16 进制/字符串收发可配，日志存储 None/MySQL/ClickHouse/IoTDB/**InfluxDB** 可无感切换
+- [x] 产品管理
+    - [x] 支持物模型定义（属性、事件、功能），导入、导出
+    - [x] 支持设置不同产品的设备离线阈值
+    - [x] 支持设置产品文档地址、产品图片上传
+    - [x] **支持配置数据接收/发送类型（16 进制、字符串）**
+- [x] **支持开启设备主动注册**
+- [x] **支持设置TCP粘包、分包、读写超时、解析器类型等策略**
+- [x] 支持数据留存策略（按属性或事件独立存储，用于BI数据分析）
+- [x] **支持定义设备注册额外参数（如安全码，密钥）**
+- [x] **支持第三方MQTT下行主题**、HTTP服务地址
+- [x] **支持使用第三方MQTT服务组件、绑定/解绑**
+- [x] **产品驱动支持IDE（Magic）、JAR（本地打包和远程URI）、JavaScript、SpringBean等方式的驱动编写**
+- [x] **零代码侵入**设备接入
+    - [x] 支持任意TCP协议的的接入（演示站有人塔石DTU网关、JT808、DLT645-2007电表等50余款）
+    - [x] 支持设备任意MQTT协议和主题的接入（不管是否复杂的签名交互、简单数据上报）
+    - [x] 支持设备的完整生命周期管理
+    - [x] 支持一个网关接入**各种不同子设备**
+    - [x] 支持同时两种以上的北向应用数据推送（HTTP、MQTT）
+    - [x] 支持独立的数据订阅、规则转发
+    - [x] 支持网关、网关子设备的拓扑关系
+    - [x] 网关子设备支持**直接发起功能指令调用**，统一标准
+    - [x] 支持设备实时状态查看、历史数据、可视化图表、位置地图轨迹和完整的日志记录
+    - [x] 支持设备影子，支持属性的期望值写入（任意的标签和数据暂存）
+    - [x] **支持指令调用（含API）和设备回复的消息匹配**，执行成功而不是调用平台成功
+- [x] 应用管理（类似多租户）
+    - [x] 支持创建多个应用
+    - [x] 支持应用生成独立的AK/SK，独立的数据北向地址
+    - [x] 支持OAuth2标准授权，支持（Maven）Java标准SDK
+    - [x] **任意普通用户，支持无限制数量租户小程序**；小程序支持多管理、增、删、改查、功能调用、各种权限控制
+    - [x] 小程序`支持主题色`、`名字`、`LOGO`等远程配置
+    - [x] 支持`H5`、`Android`、`IOS`
+- [x] 通知管理
+    - [x] 支持通知渠道管理（含钉钉、短信、语音、飞书、邮件等）
+    - [x] 支持设备数据模版的填充
+    - [x] 支持任意通知模版的格式定义，不管是WEBHOOK还是邮件，高自由度，模版替换渲染
+- [x] 支持**天翼物联（CTAIOT）** 完美对接；产品、设备全部在`nexiot`统一管理
+- [x] 支持无感动态切换日志存储方式，支持None(不存) / Mysql / ClickHouse / IoTDB / InfluxDB，**全网最多**
+- [x] 支持产品导出、一键导入（含物模型、设备驱动等）真正实现驱动生态共享，**你导出驱动，我导入使用**
+- [x] 视频能力
+    - [x] 支持国标GB2828-2016/2022视频接入，支持**NVR**
+    - [x] 支持乐橙云视频视频接入
+    - [x] **视频API与普通设备的统一物模型调用**
 
-### 📢 Advanced Features
+### 📢 高级特性
 
-#### December 2025
-- No-response device adaptation: Time window design, supports API specifying message sequence numbers, callbacks inform you of execution status, eliminating needle-in-haystack searches
-- Complex interaction ACK: One line of code in IDE protocol writing, quickly implements instruction response loop closure
-- Mini-program multi-user management control permissions
+#### 202512
+- 无应答设备适配：时间窗口设计，支持API指定消息序号,回调告诉你执行状态，让你不再大海捞针
+- 复杂交互 ACK：IDE协议编写的一行代码，快速实现指令应答闭环
+- 小程序多用户管理的控制权限
 
-## 📸 Practical Cases and Video Tutorials
+## 📸 实战案例与视频教程
 
-### 📊 Connected Device Cases (Partial Display)
+### 📊 已对接设备案例（仅展示部分）
 
 |                                                |                                                |                                        |
 |------------------------------------------------|------------------------------------------------|----------------------------------------|
-| ![Meter Device](/__MACOSX/shot/1018/dianbiap.png)      | ![Camera](/__MACOSX/shot/1018/lechen.png)         | ![Water Sensor](/__MACOSX/shot/1018/111.jpg)   |
-| ![Gateway DTU](/__MACOSX/shot/1018/dtu.jpg)          | ![Water Sensor](/__MACOSX/shot/1026/device-sj.jpg)     | ![SOS](/__MACOSX/shot/1109/sos.jpg)    |
-| ![4G Tracker](/__MACOSX/shot/1018/4gcz.png)         | ![Audio Visual Alarm](/__MACOSX/shot/1026/device-sgbjq.png) | ![Water Sensor](/__MACOSX/shot/1018/4gcz2.png) |
+| ![电表设备](/__MACOSX/shot/1018/dianbiap.png)      | ![摄像头](/__MACOSX/shot/1018/lechen.png)         | ![水浸设备](/__MACOSX/shot/1018/111.jpg)   |
+| ![网关DTU](/__MACOSX/shot/1018/dtu.jpg)          | ![水浸设备](/__MACOSX/shot/1026/device-sj.jpg)     | ![SOS](/__MACOSX/shot/1109/sos.jpg)    |
+| ![4G定位器](/__MACOSX/shot/1018/4gcz.png)         | ![声光报警器](/__MACOSX/shot/1026/device-sgbjq.png) | ![水浸设备](/__MACOSX/shot/1018/4gcz2.png) |
 
-#### ⚡ Integration Results Showcase
+#### ⚡ 接入成果展示
 
-![Integration Dynamic](__MACOSX/shot/dianbiao.gif)
+![接入成果动态](__MACOSX/shot/dianbiao.gif)
 
 ---
 
-## 📸 Platform Interface Showcase
+## 📸 平台界面展示
 
 
 
-|          🏗️ System Architecture                            |           🚀 Cloud-native Deployment Architecture                              |
+|          🏗️ 驱动的系统架构                            |           🚀 云原生部署架构                              |
 |---------------------------------------|-----------------------------------------|
-| ![System Architecture](/__MACOSX/shot/dataflow.png) |![Cloud-native Deployment](/__MACOSX/shot/deploy.jpg)  |
+| ![系统架构](/__MACOSX/shot/dataflow.png) |![云原生部署](/__MACOSX/shot/deploy.jpg)  |
 
 
-### 🖥️ Intelligent Function Showcase
+### 🖥️ 智能化功能展示
 
-#### 📺 Product Management
+#### 📺 产品管理
 
 |                                                         |                                                             |
 |---------------------------------------------------------|-------------------------------------------------------------|
-| ![Product List](/__MACOSX/shot/260118/product/list.png)         | ![Product Detail](/__MACOSX/shot/260118/product/detail.png)           |
-| ![Standard Thing Model](/__MACOSX/shot/260118/product/create.png) | ![Thing Model Fields](/__MACOSX/shot/260118/product/metadata-01.png)     |
-| ![Thing Model Search](/__MACOSX/shot/260118/product/create-metadata.png)     | ![Function Creation](/__MACOSX/shot/260118/product/metadata-02.png)      |
-| ![Connection Info](/__MACOSX/shot/260118/product/connect.png)          | ![Network Management](/__MACOSX/shot/260118/product/connect-mqtt.png)     |
-| ![Alarm Management](/__MACOSX/shot/260118/product/stand-metadata-2.png) | ![Product Detail](/__MACOSX/shot/260118/product/stand-metadata-1.png) |
+| ![产品列表](/__MACOSX/shot/260118/product/list.png)         | ![产品详情](/__MACOSX/shot/260118/product/detail.png)           |
+| ![标准物模型](/__MACOSX/shot/260118/product/create.png) | ![物模型字段](/__MACOSX/shot/260118/product/metadata-01.png)     |
+| ![物模型搜索](/__MACOSX/shot/260118/product/create-metadata.png)     | ![功能创建](/__MACOSX/shot/260118/product/metadata-02.png)      |
+| ![连接信息](/__MACOSX/shot/260118/product/connect.png)          | ![网络管理](/__MACOSX/shot/260118/product/connect-mqtt.png)     |
+| ![报警管理](/__MACOSX/shot/260118/product/stand-metadata-2.png) | ![产品详情](/__MACOSX/shot/260118/product/stand-metadata-1.png) |
 
-#### 📺 Device Management
+#### 📺 设备管理
 
 |                                                     |                                                    |
 |-----------------------------------------------------|----------------------------------------------------|
-| ![Device List](/__MACOSX/shot/260118/device/list.png)      | ![Device Detail](/__MACOSX/shot/260118/device/detail.png)   |
-| ![Functions](/__MACOSX/shot/260118/device/function.png)    | ![Logs](/__MACOSX/shot/260118/device/log.png)        |
-| ![Device Status](/__MACOSX/shot/260118/device/shadow.png)    | ![Gateway Device](/__MACOSX/shot/260118/device/tupu.png)     |
-| ![Sub-device List](/__MACOSX/shot/260118/device/tupulist.png) | ![Network Management](/__MACOSX/shot/260118/device/video.png)    |
-| ![Alarm Management](/__MACOSX/shot/260118/device/lunxun.png)    | ![Product Detail](/__MACOSX/shot/260118/device/lunxun-2.png) |
+| ![设备列表](/__MACOSX/shot/260118/device/list.png)      | ![设备详情](/__MACOSX/shot/260118/device/detail.png)   |
+| ![功能](/__MACOSX/shot/260118/device/function.png)    | ![日志](/__MACOSX/shot/260118/device/log.png)        |
+| ![设备状态](/__MACOSX/shot/260118/device/shadow.png)    | ![网关设备](/__MACOSX/shot/260118/device/tupu.png)     |
+| ![子设备列表](/__MACOSX/shot/260118/device/tupulist.png) | ![网络管理](/__MACOSX/shot/260118/device/video.png)    |
+| ![报警管理](/__MACOSX/shot/260118/device/lunxun.png)    | ![产品详情](/__MACOSX/shot/260118/device/lunxun-2.png) |
 
-#### 🚀 All Protocol Visual Management and Online Debugging
+#### 🚀所有协议可视化管理和在线调试
 
-| Breakpoint                                         | Execution Result                                         |
+| 调试断点                                         | 运行结果                                         |
 |----------------------------------------------|----------------------------------------------|
-| ![Breakpoint](/__MACOSX/shot/260118/protocol/02.png) | ![Execution](/__MACOSX/shot/260118/protocol/03.png) |
+| ![断点](/__MACOSX/shot/260118/protocol/02.png) | ![运行](/__MACOSX/shot/260118/protocol/03.png) |
 
 
-#### 🔄 Rule Orchestration and Engine
+#### 🔄 规则编排和引擎
 
 |                                                     |                                                          |
 |-----------------------------------------------------|----------------------------------------------------------|
-| ![Rule Orchestration](/__MACOSX/shot/260118/other/rule-01.png)    | ![Rule Engine](/__MACOSX/shot/260118/other/qiaojie-01.png)      |
-| ![Data Bridge](/__MACOSX/shot/260118/other/qiaojie-02.png) | ![Rule Engine](/__MACOSX/shot/260118/other/cert.png)            |
-| ![Linkage](/__MACOSX/shot/260118/other/liandong-01.png)  | ![Rule Engine](/__MACOSX/shot/260118/other/liandong-result.png) |
-| ![Linkage](/__MACOSX/shot/260118/other/tz01.png)         | ![Rule Engine](/__MACOSX/shot/260118/other/tz02.png)            |
+| ![规则编排](/__MACOSX/shot/260118/other/rule-01.png)    | ![规则引擎](/__MACOSX/shot/260118/other/qiaojie-01.png)      |
+| ![数据桥接](/__MACOSX/shot/260118/other/qiaojie-02.png) | ![规则引擎](/__MACOSX/shot/260118/other/cert.png)            |
+| ![联动](/__MACOSX/shot/260118/other/liandong-01.png)  | ![规则引擎](/__MACOSX/shot/260118/other/liandong-result.png) |
+| ![联动](/__MACOSX/shot/260118/other/tz01.png)         | ![规则引擎](/__MACOSX/shot/260118/other/tz02.png)            |
 
 
-### 🛠️ Network Components
+### 🛠️ 网络组件
 
 |                                  |                                              |                                           |
 |-----------------------------------------------|----------------------------------------------------------|-------------------------------------------------|
-| ![tcp](/__MACOSX/shot/260118/network/tcp.png) | ![mqtt detail](/__MACOSX/shot/260118/network/mqtt-detail.png) | ![tcp binding](/__MACOSX/shot/260118/network/tcp.png) |
+| ![tcp](/__MACOSX/shot/260118/network/tcp.png) | ![mqtt详情](/__MACOSX/shot/260118/network/mqtt-detail.png) | ![tcp绑定](/__MACOSX/shot/260118/network/tcp.png) |
 
-### 🛠️ Northbound Application Multi-tenant Applications
+### 🛠️ 北向应用多租户应用
 
 |                                            |                                             |                                            |
 |--------------------------------------------|---------------------------------------------|--------------------------------------------|
-| ![AK/SK](/__MACOSX/shot/260118/app/01.png) | ![mqtt detail](/__MACOSX/shot/260118/app/03.png) | ![tcp binding](/__MACOSX/shot/260118/app/02.png) |
+| ![AK/SK](/__MACOSX/shot/260118/app/01.png) | ![mqtt详情](/__MACOSX/shot/260118/app/03.png) | ![tcp绑定](/__MACOSX/shot/260118/app/02.png) |
 
 
 
-### 🎯 Data Analysis and Trends
+### 🎯 数据分析和趋势
 
 |                                                      |                                                  |                                                    |
 |------------------------------------------------------|--------------------------------------------------|----------------------------------------------------|
-| ![Thing Model List Data](/__MACOSX/shot/260109/logmeta-tubiao.png) | ![Show Trend](/__MACOSX/shot/260109/logmeta-qushi.png) | ![Export Thing Model](/__MACOSX/shot/260109/logmeta-export.png) |
-| ![Data Management 1](/__MACOSX/shot/260118/platform/dt.png) | ![Data Management 2](/__MACOSX/shot/260118/platform/d2.png)                       | ![Device Management](/__MACOSX/shot/260118/other/zhuapai.png) |
+| ![物模型列表数据](/__MACOSX/shot/260109/logmeta-tubiao.png) | ![显示趋势](/__MACOSX/shot/260109/logmeta-qushi.png) | ![导出物模型](/__MACOSX/shot/260109/logmeta-export.png) |
+| ![数据管理1](/__MACOSX/shot/260118/platform/dt.png) | ![数据管理2](/__MACOSX/shot/260118/platform/d2.png)                       | ![设备管理](/__MACOSX/shot/260118/other/zhuapai.png) |
 
 
-### 🎯 wvp-GB28281-wvp+Hikvision ISC+Dahua ICC
+### 🎯 wvp-GB28281-wvp+海康ISC+大华ICC
 
-![Video Wall](/__MACOSX/shot/260109/videowall.png)
+![视频墙](/__MACOSX/shot/260109/videowall.png)
 
 |                                                 |                                         ||
 |-------------------------------------------------|-----------------------------------------|---|
-|![Platform Instance](/__MACOSX/shot/260118/platform/hlht.png)  |  ![Recording List](/__MACOSX/shot/260118/platform/lxlb.png)  | ![Device Recording](/__MACOSX/shot/260118/platform/sblx.png)   
-|  ![National Standard Real-time](/__MACOSX/shot/260118/platform/gbss.png)            | ![Recording](/__MACOSX/shot/260118/platform/lsbf.png)     |![Device Recording Playback](/__MACOSX/shot/260118/platform/lxhf.png) |
+|![平台实例](/__MACOSX/shot/260118/platform/hlht.png)  |  ![录像列表](/__MACOSX/shot/260118/platform/lxlb.png)  | ![设备录像](/__MACOSX/shot/260118/platform/sblx.png)   
+|  ![国标实时](/__MACOSX/shot/260118/platform/gbss.png)            | ![录像](/__MACOSX/shot/260118/platform/lsbf.png)     |![设备录像回放](/__MACOSX/shot/260118/platform/lxhf.png) |
 |        |
 
 
-#### 🌐 China Telecom Product Access
-
-![China Telecom Product Access](__MACOSX/shot/260118/99.gif)
 
 
-### 🚀 SCADA Dashboard Integrated Integration (Beta)
+#### 🌐 天翼产品接入
 
-![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/01.png)
+![天翼产品接入](__MACOSX/shot/260118/99.gif)
 
-| Dashboard                                          | SCADA                                        | 
+
+### 🚀 组态大屏一体化集成（内测中）
+
+![组态大屏2](__MACOSX/shot/260118/zutai/01.png)
+
+| 大屏                                          | 组态                                        | 
 |---------------------------------------------|-------------------------------------------|
-| ![Dashboard 2](__MACOSX/shot/260118/zutai/99.png)   | ![Dashboard 2](__MACOSX/shot/260118/zutai/04.png) |
-| ![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/02.png) | ![Dashboard 2](__MACOSX/shot/260118/zutai/03.png) |
-| ![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/05.png) | ![Dashboard 2](__MACOSX/shot/260118/zutai/06.png) |
-| ![SCADA Dashboard 2](__MACOSX/shot/260118/zutai/07.png) | ![Dashboard 2](__MACOSX/shot/260118/zutai/08.png) |
+| ![大屏2](__MACOSX/shot/260118/zutai/99.png)   | ![大屏2](__MACOSX/shot/260118/zutai/04.png) |
+| ![组态大屏2](__MACOSX/shot/260118/zutai/02.png) | ![大屏2](__MACOSX/shot/260118/zutai/03.png) |
+| ![组态大屏2](__MACOSX/shot/260118/zutai/05.png) | ![大屏2](__MACOSX/shot/260118/zutai/06.png) |
+| ![组态大屏2](__MACOSX/shot/260118/zutai/07.png) | ![大屏2](__MACOSX/shot/260118/zutai/08.png) |
 
 
-### 🎯 Mobile/Mobile Applets
+### 🎯 移动端/小程序
 
 |                                               |                                              |                                              |
 |-----------------------------------------------|----------------------------------------------|----------------------------------------------|
-| ![Mini Program](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
+| ![小程序](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
 
 |                                    |                                   |                                   | 
 |------------------------------------|-----------------------------------|-----------------------------------|
-| ![Mini Program](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
-| ![Mini Program](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
+| ![小程序](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
+| ![小程序](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
 
-> Video [NexIoT Mini Program, This Time It's Strong!] https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
 
-## 📺 Video Tutorials
+> 视频【NexIoT小程序，这次很强！】 https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
 
-More videos, please follow Bilibili and Douyin
 
-### 📚 Basic Introduction Tutorials
+## 📺 视频教程
 
-| No. | Tutorial Name | Video Link |
+更多视频请关注B站和抖音
+
+### 📚 基础入门教程
+
+| 序号 | 教程名称 | 视频链接 |
 |:---:|:---|:---|
-| 1 | [NexIoT Course] (1) IDEA and Docker One-click Startup | [📺 Bilibili View](https://www.bilibili.com/video/BV1WNUnBnEx5/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
-| 2 | [NexIoT Course] (2) EMQX Configuration | [📺 Bilibili View](https://www.bilibili.com/video/BV1MdUJB4E7k/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
+| 1 | 【NexIoT课程】（一）IDEA与Docker一键启动 | [📺 B站观看](https://www.bilibili.com/video/BV1WNUnBnEx5/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
+| 2 | 【NexIoT课程】（二）EMQX配置 | [📺 B站观看](https://www.bilibili.com/video/BV1MdUJB4E7k/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
 
-### 📨 MQTT Access Tutorials
+### 📨 MQTT接入教程
 
-| No. | Tutorial Name | Video Link |
+| 序号 | 教程名称 | 视频链接 |
 |:---:|:---|:---|
-| 1 | Arbitrary Topic and Full Process Integration Tutorial | [📺 Bilibili View](https://www.bilibili.com/video/BV1q1UZBmEHS/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
+| 1 | 任意主题Topic与全流程对接教程 | [📺 B站观看](https://www.bilibili.com/video/BV1q1UZBmEHS/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff) |
 
-```
 
-```
 
-```
 
-```
+
+### 📢 重要声明
+
+- **自媒体转发**：欢迎转发项目信息，请遵循AGPL3.0开源协议
+- **企业授权**：商业使用需获得授权，保留企业授权信息
+- **法律追责**：如单位误用引起法律后果，保留追责责任
+
+### 🌐 社区联系方式
+
+|微信                            | B站                              | 抖音                               | 小程序                           |
+|-------------------------------|---------------------------------|----------------------------------|-------------------------------|
+|  ![微信](/__MACOSX/shot/wx.png) | ![B站](/__MACOSX/shot/bzhan.jpg) | ![抖音](/__MACOSX/shot/douyin.jpg) | ![wx](/__MACOSX/shot/wxq.png) |
+
+## 🛠️ 技术支持与服务
+
+我们提供全方位的技术支持服务，从基础答疑到企业级解决方案，满足不同层次的需求。收费是为了提供更好的服务，也是对作者更大的激励!
+
+### 📋 服务类型对比
+
+| 服务类型          | 服务内容                                 | 价格           | 适用场景      | 联系方式                                                         |
+|---------------|--------------------------------------|--------------|-----------|--------------------------------------------------------------|
+| **🆓 社区技术答疑** | • 基础问题答疑<br>• 使用指导<br>• 社区交流         | **免费**       | 学习、使用     | QQ群、微信群                                                      |
+| **📚 技术文档**   | • 技术文档<br>• 实践指南<br>• 视频教程           | **免费**       | 自学、参考     | [文档地址](https://docs.nexiot.cc/) |
+| **☁️ 线上部署服务** | • 客户提供硬件<br>• 完成系统部署<br>• 云服务部署      | **¥199**     | 快速上线、云部署  | 联系技术                                                         |
+| **🔧 专属技术支持** | • 各类对接支持<br>• 使用指导<br>• 部署方案<br>• 解决方案 | **¥600/4小时** | 远程支持      | 联系技术                                                         |
+| **⚡ 设备接入服务**  | • IDE解析源码<br>• 产品配置导出<br>• 定制化接入     | **¥1000/日**  | 复杂设备接入、定制开发 | 联系客服                                                         |
+| **🏢 企业省心服务** | • 商业版本地部署<br>• 代运维服务<br>• 5×8技术支持    | **¥9,999/年** | -         | 联系客服                                                         |
+
+---
+
+## 📄 开源协议与授权
+
+请遵循AGPL3.0开源协议，商业使用须获得授权
+
+### 📜 详细授权条款
+
+#### ✅ 授权用户权益
+
+1. **内部使用**：授权用户可无限期在其内部使用
+    - 企业授权：不含分公司、子公司及第三方公司
+    - 个人授权：仅限个人使用，不可用于在职公司或第三方
+
+2. **开发权限**：授权用户可通过项目形式进行源码二次开发
+    - 定制化软件必须加密打包后交付客户
+    - 如需交付源码，必须为客户购买对应商业授权
+
+#### ❌ 授权限制
+
+1. **禁止转让**：不可向第三方发行或转让授权源码
+    - 无论有偿或无偿转让
+    - 不可申请包含本项目的软件著作权
+
+### 🔒 闭源内容
+
+ **TCP**、**UDP**、**天翼物联ctaiot** 模块。可自行二次开发扩展，商业用途需赞助项目，获得授权。
+
+### 🙏 致谢
+
+感谢以下开源项目和技术平台：
+
+- **开源框架**：若依、Antdv、jetlink、ssssssss-team
+- **云平台**：阿里云、华为云、腾讯云、AEP、OneNet 等物联网平台
+- **社区支持**：所有贡献者和用户的支持与反馈
+
+### 客户情况
+
+- **市/区级智慧城市物联网平台**
+- **某港地铁**
+- **上市企业**
+- **企业园区**
+- **智慧化项目**
+- **其他行业客户**

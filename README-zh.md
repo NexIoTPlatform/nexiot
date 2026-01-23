@@ -273,15 +273,17 @@
 
 ### 🎯 移动端/小程序
 
-|                                               |                                              |                                              |
-|-----------------------------------------------|----------------------------------------------|----------------------------------------------|
-| ![小程序](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
+![小程序装修](__MACOSX/shot/260118/mp/diy-index.png)
+
+|                                                  |                                                      | 
+|--------------------------------------------------|------------------------------------------------------|
+| ![小程序装修首页](__MACOSX/shot/260118/mp/diy-user.png) | ![小程序装修设备详情](__MACOSX/shot/260118/mp/diy-detail.png) |
 
 |                                    |                                   |                                   | 
 |------------------------------------|-----------------------------------|-----------------------------------|
-| ![小程序](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
-| ![小程序](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
-
+| ![Mini Program](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
+| ![Mini Program](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
+| ![小程序](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
 
 > 视频【NexIoT小程序，这次很强！】 https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
 
