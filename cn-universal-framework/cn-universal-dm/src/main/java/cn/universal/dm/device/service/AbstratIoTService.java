@@ -12,11 +12,6 @@
 
 package cn.universal.dm.device.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -44,7 +39,10 @@ import cn.universal.persistence.entity.IoTDeviceSubscribe;
 import cn.universal.persistence.entity.IoTProduct;
 import cn.universal.persistence.query.IoTDeviceQuery;
 import jakarta.annotation.Resource;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * IoT设备服务抽象基类
