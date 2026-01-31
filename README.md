@@ -292,6 +292,9 @@
 
 > 视频【NexIoT小程序，这次很强！】 https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
 
+### 🎯 API
+
+![小程序](/__MACOSX/shot/apis.png)
 
 ## 📺 视频教程
 
