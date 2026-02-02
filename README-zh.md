@@ -17,7 +17,7 @@
 
 [📖 文档地址](https://nexiotplatform.github.io/universal-iot-docs/) | [🌐 在线演示](http://iot.192886.xyz:81/) | [🔧 AI调试IDE](http://iot.192886.xyz:81/magic/debug/index.html)
 
-**中文 | [English](../README.md)**
+**中文 | [English](README_EN.md)**
 
 
 </div>
@@ -50,7 +50,7 @@
 
 #### 🚀 核心框架（极简轻量）
 
-- **后端框架**：`Java 21` `SpringBoot 3.5` `Tk.Mybatis 5.0.1` 
+- **后端框架**：`Java 21` `SpringBoot 3.5` `Tk.Mybatis 5.0.1`
 - **前端技术**：基于`RuoYi-Antdv`构建，感谢开源社区！
 - **日志存储**：**IoTDB** / **ClickHouse** / **InfluxDB** / MySQL / None（产品级无感动态切换）
 
@@ -61,9 +61,9 @@
 
 - **一键启动**：`docker-compose up -d`
 - **访问地址**：
-  - 后台 `http://localhost:80`（默认 `nexiot/nexiot@123321`）
-  - IDE调试器 `http://localhost:9092/magic/debug/index.html` (密码同后台）
-  - EMQX 管理 `http://localhost:18083`（默认 `admin/public`）
+    - 后台 `http://localhost:80`（默认 `nexiot/nexiot@123321`）
+    - IDE调试器 `http://localhost:9092/magic/debug/index.html` (密码同后台）
+    - EMQX 管理 `http://localhost:18083`（默认 `admin/public`）
 
 > **🔧 真实设备演示请加微信，感谢！！**
 
@@ -72,12 +72,16 @@
 
 ###  近期规划（roadmap)
 
+
 - **🚀 WVP视频平集成（计划26年1月）**：与WVP视频平台系列集成 `✅（202512月已完成）`
-- **🚀 大华ICC系列产品**：与大华ICC产品系列集成`（无环境，延期中）`
+- **🚀 大华ICC系列产品**：与大华ICC产品系列集成`✅（202601月已完成beta）`
 - **🚀 海康综合安防管理平台**：使用海康平台产品系列集成`（无环境，延期中）`
 - **📱 移动端应用（计划25年12月）**：付费图鸟定小程序，具备指令控制、属性、告警查看，轻量化、多管理员`✅（202512月beta已完成）`
-- **📱 组态集成（计划26年3月）**：组态与nexiot集成
-
+- **📱 组态大屏集成（计划26年3月）**：组态与nexiot集成`✅（202601月已完成）`
+- **📱 基于nexiot的SAAS应用（计划26年5月）**：SAAS应用+移动端+多租户
+- **📱 onvif（计划26年6月）**：本地ONVIF视频接入
+- **📱 modbus串口（计划26年7月）**：modbus本地串口接入
+- **📱 视频+AI标注（计划26年9月）**：暂时放下未定
 
 
 
@@ -96,7 +100,7 @@
 - **📖 文档地址**：<https://docs.nexiot.cc/>
 
 ## 📊 功能详解
- 
+
 > **开源与企业版本区别，请点击 [版本区别](https://docs.nexiot.cc/versions/comparison.html/ "版本区别")** 查看
 
 - [x] 基于 JDK21、虚拟线程，支持 RBAC，完成安全修复，通过三级等保；**开源支持集群**
@@ -273,20 +277,21 @@
 
 ### 🎯 移动端/小程序
 
-![小程序装修](__MACOSX/shot/260118/mp/diy-index.png)
-
-|                                                  |                                                      | 
-|--------------------------------------------------|------------------------------------------------------|
-| ![小程序装修首页](__MACOSX/shot/260118/mp/diy-user.png) | ![小程序装修设备详情](__MACOSX/shot/260118/mp/diy-detail.png) |
+|                                               |                                              |                                              |
+|-----------------------------------------------|----------------------------------------------|----------------------------------------------|
+| ![小程序](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
 
 |                                    |                                   |                                   | 
 |------------------------------------|-----------------------------------|-----------------------------------|
-| ![Mini Program](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
-| ![Mini Program](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
-| ![小程序](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
+| ![小程序](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
+| ![小程序](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
+
 
 > 视频【NexIoT小程序，这次很强！】 https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
 
+### 🎯 API
+
+![小程序](/__MACOSX/shot/apis.png)
 
 ## 📺 视频教程
 
@@ -340,7 +345,11 @@
 
 ## 📄 开源协议与授权
 
-请遵循AGPL3.0开源协议，商业使用须获得授权
+本项目严格遵循**AGPL-3.0开源协议**开源，**公益学习可按协议免费使用，任何修改必须开源**，**任何商业用途（含企业级部署、产品集成、商业盈利等）必须提前购买官方专属商业授权**，未授权商用均视为侵权。
+
+本项目累计研发投入超200万元，软著、专利、研发全Git提交记录、证据完整可查，侵权行为相关数据留存永久可追溯。
+
+**郑重警示**：未经授权擅自商业使用，我方将依据《著作权法》《民法典》及相关开源协议约定，**永久追究侵权方的全部法律责任与经济赔偿责任**，侵权成本远高于授权成本，切勿心存侥幸！
 
 ### 📜 详细授权条款
 
@@ -362,7 +371,7 @@
 
 ### 🔒 闭源内容
 
- **TCP**、**UDP**、**天翼物联ctaiot** 模块。可自行二次开发扩展，商业用途需赞助项目，获得授权。
+**TCP**、**UDP**、**天翼物联ctaiot** 模块。可自行二次开发扩展，商业用途需赞助项目，获得授权。
 
 ### 🙏 致谢
 
