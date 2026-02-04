@@ -107,7 +107,7 @@
 基于nexiot北向应用，构建奈科斯应用工坊
 
 - **📖 访问入口**：<http://forge.192886.xyz:81//>
-- **👤 演示账号**：`test`
+- **👤 演示账号**：`nexiot`
 - **🔑 演示密码**：`nexiot@123321`
 - **📖 项目地址**：<https://gitee.com/NexIoT/nexiot-app-workshop>
 
