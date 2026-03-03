@@ -252,12 +252,13 @@
 | ![联动](/__MACOSX/shot/260118/other/liandong-01.png)  | ![规则引擎](/__MACOSX/shot/260118/other/liandong-result.png) |
 | ![联动](/__MACOSX/shot/260118/other/tz01.png)         | ![规则引擎](/__MACOSX/shot/260118/other/tz02.png)            |
 
-
 ### 🛠️ 网络组件
 
 |                                  |                                              |                                           |
 |-----------------------------------------------|----------------------------------------------------------|-------------------------------------------------|
 | ![tcp](/__MACOSX/shot/260118/network/tcp.png) | ![mqtt详情](/__MACOSX/shot/260118/network/mqtt-detail.png) | ![tcp绑定](/__MACOSX/shot/260118/network/tcp.png) |
+
+
 
 ### 🛠️ 北向应用多租户应用
 
@@ -274,6 +275,11 @@
 | ![物模型列表数据](/__MACOSX/shot/260109/logmeta-tubiao.png) | ![显示趋势](/__MACOSX/shot/260109/logmeta-qushi.png) | ![导出物模型](/__MACOSX/shot/260109/logmeta-export.png) |
 | ![数据管理1](/__MACOSX/shot/260118/platform/dt.png) | ![数据管理2](/__MACOSX/shot/260118/platform/d2.png)                       | ![设备管理](/__MACOSX/shot/260118/other/zhuapai.png) |
 
+### 🎯 多种算法功能
+
+|                                             |                                               |                                                   |            |
+|---------------------------------------------|-----------------------------------------------|---------------------------------------------------|------|
+| ![算法配置](/__MACOSX/shot/0303/sf-config.png) | ![算法监控](/__MACOSX/shot/0303/sf-select.png) |  ![算法监控](/__MACOSX/shot/0303/sf-run.png)| ![算法监控](/__MACOSX/shot/0303/sf-run-mon.png)  |
 
 ### 🎯 wvp-GB28281-wvp+海康ISC+大华ICC
 
