@@ -100,7 +100,7 @@
 - **🌐 演示地址**：<http://demo.nexiot.cc/>
 - **🔧 调试IDE**：<http://demo.nexiot.cc/magic/debug/index.html>
 - **👤 演示账号**：`test`
-- **🔑 演示密码**：`nexiot@123321`
+- **🔑 演示密码**：关注【开源啦】公众号，发送`nexiot`获取
 - **📖 文档地址**：<https://docs.nexiot.cc/>
 
 
