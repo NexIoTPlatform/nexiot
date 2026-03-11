@@ -100,8 +100,9 @@
 - **🌐 演示地址**：<http://demo.nexiot.cc/>
 - **🔧 调试IDE**：<http://demo.nexiot.cc/magic/debug/index.html>
 - **👤 演示账号**：`test`
-- **🔑 演示密码**：`nexiot@123322`
+- **🔑 演示密码**：`nexiot@123322`  （如果打不开请加微信：outlookFil)
 - **📖 文档地址**：<https://docs.nexiot.cc/>
+
 
 
 ### 🔥🔥🔥新产品预告！！新产品预告！
