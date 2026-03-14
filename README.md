@@ -119,7 +119,7 @@
 |                                             |                                                   |                                               |
 |---------------------------------------------|---------------------------------------------------|-----------------------------------------------|
 | ![应用工坊-产品](/__MACOSX/shot/saas/product.png) | ![应用工坊-模版](/__MACOSX/shot/saas/diy-tp.png)           | ![应用工坊-设备](/__MACOSX/shot/saas/diy-pdg.png)    |
-| ![应用工坊-日志](/__MACOSX/shot/saas/log.png)     | ![应用工坊-diy模版](/__MACOSX/shot/saas/diy-tp.png) | ![应用工坊-DIY小程序](/__MACOSX/shot/saas/diy-list.png) |
+| ![应用工坊-日志](/__MACOSX/shot/saas/log.png)     | ![应用工坊-diy模版](/__MACOSX/shot/saas/diy-detail.png) | ![应用工坊-DIY小程序](/__MACOSX/shot/saas/diy-list.png) |
 
 
 
