@@ -54,7 +54,7 @@
 
 - **后端框架**：`Java 21` `SpringBoot 3.5` `Tk.Mybatis 5.0.1` 
 - **前端技术**：基于`RuoYi-Antdv`构建，感谢开源社区！
-- **日志存储**：**IoTDB** / **ClickHouse** / **InfluxDB** / MySQL / None（产品级无感动态切换）
+- **日志存储**：**IoTDB** / **TDengine** / **ClickHouse** / **InfluxDB** / MySQL / None（产品级无感动态切换）
 
 ## 🧭 部署与启动（一键启动）
 
@@ -109,7 +109,7 @@
 - [x] 热更新与零侵入：产品驱动/协议外置，一键导入导出即可使用，热部署
 - [x] 多协议接入：**不改代码**支持任意 TCP 协议、任意 MQTT Topic主题和任意格式消息设备接入，支持粘包/分包、读写超时、解析器类型全部页面可配和扩展
 - [x] 第三方 MQTT 兼容：支持绑定/解绑外部 MQTT Broker，自定义下行主题，扩展接入上限
-- [x] 数据策略：自动注册、按属性/事件独立留存，16 进制/字符串收发可配，日志存储 None/MySQL/ClickHouse/IoTDB/**InfluxDB**/TDengine 可无感切换
+- [x] 数据策略：自动注册、按属性/事件独立留存，16 进制/字符串收发可配，日志存储 None/MySQL/ClickHouse/IoTDB/InfluxDB/TDengine 可无感切换
 - [x] 产品管理
     - [x] 支持物模型定义（属性、事件、功能），导入、导出
     - [x] 支持设置不同产品的设备离线阈值
