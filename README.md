@@ -285,6 +285,11 @@
 | ![物模型列表数据](/__MACOSX/shot/260109/logmeta-tubiao.png) | ![显示趋势](/__MACOSX/shot/260109/logmeta-qushi.png) | ![导出物模型](/__MACOSX/shot/260109/logmeta-export.png) |
 | ![数据管理1](/__MACOSX/shot/260118/platform/dt.png) | ![数据管理2](/__MACOSX/shot/260118/platform/d2.png)                       | ![设备管理](/__MACOSX/shot/260118/other/zhuapai.png) |
 
+![可视化编辑器](__MACOSX/shot/260319/visual.gif)
+
+![编辑器](__MACOSX/shot/260319/vidual-editor.png)
+
+
 ### 🎯 多种算法功能
 
 |                                             |                                               |                                                   |            |
