@@ -438,10 +438,44 @@
 - **云平台**：阿里云、华为云、腾讯云、AEP、OneNet 等物联网平台
 - **社区支持**：所有贡献者和用户的支持与反馈
 
-### 客户情况
+### 行业客户案例
 
-- **市/区级智慧城市物联网平台**
-- **深圳地铁**
-- **云南交投**
-- **企业客户50+**
-- **其他行业客户**
+
+**当前已覆盖智慧城市、工业领域、轨道交通、交通基建、企业服务等多条行业线。**
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <strong>智慧城市</strong><br/>
+      市/区级智慧城市物联网平台
+    </td>
+    <td align="center" width="50%">
+      <strong>100余家科技企业</strong><br/>
+      持续服务多类企业客户
+    </td>
+  </tr>
+  
+  <tr>
+    <td align="center" width="50%">
+      <strong>校园教育</strong><br/><br/>
+      教育局智慧化、智慧校园等
+    </td>
+    <td align="center" width="50%">
+      <strong>企业园区</strong><br/><br/>
+      实验室、企业园区、智慧车间等等
+    </td>
+  </tr>
+   <tr>
+    <td align="center" width="50%">
+      <strong>轨道交通</strong><br/><br/>
+      <img src="/__MACOSX/shot/kehu/szdt.png" alt="深圳地铁" height="28" /><br/>
+      深圳地铁
+    </td>
+    <td align="center" width="50%">
+      <strong>交通基建</strong><br/><br/>
+      <img src="/__MACOSX/shot/kehu/ynjt.png" alt="云南交投" height="28" /><br/>
+      云南交投
+    </td>
+  </tr>
+</table>
+
