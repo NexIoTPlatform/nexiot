@@ -215,8 +215,9 @@
 
 ## 📸 平台界面展示
 
-> 演示截图最新版功能界面
+> 演示截图为【企业版】功能界面
 
+![系统架构](/__MACOSX/shot/260423/login.png)
 
 | 🏗️ 驱动的系统架构                          |           🚀 云原生部署架构                              |
 |--------------------------------------|-----------------------------------------|
@@ -226,6 +227,8 @@
 ### 🖥️ 智能化功能展示(含商业版)
 
 #### 📺 产品管理
+
+![工作台](/__MACOSX/shot/260423/gzt.png)
 
 |                                                         |                                                             |
 |---------------------------------------------------------|-------------------------------------------------------------|
@@ -237,13 +240,16 @@
 
 #### 📺 设备管理
 
-|                                                     |                                                    |
-|-----------------------------------------------------|----------------------------------------------------|
-| ![设备列表](/__MACOSX/shot/260118/device/list.png)      | ![设备详情](/__MACOSX/shot/260118/device/detail.png)   |
-| ![功能](/__MACOSX/shot/260118/device/function.png)    | ![日志](/__MACOSX/shot/260118/device/log.png)        |
-| ![设备状态](/__MACOSX/shot/260118/device/shadow.png)    | ![网关设备](/__MACOSX/shot/260118/device/tupu.png)     |
-| ![子设备列表](/__MACOSX/shot/260118/device/tupulist.png) | ![网络管理](/__MACOSX/shot/260118/device/video.png)    |
-| ![报警管理](/__MACOSX/shot/260118/device/lunxun.png)    | ![产品详情](/__MACOSX/shot/260118/device/lunxun-2.png) |
+
+|                                                     |                                                     |
+|-----------------------------------------------------|-----------------------------------------------------|
+| ![设备列表](/__MACOSX/shot/260118/device/list.png)      | ![设备详情](/__MACOSX/shot/260118/device/detail.png)    |
+| ![设备状态](/__MACOSX/shot/260423/device-status.png)    | ![设备状态设备](/__MACOSX/shot/260423/device-status2.png) |
+| ![功能](/__MACOSX/shot/260118/device/function.png)    | ![日志](/__MACOSX/shot/260118/device/log.png)         |
+| ![设备状态](/__MACOSX/shot/260118/device/shadow.png)    | ![网关设备](/__MACOSX/shot/260118/device/tupu.png)      |
+| ![子设备列表](/__MACOSX/shot/260118/device/tupulist.png) | ![网络管理](/__MACOSX/shot/260118/device/video.png)     |
+| ![报警管理](/__MACOSX/shot/260118/device/lunxun.png)    | ![产品详情](/__MACOSX/shot/260118/device/lunxun-2.png)  |
+| ![ota](/__MACOSX/shot/260423/ota.png)               | ![ota任务](/__MACOSX/shot/260423/ota-task.png)        |
 
 #### 🚀驱动在线调试和可视化拖拽
 
