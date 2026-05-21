@@ -106,7 +106,7 @@
 ## 📊 功能详解
  
 
-> **如需了解开源版与企业版完整差异，可查看 [版本区别](https://docs.nexiot.cc/versions/comparison.html/ "版本区别")** 查看
+> **如需了解开源版与企业版完整差异，可查看 [版ƒ本区别](https://docs.nexiot.cc/versions/comparison.html/ "版本区别")** 查看
 
 - [x] 基于 JDK21、虚拟线程，支持 RBAC，完成安全修复，通过三级等保；**开源支持集群**
 - [x] 支持 WEB-IDE 产品驱动编写，真正“零”代码侵入面向协议
@@ -336,6 +336,8 @@
 | ![组态大屏2](__MACOSX/shot/260118/zutai/02.png) | ![大屏2](__MACOSX/shot/260118/zutai/03.png) |
 | ![组态大屏2](__MACOSX/shot/260118/zutai/05.png) | ![大屏2](__MACOSX/shot/260118/zutai/06.png) |
 | ![组态大屏2](__MACOSX/shot/260118/zutai/07.png) | ![大屏2](__MACOSX/shot/260118/zutai/08.png) |
+| ![组态大屏2](__MACOSX/shot/260118/zutai/20.png) | ![大屏2](__MACOSX/shot/260118/zutai/21.png) |
+| ![组态大屏2](__MACOSX/shot/260118/zutai/22.png) | ![大屏2](__MACOSX/shot/260118/zutai/23.png) |
 
 
 ### 🎯 移动端/小程序
