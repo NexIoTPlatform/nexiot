@@ -215,7 +215,7 @@
 
 ## 📸 平台界面展示
 
-> 演示截图为【企业版】功能界面
+> 以下截图是【企业版】功能界面，会有UI调整，开源版请自行部署
 
 ![系统架构](/__MACOSX/shot/260423/login.png)
 
@@ -249,14 +249,12 @@
 | ![设备状态](/__MACOSX/shot/260118/device/shadow.png)    | ![网关设备](/__MACOSX/shot/260118/device/tupu.png)      |
 | ![子设备列表](/__MACOSX/shot/260118/device/tupulist.png) | ![网络管理](/__MACOSX/shot/260118/device/video.png)     |
 | ![报警管理](/__MACOSX/shot/260118/device/lunxun.png)    | ![产品详情](/__MACOSX/shot/260118/device/lunxun-2.png)  |
-| ![ota](/__MACOSX/shot/260423/ota.png)               | ![ota任务](/__MACOSX/shot/260423/ota-task.png)        |
 
 #### 🚀驱动在线调试和可视化拖拽
 
 | 调试断点                                               | 运行结果                                              |
 |----------------------------------------------------|---------------------------------------------------|
 | ![断点](/__MACOSX/shot/260118/protocol/02.png)       | ![运行](/__MACOSX/shot/260118/protocol/03.png)      |
-| ![可视化驱动](/__MACOSX/shot/260319/visual-debug.png) | ![可视化驱动](/__MACOSX/shot/260319/visual-encode.png) |
 
 #### 🔄 边云协同，隧道直连内容
 
@@ -270,7 +268,6 @@
 
 |                                                     |                                                          |
 |-----------------------------------------------------|----------------------------------------------------------|
-| ![数据桥接](/__MACOSX/shot/260118/other/qiaojie-02.png) | ![规则引擎](/__MACOSX/shot/260118/other/cert.png)            |
 | ![联动](/__MACOSX/shot/260118/other/liandong-01.png)  | ![规则引擎](/__MACOSX/shot/260118/other/liandong-result.png) |
 | ![联动](/__MACOSX/shot/260118/other/tz01.png)         | ![规则引擎](/__MACOSX/shot/260118/other/tz02.png)            |
 
@@ -297,17 +294,15 @@
 | ![物模型列表数据](/__MACOSX/shot/260109/logmeta-tubiao.png) | ![显示趋势](/__MACOSX/shot/260109/logmeta-qushi.png) | ![导出物模型](/__MACOSX/shot/260109/logmeta-export.png) |
 | ![数据管理1](/__MACOSX/shot/260118/platform/dt.png) | ![数据管理2](/__MACOSX/shot/260118/platform/d2.png)                       | ![设备管理](/__MACOSX/shot/260118/other/zhuapai.png) |
 
-![可视化编辑器](__MACOSX/shot/260319/visual.gif)
-
-![编辑器](__MACOSX/shot/260319/vidual-editor.png)
 
 
-### 🎯 多种算法功能
 
-|                                             |                                               |                                                   |            |
-|---------------------------------------------|-----------------------------------------------|---------------------------------------------------|------|
-| ![算法配置](/__MACOSX/shot/0303/sf-config.png) | ![算法监控](/__MACOSX/shot/0303/sf-select.png) |  ![算法监控](/__MACOSX/shot/0303/sf-run.png)| ![算法监控](/__MACOSX/shot/0303/sf-run-mon.png)  |
+### 🎯 视频AIoT
 
+|                                        |                                         |                                       | 
+|----------------------------------------|-----------------------------------------|---------------------------------------|
+| ![模型](/__MACOSX/shot/260613/1-mox.png) | ![数据标记](/__MACOSX/shot/260613/2-sc.png) | ![推理](/__MACOSX/shot/260613/3-tl.png) |
+| ![模型](/__MACOSX/shot/260613/4-sl.png)  | ![数据标记](/__MACOSX/shot/260613/5-rw.png) | ![推理](/__MACOSX/shot/260613/6-lx.png) |
 ### 🎯 wvp-GB28281-wvp+海康ISC+大华ICC
 
 ![视频墙](/__MACOSX/shot/260109/videowall.png)
