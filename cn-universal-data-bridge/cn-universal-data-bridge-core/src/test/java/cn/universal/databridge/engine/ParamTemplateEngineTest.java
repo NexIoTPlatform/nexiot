@@ -1,17 +1,17 @@
 package cn.universal.databridge.engine;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import cn.universal.databridge.engine.dialect.MySqlDialectAdapter;
+import cn.universal.databridge.engine.dialect.OracleDialectAdapter;
+import cn.universal.databridge.engine.dialect.PostgresDialectAdapter;
+import cn.universal.databridge.engine.dialect.SqlServerDialectAdapter;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-/**
- * ParamTemplateEngine 单元测试
- */
+/** ParamTemplateEngine 单元测试 */
 class ParamTemplateEngineTest {
 
     private ParamTemplateEngine engine;
@@ -40,27 +40,98 @@ class ParamTemplateEngineTest {
 
     @Test
     void testMysqlTemplate() {
-        SqlDialectAdapter adapter = new MySqlDialectAdapter();
+    SqlDialectAdapter adapter = new MySqlDialectAdapter();
 
-        String template = "INSERT INTO device_data(\n" +
-                "    device_id, product_key, device_name, iot_id,\n" +
-                "    device_node, message_type, properties, raw_data\n" +
-                ") VALUES(\n" +
-                "    #{deviceId}, #{productKey}, #{deviceName}, #{iotId},\n" +
-                "    #{deviceNode}, #{messageType}, #{properties}, \n" +
-                "    ${json('csq', properties.temperature, 'tips', properties.illuminationDesc)}\n" +
-                ");";
+    String template =
+        "INSERT INTO device_data(\n"
+            + "    device_id, product_key, device_name, iot_id,\n"
+            + "    device_node, message_type, properties, raw_data\n"
+            + ") VALUES(\n"
+            + "    #{deviceId}, #{productKey}, #{deviceName}, #{iotId},\n"
+            + "    #{deviceNode}, #{messageType}, #{properties}, \n"
+            + "    ${json('csq', properties.temperature, 'tips', properties.illuminationDesc)}\n"
+            + ");";
 
-        ParamSql result = engine.process(template, variables, adapter);
+    ParamSql result = engine.process(template, variables, adapter);
 
-        assertNotNull(result);
-        assertTrue(result.getSql().contains("JSON_OBJECT"));
-        assertTrue(result.getSql().contains("?"));
-        assertEquals(9, result.getParams().size());
-        assertEquals("dev123", result.getParams().get(0));
-        assertEquals("pk001", result.getParams().get(1));
-        assertEquals(25.5, result.getParams().get(3)); // csq value
-        assertEquals("明亮", result.getParams().get(4)); // tips value
+    assertNotNull(result);
+    assertTrue(result.getSql().contains("JSON_OBJECT"));
+    assertTrue(result.getSql().contains("?"));
+    assertEquals(9, result.getParams().size());
+    assertEquals("dev123", result.getParams().get(0));
+    assertEquals("pk001", result.getParams().get(1));
+    assertEquals(25.5, result.getParams().get(7)); // csq value
+    assertEquals("明亮", result.getParams().get(8)); // tips value
+  }
+
+  @Test
+  void testPostgreSqlTemplate() {
+    SqlDialectAdapter adapter = new PostgresDialectAdapter();
+
+    String template =
+        "INSERT INTO device_data(\n"
+            + "    device_id, product_key, device_name, iot_id,\n"
+            + "    device_node, message_type, properties, raw_data\n"
+            + ") VALUES(\n"
+            + "    #{deviceId}, #{productKey}, #{deviceName}, #{iotId},\n"
+            + "    #{deviceNode}, #{messageType}, #{properties}, \n"
+            + "    ${json_text('csq', properties.temperature, 'tips', properties.illuminationDesc)}\n"
+            + ");";
+
+    ParamSql result = engine.process(template, variables, adapter);
+
+    assertNotNull(result);
+    assertTrue(result.getSql().contains("json_build_object"));
+    assertTrue(result.getSql().contains("::TEXT"));
+    assertTrue(result.getSql().contains("?"));
+    assertEquals(9, result.getParams().size());
+    assertEquals("dev123", result.getParams().get(0));
+    assertEquals("明亮", result.getParams().get(8));
+  }
+
+  @Test
+  void testOracleTemplate() {
+    SqlDialectAdapter adapter = new OracleDialectAdapter();
+
+    String template =
+        "INSERT INTO device_data(\n"
+            + "    device_id, product_key, device_name, iot_id,\n"
+            + "    device_node, message_type, properties, raw_data\n"
+            + ") VALUES(\n"
+            + "    #{deviceId}, #{productKey}, #{deviceName}, #{iotId},\n"
+            + "    #{deviceNode}, #{messageType}, #{properties}, \n"
+            + "    ${json('csq', properties.temperature, 'tips', properties.illuminationDesc)}\n"
+            + ");";
+
+    ParamSql result = engine.process(template, variables, adapter);
+
+    assertNotNull(result);
+    assertTrue(result.getSql().contains("JSON_OBJECT"));
+    assertTrue(result.getSql().contains("VALUE"));
+    assertTrue(result.getSql().contains("?"));
+    assertEquals(9, result.getParams().size());
+  }
+
+  @Test
+  void testSqlServerTemplate() {
+    SqlDialectAdapter adapter = new SqlServerDialectAdapter();
+
+    String template =
+        "INSERT INTO device_data(\n"
+            + "    device_id, product_key, device_name, iot_id,\n"
+            + "    device_node, message_type, properties, raw_data\n"
+            + ") VALUES(\n"
+            + "    #{deviceId}, #{productKey}, #{deviceName}, #{iotId},\n"
+            + "    #{deviceNode}, #{messageType}, #{properties}, \n"
+            + "    ${json('csq', properties.temperature, 'tips', properties.illuminationDesc)}\n"
+            + ");";
+
+    ParamSql result = engine.process(template, variables, adapter);
+
+    assertNotNull(result);
+    assertTrue(result.getSql().contains("CONCAT"));
+    assertTrue(result.getSql().contains("?"));
+    assertEquals(9, result.getParams().size());
     }
 
     @Test
@@ -140,18 +211,50 @@ class ParamTemplateEngineTest {
         assertEquals(template, result.getSql());
         assertTrue(result.getParams().isEmpty());
     }
+  @Test
+  void testMixedJsonAndJsonText() {
+    SqlDialectAdapter adapter = new PostgresDialectAdapter();
 
+    String template =
+        "INSERT INTO test(col1, col2) VALUES("
+            + "${json('temp', properties.temperature)}, "
+            + "${json_text('desc', properties.illuminationDesc)}"
+            + ")";
 
-    @Test
-    void testChineseCharacters() {
-        SqlDialectAdapter adapter = new MySqlDialectAdapter();
+    ParamSql result = engine.process(template, variables, adapter);
 
-        variables.put("chineseValue", "测试中文");
-        String template = "INSERT INTO test(name) VALUES(#{chineseValue})";
+    assertTrue(result.getSql().contains("json_build_object"));
+    assertTrue(result.getSql().contains("::TEXT"));
+    assertEquals(2, result.getParams().size());
+    assertEquals(25.5, result.getParams().get(0));
+    assertEquals("明亮", result.getParams().get(1));
+  }
 
-        ParamSql result = engine.process(template, variables, adapter);
+  @Test
+  void testChineseCharacters() {
+    SqlDialectAdapter adapter = new MySqlDialectAdapter();
 
-        assertEquals("INSERT INTO test(name) VALUES(?)", result.getSql());
-        assertEquals("测试中文", result.getParams().get(0));
-    }
+    variables.put("chineseValue", "测试中文");
+    String template = "INSERT INTO test(name) VALUES(#{chineseValue})";
+
+    ParamSql result = engine.process(template, variables, adapter);
+
+    assertEquals("INSERT INTO test(name) VALUES(?)", result.getSql());
+    assertEquals("测试中文", result.getParams().get(0));
+  }
+
+  @Test
+  void testSpecialCharactersInJson() {
+    SqlDialectAdapter adapter = new PostgresDialectAdapter();
+
+    Map<String, Object> props = (Map<String, Object>) variables.get("properties");
+    props.put("specialDesc", "包含\"引号\"和'单引号'");
+
+    String template = "SELECT ${json_text('data', properties.specialDesc)}";
+
+    ParamSql result = engine.process(template, variables, adapter);
+
+    assertNotNull(result);
+    assertTrue(result.getParams().get(0).toString().contains("引号"));
+  }
 }

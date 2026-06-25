@@ -142,10 +142,4 @@ public interface ISysMenuService {
    */
   public String checkMenuNameUnique(SysMenu menu);
 
-  /**
-   * 执行菜单脚本
-   *
-   * @param sql 菜单脚本
-   */
-  void execMenuSql(String sql);
 }

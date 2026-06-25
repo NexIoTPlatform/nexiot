@@ -47,9 +47,6 @@
             <if test="params!=null and params.endTime!=null and params.endTime!=''">
                 and date_format(login_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
-            <!--      <if test="params!=null and params.scope != null and params.scope != ''">-->
-            <!--        AND ( ${params.scope} )-->
-            <!--      </if>-->
         </where>
         order by login_time desc
     </select>

@@ -41,10 +41,6 @@
                create_time
         from sys_menu
     </sql>
-    <select id="execMenuSql" resultType="integer">
-        ${sql}
-    </select>
-
     <select id="selectMenuList" parameterType="cn.universal.persistence.entity.admin.SysMenu"
             resultMap="SysMenuResult">
         select distinct m.menu_id,
@@ -54,7 +50,7 @@
         m.component,
         m.visible,
         m.status,
-        ifnull(m.perms, '') as perms,
+            ifnull(m.perms, '') as perms,
         m.is_frame,
         m.is_cache,
         m.menu_type,
@@ -64,7 +60,7 @@
         from sys_menu m
         <where>
             <if test="menuName!=null and menuName!=''">
-                and menu_name like '%${menuName}%'
+                and menu_name like concat('%', #{menuName}, '%')
             </if>
             <if test="visible!=null and visible!=''">
                 and visible = #{visible}

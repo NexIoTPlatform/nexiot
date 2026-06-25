@@ -453,13 +453,4 @@ public class SysMenuServiceImpl implements ISysMenuService {
     return getChildList(list, t).size() > 0;
   }
 
-  /**
-   * 执行菜单脚本
-   *
-   * @param sql 菜单脚本
-   */
-  @Override
-  public void execMenuSql(String sql) {
-    menuMapper.execMenuSql(sql);
-  }
 }
