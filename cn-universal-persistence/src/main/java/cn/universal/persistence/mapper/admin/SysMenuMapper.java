@@ -72,11 +72,4 @@ public interface SysMenuMapper extends BaseMapper<SysMenu> {
   public List<Long> selectMenuListByRoleId(
       @Param("roleId") Long roleId, @Param("menuCheckStrictly") boolean menuCheckStrictly);
 
-  /**
-   * 执行菜单脚本
-   *
-   * @param sql 菜单脚本
-   * @return 返回null
-   */
-  Integer execMenuSql(@Param("sql") String sql);
 }

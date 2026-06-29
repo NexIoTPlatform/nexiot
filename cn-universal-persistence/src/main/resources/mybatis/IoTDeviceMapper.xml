@@ -305,7 +305,7 @@
                 AND p.product_key = #{productKey}
             </if>
             <if test="companyNo!=null and companyNo!=''">
-                AND p.company_no like '%${companyNo}%'
+                AND p.company_no like concat('%', #{companyNo}, '%')
             </if>
             <if test="iotUnionId!=null and iotUnionId!=''">
                 AND a.creator_id = #{iotUnionId}
@@ -347,7 +347,7 @@
                 AND p.product_id = #{productId}
             </if>
             <if test="companyNo!=null and companyNo!=''">
-                AND p.company_no like '%${companyNo}%'
+                AND p.company_no like concat('%', #{companyNo}, '%')
             </if>
             <if test="iotUnionId!=null and iotUnionId!=''">
                 AND a.creator_id = #{iotUnionId}
@@ -475,9 +475,6 @@
             <if test="unionId != null and unionId != ''">
                 and d.creator_id=#{unionId}
             </if>
-            <!--      <if test="params.scope != null and params.scope != ''">-->
-            <!--        AND ( ${params.scope} )-->
-            <!--      </if>-->
         </where>
         ORDER BY d.create_time DESC
     </select>
@@ -556,9 +553,6 @@
             <if test="unionId != null and unionId != ''">
                 and d.creator_id=#{unionId}
             </if>
-            <!--      <if test="params.scope != null and params.scope != ''">-->
-            <!--        AND ( ${params.scope} )-->
-            <!--      </if>-->
         </where>
         ORDER BY d.create_time DESC
     </select>
@@ -832,9 +826,6 @@
             <if test="dev.registryTime != null ">and registry_time = #{dev.registryTime}</if>
             <if test="dev.onlineTime != null ">and online_time = #{dev.onlineTime}</if>
             <if test="dev.areasId != null  and dev.areasId != ''">and areas_id = #{dev.areasId}</if>
-            <if test="dev.params.scope != null and dev.params.scope != ''">
-                AND ( ${dev.params.scope} )
-            </if>
             <if test="unionId != null and unionId != ''">
                 and creator_id=#{unionId}
             </if>

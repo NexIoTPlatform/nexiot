@@ -410,8 +410,8 @@ public class CkDeviceLogService extends AbstractIoTDeviceLogService {
     }
     if (MapUtil.isNotEmpty(logQuery.getParams())
         && ObjectUtil.isNotNull(logQuery.getParams().get("properties"))) {
-      sql.append(
-          " AND JSONHas(content,'properties','" + logQuery.getParams().get("properties") + "')=1");
+      sql.append(" AND JSONHas(content,'properties',?)=1");
+      params.add(logQuery.getParams().get("properties"));
     }
     if (MapUtil.isNotEmpty(logQuery.getParams())
         && ObjectUtil.isNotNull(logQuery.getParams().get("event"))) {

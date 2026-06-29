@@ -101,6 +101,7 @@ import cn.universal.core.engine.parsing.ast.literal.StringLiteral;
 import cn.universal.core.engine.parsing.ast.statement.Assert;
 import cn.universal.core.engine.parsing.ast.statement.AsyncCall;
 import cn.universal.core.engine.parsing.ast.statement.Break;
+import cn.universal.core.engine.parsing.ast.statement.ClassicForStatement;
 import cn.universal.core.engine.parsing.ast.statement.ClassConverter;
 import cn.universal.core.engine.parsing.ast.statement.Continue;
 import cn.universal.core.engine.parsing.ast.statement.Exit;
@@ -115,6 +116,7 @@ import cn.universal.core.engine.parsing.ast.statement.MethodCall;
 import cn.universal.core.engine.parsing.ast.statement.NewStatement;
 import cn.universal.core.engine.parsing.ast.statement.Return;
 import cn.universal.core.engine.parsing.ast.statement.Spread;
+import cn.universal.core.engine.parsing.ast.statement.SwitchStatement;
 import cn.universal.core.engine.parsing.ast.statement.Throw;
 import cn.universal.core.engine.parsing.ast.statement.TryStatement;
 import cn.universal.core.engine.parsing.ast.statement.VariableAccess;
@@ -272,6 +274,8 @@ public class Parser {
       result = parseReturn();
     } else if (stream.match("for", false)) {
       result = parseForStatement();
+    } else if (isSwitchStatement()) {
+      result = parseSwitchStatement();
     } else if (stream.match("while", false)) {
       result = parseWhileStatement();
     } else if (stream.match("continue", false)) {
@@ -675,9 +679,16 @@ public class Parser {
     return new WhileStatement(addSpan(openingWhile, closingEnd), condition, trueBlock);
   }
 
-  private ForStatement parseForStatement() {
+  private Node parseForStatement() {
     Span openingFor = stream.expect("for").getSpan();
     stream.expect("(");
+    if (isClassicForStatement()) {
+      return parseClassicForStatement(openingFor);
+    }
+    return parseIteratorForStatement(openingFor);
+  }
+
+  private ForStatement parseIteratorForStatement(Span openingFor) {
     push();
     Span index = null;
     Span value = stream.expect(Identifier).getSpan();
@@ -707,6 +718,140 @@ public class Parser {
         anonymous,
         mapOrArray,
         body);
+  }
+
+  private ClassicForStatement parseClassicForStatement(Span openingFor) {
+    push();
+    Node initializer = null;
+    Expression condition = null;
+    Expression update = null;
+    if (!stream.match(";", false)) {
+      initializer = parseForInitializer();
+    }
+    stream.expect(";");
+    if (!stream.match(";", false)) {
+      condition = parseExpression();
+    }
+    stream.expect(";");
+    if (!stream.match(")", false)) {
+      update = parseExpression();
+    }
+    stream.expect(")");
+    List<Node> body = parseFunctionBody();
+    pop();
+    return new ClassicForStatement(
+        addSpan(openingFor, stream.getPrev().getSpan()), initializer, condition, update, body);
+  }
+
+  private Node parseForInitializer() {
+    if (matchVarDefine()) {
+      return parseVarDefine();
+    }
+    int index = stream.makeIndex();
+    if (matchTypeDefine()) {
+      stream.resetIndex(index);
+      return parseVarDefine();
+    }
+    stream.resetIndex(index);
+    return parseExpression();
+  }
+
+  private boolean isClassicForStatement() {
+    int index = stream.makeIndex();
+    int depth = 0;
+    try {
+      while (stream.hasMore()) {
+        Token token = stream.consume();
+        switch (token.getType()) {
+          case LeftParantheses:
+          case LeftBracket:
+          case LeftCurly:
+            depth++;
+            break;
+          case RightParantheses:
+            if (depth == 0) {
+              return false;
+            }
+            depth--;
+            break;
+          case RightBracket:
+          case RightCurly:
+            if (depth > 0) {
+              depth--;
+            }
+            break;
+          default:
+            if (";".equals(token.getText()) && depth == 0) {
+              return true;
+            }
+            break;
+        }
+      }
+      return false;
+    } finally {
+      stream.resetIndex(index);
+    }
+  }
+
+  private boolean isSwitchStatement() {
+    if (!stream.match("switch", false)) {
+      return false;
+    }
+    int index = stream.makeIndex();
+    try {
+      stream.consume();
+      return stream.match(LeftParantheses, false);
+    } finally {
+      stream.resetIndex(index);
+    }
+  }
+
+  private SwitchStatement parseSwitchStatement() {
+    Span openingSwitch = stream.expect("switch").getSpan();
+    requiredNew = false;
+    Expression target = parseExpression();
+    requiredNew = true;
+    stream.expect("{");
+    List<SwitchStatement.SwitchCase> switchCases = new ArrayList<>();
+    boolean hasDefault = false;
+    while (stream.hasMore() && !stream.match("}", false)) {
+      boolean defaultCase = false;
+      Expression condition = null;
+      Span caseSpan;
+      if (stream.match("case", true)) {
+        caseSpan = stream.getPrev().getSpan();
+        condition = parseExpression();
+      } else if (stream.match("default", true)) {
+        caseSpan = stream.getPrev().getSpan();
+        defaultCase = true;
+        if (hasDefault) {
+          MagicScriptError.error("switch 中只允许一个 default", caseSpan);
+        }
+        hasDefault = true;
+      } else {
+        MagicScriptError.error("switch 中只允许 case 或 default", stream.consume().getSpan());
+        return null;
+      }
+      stream.expect(Colon);
+      List<Node> statements = new ArrayList<>();
+      while (stream.hasMore()
+          && !stream.match("}", false)
+          && !stream.match("case", false)
+          && !stream.match("default", false)) {
+        Node node = parseStatement(true);
+        if (node != null) {
+          validateNode(node);
+          statements.add(node);
+        }
+      }
+      Span clauseEnd =
+          statements.isEmpty() ? stream.getPrev().getSpan() : statements.get(statements.size() - 1).getSpan();
+      switchCases.add(
+          new SwitchStatement.SwitchCase(
+              addSpan(caseSpan, clauseEnd), condition, statements, defaultCase));
+    }
+    Span closingEnd = expectCloseing();
+    return new SwitchStatement(addSpan(openingSwitch, closingEnd), target, switchCases);
   }
 
   private Span expectCloseing() {

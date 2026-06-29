@@ -50,7 +50,7 @@
                 AND device_node = #{deviceNode}
             </if>
             <if test="productName!=null and productName!=''">
-                AND `name` like '%${productName}%'
+                AND `name` like concat('%', #{productName}, '%')
             </if>
             <if test="transportProtocol!=null and transportProtocol!=''">
                 AND a.transport_protocol = #{transportProtocol}
@@ -59,7 +59,7 @@
                 AND product_id = #{productId}
             </if>
             <if test="companyNo!=null and companyNo!=''">
-                AND company_no like '%${companyNo}%'
+                AND company_no like concat('%', #{companyNo}, '%')
             </if>
         </where>
 

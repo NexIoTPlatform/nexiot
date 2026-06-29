@@ -59,7 +59,7 @@ public class MagicScriptCompiler implements Opcodes {
 
   private final Stack<List<String>> vars = new Stack<>();
 
-  private final Stack<Label[]> labelStack = new Stack<>();
+  private final Stack<FlowControlLabel> labelStack = new Stack<>();
 
   private final Stack<List<Node>> finallyStack = new Stack<>();
 
@@ -123,7 +123,7 @@ public class MagicScriptCompiler implements Opcodes {
     methodVisitors.push(visitor);
     vars.push(new ArrayList<>());
     finallyStack.push(null);
-    labelStack.push(new Label[2]);
+    labelStack.push(new FlowControlLabel(null, null));
     return this;
   }
 
@@ -138,7 +138,13 @@ public class MagicScriptCompiler implements Opcodes {
 
   /** 标识continue和break位置 */
   public MagicScriptCompiler markLabel(Label start, Label end) {
-    labelStack.push(new Label[] {start, end});
+    labelStack.push(new FlowControlLabel(start, end));
+    return this;
+  }
+
+  /** 标识仅支持break的位置，例如 switch */
+  public MagicScriptCompiler markBreakLabel(Label end) {
+    labelStack.push(new FlowControlLabel(null, end));
     return this;
   }
 
@@ -150,12 +156,24 @@ public class MagicScriptCompiler implements Opcodes {
 
   /** 跳转到continue位置 */
   public MagicScriptCompiler start() {
-    return jump(GOTO, labelStack.peek()[0]);
+    for (int i = labelStack.size() - 1; i >= 0; i--) {
+      Label label = labelStack.get(i).getContinueLabel();
+      if (label != null) {
+        return jump(GOTO, label);
+      }
+    }
+    throw new MagicScriptCompileException("continue 只能在循环中使用");
   }
 
   /** 跳转到break位置 */
   public MagicScriptCompiler end() {
-    return jump(GOTO, labelStack.peek()[1]);
+    for (int i = labelStack.size() - 1; i >= 0; i--) {
+      Label label = labelStack.get(i).getBreakLabel();
+      if (label != null) {
+        return jump(GOTO, label);
+      }
+    }
+    throw new MagicScriptCompileException("break 只能在循环或 switch 中使用");
   }
 
   /** 访问AST节点 */
@@ -312,6 +330,12 @@ public class MagicScriptCompiler implements Opcodes {
 
   public MagicScriptCompiler load4() {
     self().visitVarInsn(ALOAD, 4);
+    return this;
+  }
+
+  /** 加载本地临时变量 */
+  public MagicScriptCompiler loadLocal(int index) {
+    self().visitVarInsn(ALOAD, index);
     return this;
   }
 
@@ -751,6 +775,26 @@ public class MagicScriptCompiler implements Opcodes {
 
   private MethodVisitor self() {
     return methodVisitors.peek();
+  }
+
+  private static class FlowControlLabel {
+
+    private final Label continueLabel;
+
+    private final Label breakLabel;
+
+    private FlowControlLabel(Label continueLabel, Label breakLabel) {
+      this.continueLabel = continueLabel;
+      this.breakLabel = breakLabel;
+    }
+
+    public Label getContinueLabel() {
+      return continueLabel;
+    }
+
+    public Label getBreakLabel() {
+      return breakLabel;
+    }
   }
 
   private static String getJvmType(Class<?> target) {
