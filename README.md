@@ -90,7 +90,7 @@
 
 ## 🚀 快速开始
 
-### 🎯 演示地址（最新版本）
+### 🎯 演示地址（企业版）
 
 > **✨ 全部真实设备，驱动源码开放，全部透明可见！**
 
@@ -222,22 +222,6 @@
 
 
 
-### 📊 已对接设备案例
-
-[//]: # ()
-[//]: # (（仅展示部分）)
-
-[//]: # ()
-[//]: # (|                                                |                                                |                                        |)
-
-[//]: # (|------------------------------------------------|------------------------------------------------|----------------------------------------|)
-
-[//]: # (| ![电表设备]&#40;/__MACOSX/shot/1018/dianbiap.png&#41;      | ![摄像头]&#40;/__MACOSX/shot/1018/tongtongsuo.png&#41;    | ![水浸设备]&#40;/__MACOSX/shot/1018/111.jpg&#41;   |)
-
-[//]: # (| ![网关DTU]&#40;/__MACOSX/shot/1018/dtu.jpg&#41;          | ![水浸设备]&#40;/__MACOSX/shot/1026/device-sj.jpg&#41;     | ![SOS]&#40;/__MACOSX/shot/1109/sos.jpg&#41;    |)
-
-[//]: # (| ![4G定位器]&#40;/__MACOSX/shot/1018/4gcz.png&#41;         | ![声光报警器]&#40;/__MACOSX/shot/1026/device-sgbjq.png&#41; | ![水浸设备]&#40;/__MACOSX/shot/1018/4gcz2.png&#41; |)
-
 #### ⚡ 接入成果展示
 
 ![接入成果动态](__MACOSX/shot/dianbiao.gif)
@@ -245,10 +229,6 @@
 ---
 
 ## 📸 平台界面展示
-
-[//]: # (> 以下截图是【企业版】功能界面，会有UI调整，开源版请自行部署)
-
-![系统架构](/__MACOSX/shot/260423/login.png)
 
 | 🏗️ 驱动的系统架构                          |           🚀 云原生部署架构                              |
 |--------------------------------------|-----------------------------------------|
@@ -261,60 +241,21 @@
 
 ![工作台](/__MACOSX/shot/260423/gzt.png)
 
-|                                                         |                                                             |
-|---------------------------------------------------------|-------------------------------------------------------------|
-| ![产品列表](/__MACOSX/shot/260118/product/list.png)         | ![产品详情](/__MACOSX/shot/260118/product/detail.png)           |
-| ![标准物模型](/__MACOSX/shot/260118/product/create.png) | ![物模型字段](/__MACOSX/shot/260118/product/metadata-01.png)     |
-| ![物模型搜索](/__MACOSX/shot/260118/product/create-metadata.png)     | ![功能创建](/__MACOSX/shot/260118/product/metadata-02.png)      |
-| ![连接信息](/__MACOSX/shot/260118/product/connect.png)          | ![网络管理](/__MACOSX/shot/260118/product/connect-mqtt.png)     |
-| ![报警管理](/__MACOSX/shot/260118/product/stand-metadata-2.png) | ![产品详情](/__MACOSX/shot/260118/product/stand-metadata-1.png) |
+| VUE2                                            | VUE3                                     |
+|-------------------------------------------------|------------------------------------------|
+| ![产品列表](/__MACOSX/shot/260118/product/list.png) | ![产品详情](/__MACOSX/shot/0722/vue3-pd.png) |
+| ![设备列表](/__MACOSX/shot/0722/vue2-dl.png)        | ![设备列表](/__MACOSX/shot/0722/vue3-dl.png) |
+| ![log](/__MACOSX/shot/0722/vue2-log.png)        | ![log](/__MACOSX/shot/0722/vue3-log.png) |
+
 
 #### 📺 设备管理
 
-
-|                                                     |                                                     |
-|-----------------------------------------------------|-----------------------------------------------------|
-| ![设备列表](/__MACOSX/shot/260118/device/list.png)      | ![设备详情](/__MACOSX/shot/260118/device/detail.png)    |
-| ![设备状态](/__MACOSX/shot/260423/device-status.png)    | ![设备状态设备](/__MACOSX/shot/260423/device-status2.png) |
-| ![功能](/__MACOSX/shot/260118/device/function.png)    | ![日志](/__MACOSX/shot/260118/device/log.png)         |
-| ![设备状态](/__MACOSX/shot/260118/device/shadow.png)    | ![网关设备](/__MACOSX/shot/260118/device/tupu.png)      |
-| ![子设备列表](/__MACOSX/shot/260118/device/tupulist.png) | ![网络管理](/__MACOSX/shot/260118/device/video.png)     |
-| ![报警管理](/__MACOSX/shot/260118/device/lunxun.png)    | ![产品详情](/__MACOSX/shot/260118/device/lunxun-2.png)  |
 
 #### 🚀驱动在线调试和可视化拖拽
 
 | 调试断点                                               | 运行结果                                              |
 |----------------------------------------------------|---------------------------------------------------|
 | ![断点](/__MACOSX/shot/260118/protocol/02.png)       | ![运行](/__MACOSX/shot/260118/protocol/03.png)      |
-
-#### 🔄 边云协同，隧道直连内容
-
-| 云端管理                                               | 边云协作                                                |
-|----------------------------------------------------|-----------------------------------------------------|
-| ![云端](/__MACOSX/shot/260530/nexiot-edge-cloud.png) | ![边云协同](/__MACOSX/shot/260530/nexiot-edge.png) |
-
-
-
-#### 🔄 规则编排和引擎
-
-|                                                     |                                                          |
-|-----------------------------------------------------|----------------------------------------------------------|
-| ![联动](/__MACOSX/shot/260118/other/liandong-01.png)  | ![规则引擎](/__MACOSX/shot/260118/other/liandong-result.png) |
-| ![联动](/__MACOSX/shot/260118/other/tz01.png)         | ![规则引擎](/__MACOSX/shot/260118/other/tz02.png)            |
-
-### 🛠️ 网络组件
-
-|                                  |                                              |                                           |
-|-----------------------------------------------|----------------------------------------------------------|-------------------------------------------------|
-| ![tcp](/__MACOSX/shot/260118/network/tcp.png) | ![mqtt详情](/__MACOSX/shot/260118/network/mqtt-detail.png) | ![tcp绑定](/__MACOSX/shot/260118/network/tcp.png) |
-
-
-
-### 🛠️ 北向应用多租户应用
-
-|                                            |                                             |                                            |
-|--------------------------------------------|---------------------------------------------|--------------------------------------------|
-| ![AK/SK](/__MACOSX/shot/260118/app/01.png) | ![mqtt详情](/__MACOSX/shot/260118/app/03.png) | ![tcp绑定](/__MACOSX/shot/260118/app/02.png) |
 
 
 
@@ -326,30 +267,16 @@
 | ![数据管理1](/__MACOSX/shot/260118/platform/dt.png) | ![数据管理2](/__MACOSX/shot/260118/platform/d2.png)                       | ![设备管理](/__MACOSX/shot/260118/other/zhuapai.png) |
 
 
-
-
-### 🎯 视频AIoT
-
-|                                        |                                         |                                       | 
-|----------------------------------------|-----------------------------------------|---------------------------------------|
-| ![模型](/__MACOSX/shot/260613/1-mox.png) | ![数据标记](/__MACOSX/shot/260613/2-sc.png) | ![推理](/__MACOSX/shot/260613/3-tl.png) |
-| ![模型](/__MACOSX/shot/260613/4-sl.png)  | ![数据标记](/__MACOSX/shot/260613/5-rw.png) | ![推理](/__MACOSX/shot/260613/6-lx.png) |
 ### 🎯 wvp-GB28281-wvp+海康ISC+大华ICC
 
-![视频墙](/__MACOSX/shot/260109/videowall.png)
 
-|                                                 |                                         ||
-|-------------------------------------------------|-----------------------------------------|---|
-|![平台实例](/__MACOSX/shot/260118/platform/hlht.png)  |  ![录像列表](/__MACOSX/shot/260118/platform/lxlb.png)  | ![设备录像](/__MACOSX/shot/260118/platform/sblx.png)   
-|  ![国标实时](/__MACOSX/shot/260118/platform/gbss.png)            | ![录像](/__MACOSX/shot/260118/platform/lsbf.png)     |![设备录像回放](/__MACOSX/shot/260118/platform/lxhf.png) |
-|        |
+
+| VUE2                                        | VUE3                                         |
+|---------------------------------------------|----------------------------------------------|
+| ![设备列表](/__MACOSX/shot/0722/vue2-video.png) | ![设备列表](/__MACOSX/shot/0722/vue3-video2.png) |
 
 
 
-
-#### 🌐 天翼产品接入
-
-![天翼产品接入](__MACOSX/shot/260118/99.gif)
 
 
 ### 🚀 组态大屏一体化集成
@@ -362,11 +289,6 @@
 | 大屏                                          | 组态                                        | 
 |---------------------------------------------|-------------------------------------------|
 | ![大屏2](__MACOSX/shot/260118/zutai/99.png)   | ![大屏2](__MACOSX/shot/260118/zutai/04.png) |
-| ![组态大屏2](__MACOSX/shot/260118/zutai/02.png) | ![大屏2](__MACOSX/shot/260118/zutai/03.png) |
-| ![组态大屏2](__MACOSX/shot/260118/zutai/05.png) | ![大屏2](__MACOSX/shot/260118/zutai/06.png) |
-| ![组态大屏2](__MACOSX/shot/260118/zutai/07.png) | ![大屏2](__MACOSX/shot/260118/zutai/08.png) |
-| ![组态大屏2](__MACOSX/shot/260118/zutai/20.png) | ![大屏2](__MACOSX/shot/260118/zutai/21.png) |
-| ![组态大屏2](__MACOSX/shot/260118/zutai/22.png) | ![大屏2](__MACOSX/shot/260118/zutai/23.png) |
 
 
 ### 🎯 移动端/小程序
@@ -375,7 +297,6 @@
 |-----------------------------------------------|----------------------------------------------|----------------------------------------------|
 | ![小程序](/__MACOSX/shot/260118/mp/mp-index.png) | ![app](__MACOSX/shot/260118/mp/app-user.png) | ![app](__MACOSX/shot/260118/mp/app-edit.png) |
 | ![小程序](/__MACOSX/shot/260118/mp/00.jpg) | ![app](__MACOSX/shot/260118/mp/01.jpg) | ![app](__MACOSX/shot/260118/mp/02.jpg) |
-| ![小程序](/__MACOSX/shot/260118/mp/03.jpg) | ![app](__MACOSX/shot/260118/mp/04.jpg) | ![app](__MACOSX/shot/260118/mp/05.jpg) |
 
 
 > 视频【NexIoT小程序，这次很强！】 https://www.bilibili.com/video/BV1WMqDB6EAc/?share_source=copy_web&vd_source=c9e1500efcc8aa0763f711fadaa68dff
