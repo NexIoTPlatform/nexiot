@@ -63,3 +63,4 @@ nbdist/
 /cn-universal-web/logs/cn-universal/tcp.2025-*.gz
 /cn-universal-web/logs/cn-universal/api.2025-*.gz
 /.cursorindexingignore
+/.workbuddy/

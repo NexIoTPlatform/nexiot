@@ -7,7 +7,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/** JDK 21 对称加密工具类，支持AES和DES算法 */
+/** JDK 25 对称加密工具类，支持AES和DES算法 */
 public class SymmetricEncryptionUtil {
 
   // 密钥长度常量

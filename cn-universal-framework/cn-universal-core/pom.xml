@@ -9,8 +9,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
@@ -46,16 +46,26 @@
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
         </dependency>
-        <!-- GraalJS - 替代 Nashorn -->
+        <!-- GraalJS - 替代 Nashorn (25.x 起 js 为聚合POM无jar，改用 js-language + truffle-runtime) -->
         <dependency>
             <groupId>org.graalvm.js</groupId>
-            <artifactId>js</artifactId>
-            <version>23.0.0</version>
+            <artifactId>js-language</artifactId>
+            <version>${graaljs.version}</version>
         </dependency>
         <dependency>
             <groupId>org.graalvm.js</groupId>
             <artifactId>js-scriptengine</artifactId>
-            <version>23.0.0</version>
+            <version>${graaljs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.truffle</groupId>
+            <artifactId>truffle-runtime</artifactId>
+            <version>${graaljs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>polyglot</artifactId>
+            <version>${graaljs.version}</version>
         </dependency>
 
         <!-- Spring Security Crypto - 提供 Base64Utils -->

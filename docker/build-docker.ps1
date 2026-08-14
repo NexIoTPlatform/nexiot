@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🚀 开始构建 Docker 镜像 (JDK 21 + MySQL 5.8 + EMQX)..."
+Write-Host "🚀 开始构建 Docker 镜像 (JDK 25 + MySQL 5.8 + EMQX)..."
 Write-Host ""
 Write-Host "📋 支持的构建版本："
 Write-Host "   后端版本："

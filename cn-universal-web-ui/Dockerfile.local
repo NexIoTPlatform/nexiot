@@ -1,12 +1,12 @@
-# 使用已经下载的 openjdk:21 镜像作为基础，安装 nginx
-FROM openjdk:21
+# 使用 Eclipse Temurin JDK 25 镜像作为基础，安装 nginx
+FROM eclipse-temurin:25
 
 # 安装 nginx 和必要工具
-RUN microdnf update -y && microdnf install -y \
+RUN apt-get update && apt-get install -y \
     nginx \
     curl \
     wget \
-    && microdnf clean all
+    && rm -rf /var/lib/apt/lists/*
 
 # 复制前端构建文件
 COPY dist/ /usr/share/nginx/html/

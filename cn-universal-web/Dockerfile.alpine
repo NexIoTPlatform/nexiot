@@ -1,5 +1,5 @@
-# 使用 Eclipse Temurin JRE 21 Alpine 版本 (镜像更小、通用)
-FROM eclipse-temurin:21-jre-alpine
+# 使用 Eclipse Temurin JRE 25 Alpine 版本 (镜像更小、通用)
+FROM eclipse-temurin:25-jre-alpine
 
 # 设置工作目录
 WORKDIR /app

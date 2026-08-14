@@ -75,9 +75,9 @@ cd docker
 
 ### 后端版本
 
-- `default`: OpenJDK 21 (Oracle Linux) - 推荐
-- `alpine`: OpenJDK 21 Alpine (镜像更小)
-- `corretto`: Amazon Corretto 21 (企业级支持)
+- `default`: OpenJDK 25 (Oracle Linux) - 推荐
+- `alpine`: OpenJDK 25 Alpine (镜像更小)
+- `corretto`: Amazon Corretto 25 (企业级支持)
 
 ### 前端版本
 

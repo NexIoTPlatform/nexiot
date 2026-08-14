@@ -1,5 +1,5 @@
-# 使用 Amazon Corretto 21 (企业级支持)
-FROM amazoncorretto:21
+# 使用 Amazon Corretto 25 (企业级支持)
+FROM amazoncorretto:25
 
 # 设置工作目录
 WORKDIR /app

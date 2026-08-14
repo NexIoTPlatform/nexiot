@@ -11,8 +11,8 @@
   <description>java实现产品驱动，主要针对超复杂协议（如门锁）和平台互通的情况</description>
   <artifactId>nexiot-jar-deiver-extend-plugins</artifactId>
   <properties>
-    <maven.compiler.source>21</maven.compiler.source>
-    <maven.compiler.target>21</maven.compiler.target>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>

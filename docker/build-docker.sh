@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🚀 开始构建 Docker 镜像 (JDK 21 + MySQL 5.8 + EMQX)..."
+echo "🚀 开始构建 Docker 镜像 (JDK 25 + MySQL 5.8 + EMQX)..."
 echo ""
 echo "📋 支持的构建版本："
 echo "   后端版本："

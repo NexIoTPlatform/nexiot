@@ -1,5 +1,5 @@
-# 使用本地可用的 OpenJDK 21 基础镜像，避免外网拉取失败
-FROM eclipse-temurin:21-jre
+# 使用本地可用的 OpenJDK 25 基础镜像，避免外网拉取失败
+FROM eclipse-temurin:25-jre
 
 # 设置工作目录
 WORKDIR /app

@@ -32,7 +32,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 /**
- * 虚拟线程配置 - Spring Boot 3.5 + JDK 21 新特性
+ * 虚拟线程配置 - Spring Boot 3.5 + JDK 25 新特性
  *
  * <p>虚拟线程优势：
  * <ul>
