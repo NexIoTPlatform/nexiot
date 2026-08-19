@@ -3,7 +3,7 @@
 <div align="center">
 
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)
-![Java](https://img.shields.io/badge/Java-21-orange.svg)
+![Java](https://img.shields.io/badge/Java-25-orange.svg)
 ![SpringBoot](https://img.shields.io/badge/SpringBoot-3.5-brightgreen.svg)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)
 ![Redis](https://img.shields.io/badge/Redis-Latest-red.svg)
@@ -52,7 +52,7 @@
 
 #### 🚀 核心框架（极简轻量）
 
-- **后端框架**：`Java 21` `SpringBoot 3.5` `Tk.Mybatis 5.0.1` 
+- **后端框架**：`Java 25` `SpringBoot 3.5` `Tk.Mybatis 5.0.1` 
 - **前端技术**：基于`RuoYi-Antdv`构建，感谢开源社区！
 - **日志存储**：**IoTDB** / **TDengine** / **ClickHouse** / **InfluxDB** / MySQL / None（产品级无感动态切换）
 
@@ -139,7 +139,7 @@
 
 [//]: # (> **如需了解开源版与企业版完整差异，可查看 [版ƒ本区别]&#40;https://docs.nexiot.cc/versions/comparison.html/ "版本区别"&#41;** 查看)
 
-- [x] 基于 JDK21、虚拟线程，支持 RBAC，完成安全修复，通过三级等保；**开源支持集群**
+- [x] 基于 JDK25、虚拟线程，支持 RBAC，完成安全修复，通过三级等保；**开源支持集群**
 - [x] 支持 WEB-IDE 产品驱动编写，真正“零”代码侵入面向协议
 - [x] 热更新与零侵入：产品驱动/协议外置，一键导入导出即可使用，热部署
 - [x] 多协议接入：**不改代码**支持任意 TCP 协议、任意 MQTT Topic主题和任意格式消息设备接入，支持粘包/分包、读写超时、解析器类型全部页面可配和扩展
