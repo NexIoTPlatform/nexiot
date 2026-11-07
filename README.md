@@ -1,6 +1,6 @@
-# 🤖 NexIoT AI物联网平台
-
 <div align="center">
+
+# 🤖 NexIoT AI物联网平台
 
 ![Java](https://img.shields.io/badge/Java-25-orange.svg)
 ![SpringBoot](https://img.shields.io/badge/SpringBoot-3.5-brightgreen.svg)
