@@ -1,0 +1,10 @@
+-- 模板独立微信配置；保留渠道上的旧配置供旧接口兼容。
+ALTER TABLE notice_template ADD COLUMN wechat_config TEXT;
+UPDATE sys_dict_data SET status='1' WHERE dict_type='notice_wechat_field' AND dict_value IN ('templateId','url','miniProgramAppId','miniProgramPage');
+INSERT INTO sys_dict_type (dict_name,dict_type,status,create_by,create_time,remark)
+SELECT '微信通知模板字段','notice_wechat_template_field','0','system',CURRENT_TIMESTAMP,'模板 ID 与跳转设置，字段映射由微信原文识别'
+WHERE NOT EXISTS (SELECT 1 FROM sys_dict_type WHERE dict_type='notice_wechat_template_field');
+INSERT INTO sys_dict_data (dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,create_by,create_time) SELECT 1,'微信模板 ID','templateId','notice_wechat_template_field','input|required|请输入公众号申请的模板 ID','','N','0','system',CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT 1 FROM sys_dict_data WHERE dict_type='notice_wechat_template_field' AND dict_value='templateId');
+INSERT INTO sys_dict_data (dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,create_by,create_time) SELECT 2,'跳转外链','url','notice_wechat_template_field','input|optional|https://，可使用 #{deviceId} 等参数','','N','0','system',CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT 1 FROM sys_dict_data WHERE dict_type='notice_wechat_template_field' AND dict_value='url');
+INSERT INTO sys_dict_data (dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,create_by,create_time) SELECT 3,'小程序 AppID','miniProgramAppId','notice_wechat_template_field','input|optional|与小程序页面同时填写','','N','0','system',CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT 1 FROM sys_dict_data WHERE dict_type='notice_wechat_template_field' AND dict_value='miniProgramAppId');
+INSERT INTO sys_dict_data (dict_sort,dict_label,dict_value,dict_type,css_class,list_class,is_default,status,create_by,create_time) SELECT 4,'小程序页面','miniProgramPage','notice_wechat_template_field','input|optional|pages/detail/index，可使用 #{deviceId}','','N','0','system',CURRENT_TIMESTAMP WHERE NOT EXISTS (SELECT 1 FROM sys_dict_data WHERE dict_type='notice_wechat_template_field' AND dict_value='miniProgramPage');

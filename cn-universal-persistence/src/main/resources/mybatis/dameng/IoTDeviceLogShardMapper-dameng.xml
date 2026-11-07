@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceLogShardMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="command_id" jdbcType="VARCHAR" property="commandId" />
+    <result column="command_status" jdbcType="SMALLINT" property="commandStatus" />
+    <result column="point" jdbcType="VARCHAR" property="point" />
+    <result column="event" jdbcType="VARCHAR" property="event" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <select id="queryLogPageV2ByIdList" timeout="8" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    SELECT * FROM (
+    (SELECT * FROM iot_device_log
+    <where>
+      <if test="id != null">id &lt; CAST(#{id} AS bigint)</if>
+      <if test="iotId != null">AND iot_id = #{iotId}</if>
+      <if test="productKey != null and productKey != ''">AND product_key = #{productKey}</if>
+      <if test="deviceId != null and deviceId != ''">AND device_id = #{deviceId}</if>
+      <if test="messageType != null and messageType != ''">AND message_type = #{messageType}</if>
+      <choose>
+        <when test="event != null and event != ''">AND event = #{event}</when>
+        <when test="params != null and params.event != null and params.event != ''">AND event = #{params.event}</when>
+      </choose>
+      <choose>
+        <when test="beginCreateTime != null">AND create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}</when>
+        <when test="params != null and params.beginCreateTime != null">AND create_time &gt;= to_timestamp(#{params.beginCreateTime})</when>
+      </choose>
+      <choose>
+        <when test="endCreateTime != null">AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}</when>
+        <when test="params != null and params.endCreateTime != null">AND create_time &lt;= to_timestamp(#{params.endCreateTime})</when>
+      </choose>
+    </where>
+    ORDER BY create_time DESC, id DESC LIMIT #{halfSize})
+
+    UNION ALL
+
+    (SELECT * FROM iot_device_log
+    <where>
+      <if test="id != null">id &gt;= CAST(#{id} AS bigint)</if>
+      <if test="iotId != null">AND iot_id = #{iotId}</if>
+      <if test="productKey != null and productKey != ''">AND product_key = #{productKey}</if>
+      <if test="deviceId != null and deviceId != ''">AND device_id = #{deviceId}</if>
+      <if test="messageType != null and messageType != ''">AND message_type = #{messageType}</if>
+      <choose>
+        <when test="event != null and event != ''">AND event = #{event}</when>
+        <when test="params != null and params.event != null and params.event != ''">AND event = #{params.event}</when>
+      </choose>
+      <choose>
+        <when test="beginCreateTime != null">AND create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}</when>
+        <when test="params != null and params.beginCreateTime != null">AND create_time &gt;= to_timestamp(#{params.beginCreateTime})</when>
+      </choose>
+      <choose>
+        <when test="endCreateTime != null">AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}</when>
+        <when test="params != null and params.endCreateTime != null">AND create_time &lt;= to_timestamp(#{params.endCreateTime})</when>
+      </choose>
+    </where>
+    ORDER BY create_time ASC, id ASC LIMIT #{halfSize})
+    ) AS combined
+    ORDER BY create_time DESC, id DESC
+  </select>
+  <select id="queryLogPageV2List" timeout="8" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="iotId != null and iotId != ''">
+        and iot_id = #{iotId}
+      </if>
+      <if test="messageType != null and messageType != ''">
+        and message_type = #{messageType}
+      </if>
+      <if test="beginCreateTime != null">
+        and create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endCreateTime != null">
+        and create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="params != null and params.beginCreateTime != null">
+        and create_time &gt;= to_timestamp(#{params.beginCreateTime})
+      </if>
+      <if test="params != null and params.endCreateTime != null">
+        and create_time &lt;= to_timestamp(#{params.endCreateTime})
+      </if>
+      <if test="productKey != null and productKey != ''">
+        and product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        and device_id = #{deviceId}
+      </if>
+      <if test="deviceName != null and deviceName != ''">
+        and device_name like concat('%', #{deviceName}, '%')
+      </if>
+      <choose>
+        <when test="event != null and event != ''">and event = #{event}</when>
+        <when test="params != null and params.event != null and params.event != ''">and event = #{params.event}</when>
+      </choose>
+      <if test="params != null and params.properties != null and params.properties != ''">
+        and JSON_CONTAINS_PATH(COALESCE(NULLIF(content, ''), '{}'), 'ONE', concat('$.properties.', #{params.properties})) = 1
+      </if>
+    </where>
+    order by create_time desc, id desc
+  </select>
+  <select id="queryLogById" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="id != null and id != ''">
+        and id = CAST(#{id} AS bigint)
+      </if>
+      <if test="iotId != null and iotId != ''">
+        and iot_id = #{iotId}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        and product_key = #{productKey}
+      </if>
+    </where>
+  </select>
+  <select id="queryLogPageList" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="iotId != null and iotId != ''">
+        and iot_id = #{iotId}
+      </if>
+      <if test="messageType != null and messageType != ''">
+        and message_type = #{messageType}
+      </if>
+      <if test="beginCreateTime != null">
+        and create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endCreateTime != null">
+        and create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="params != null and params.beginCreateTime != null">
+        and create_time &gt;= to_timestamp(#{params.beginCreateTime})
+      </if>
+      <if test="params != null and params.endCreateTime != null">
+        and create_time &lt;= to_timestamp(#{params.endCreateTime})
+      </if>
+      <if test="productKey != null and productKey != ''">
+        and product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        and device_id = #{deviceId}
+      </if>
+      <if test="deviceName != null and deviceName != ''">
+        and device_name like concat('%', #{deviceName}, '%')
+      </if>
+      <if test="params != null and params.event != null and params.event != ''">
+        and event = #{params.event}
+      </if>
+      <if test="params != null and params.properties != null and params.properties != ''">
+        and JSON_CONTAINS_PATH(COALESCE(NULLIF(content, ''), '{}'), 'ONE', concat('$.properties.', #{params.properties})) = 1
+      </if>
+    </where>
+    order by create_time desc, id desc
+  </select>
+  <select id="queryEventTotalByEventAndId" resultType="java.lang.String" databaseId="dameng">
+    SELECT create_time
+    FROM iot_device_log
+    WHERE iot_id = #{iotId}
+      AND message_type = 'EVENT'
+      AND event = #{event}
+    ORDER BY create_time desc LIMIT 1
+  </select>
+  <insert id="addFunctionLog" parameterType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into iot_device_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="iotId != null">iot_id,</if>
+      <if test="deviceId != null and deviceId != ''">device_id,</if>
+      <if test="product_key != null">product_key,</if>
+      <if test="device_name != null">device_name,</if>
+      <if test="message_type != null">message_type,</if>
+      <if test="command_id != null">command_id,</if>
+      <if test="command_status != null">command_status,</if>
+      <if test="event != null">event,</if>
+      <if test="point != null">point,</if>
+      <if test="content != null">content,</if>
+      <if test="create_time != null">create_time,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="iotId != null">#{iotId},</if>
+      <if test="deviceId != null and deviceId != ''">#{deviceId},</if>
+      <if test="product_key != null">#{productKey},</if>
+      <if test="device_name != null">#{deviceName},</if>
+      <if test="message_type != null">#{messageType},</if>
+      <if test="command_id != null">#{commandId},</if>
+      <if test="command_status != null">#{commandStatus},</if>
+      <if test="event != null">#{event},</if>
+      <if test="point != null">#{point},</if>
+      <if test="content != null">#{content},</if>
+      <if test="create_time != null">#{createTime},</if>
+    </trim>
+  </insert>
+
+  <insert id="batchInsertByIotId" parameterType="map" databaseId="dameng">
+    insert into iot_device_log (
+    id, iot_id, device_id, product_key, device_name, message_type,
+    command_id, command_status, event, point, content, create_time
+    ) values
+    <foreach collection="logs" item="log" separator=",">
+      (
+      #{log.id}, #{log.iotId}, #{log.deviceId}, #{log.productKey}, #{log.deviceName},
+      #{log.messageType}, #{log.commandId}, #{log.commandStatus}, #{log.event},
+      #{log.point}, #{log.content}, #{log.createTime}
+      )
+    </foreach>
+  </insert>
+  <select id="queryCoordinatesLogByIotId" resultType="cn.universal.persistence.entity.IoTDeviceLog" databaseId="dameng">
+    select *
+    from iot_device_log
+    where iot_id = #{iotId}
+      and message_type = 'PROPERTIES'
+      and content like '%coordinate%'
+    order by id desc
+    limit 1 offset 1
+  </select>
+  <select id="queryLatestCoordinatesLogByIotId" resultType="cn.universal.persistence.entity.IoTDeviceLog" databaseId="dameng">
+    select *
+    from iot_device_log
+    where iot_id = #{iotId}
+      and message_type = 'PROPERTIES'
+      and content like '%coordinate%'
+    order by id desc limit 1
+  </select>
+  <select id="getRecentCommand" resultType="cn.universal.persistence.entity.IoTDeviceLog" databaseId="dameng">
+    select *
+    from iot_device_log
+    where iot_id = #{iotId}
+      and message_type = #{messageType}
+      and create_time &gt;= to_timestamp(#{createTime})
+      and command_id = #{commandId}
+      and command_status = #{commandStatus}
+    limit 1
+  </select>
+  <update id="updateRecentCommandSuccess" databaseId="dameng">
+    update iot_device_log
+    set command_status = 1
+    where id = #{ioTDeviceLog.id}
+      and iot_id = #{iotId}
+  </update>
+  <select id="queryDeviceLogs" resultType="cn.universal.persistence.entity.IoTDeviceLog" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="query.iotId != null">
+        AND iot_id = #{query.iotId}
+      </if>
+      <if test="query.productKey != null">
+        AND product_key = #{query.productKey}
+      </if>
+      <if test="query.deviceId != null">
+        AND device_id = #{query.deviceId}
+      </if>
+      <if test="query.messageType != null">
+        AND message_type = #{query.messageType}
+      </if>
+      <if test="query.logId != null">
+        AND id = #{query.logId}
+      </if>
+      <if test="query.startTime != null">
+        AND create_time &gt;= to_timestamp(#{query.startTime})
+      </if>
+      <if test="query.endTime != null">
+        AND create_time &lt;= to_timestamp(#{query.endTime})
+      </if>
+      <if test="query.commandId != null">
+        AND command_id = #{query.commandId}
+      </if>
+      <if test="query.commandStatus != null">
+        AND command_status = #{query.commandStatus}
+      </if>
+      <if test="query.eventType != null">
+        AND event = #{query.eventType}
+      </if>
+    </where>
+    ORDER BY create_time DESC, id DESC
+    <if test="query.limit &gt; 0">
+      LIMIT #{query.limit}
+    </if>
+  </select>
+  <select id="queryLogCursorList" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng" timeout="8">
+    SELECT * FROM iot_device_log
+    WHERE iot_id = #{iotId} AND product_key = #{productKey}
+      AND create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+      AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+      <if test="deviceId != null and deviceId != ''">AND device_id = #{deviceId}</if>
+      <if test="messageType != null and messageType != ''">AND message_type = #{messageType}</if>
+      <if test="event != null and event != ''">AND event = #{event}</if>
+      <if test="id != null and id != ''">AND id = CAST(#{id} AS BIGINT)</if>
+      <if test="beforeTime != null">
+        AND create_time &lt;= #{beforeTime,jdbcType=TIMESTAMP}
+        AND (create_time &lt; #{beforeTime,jdbcType=TIMESTAMP}
+          OR (create_time = #{beforeTime,jdbcType=TIMESTAMP} AND id &lt; #{beforeId,jdbcType=BIGINT}))
+      </if>
+    ORDER BY create_time DESC, id DESC LIMIT #{fetchSize}
+  </select>
+  <select id="queryHistoryEventStats" timeout="8"
+    resultType="cn.universal.persistence.entity.vo.EventCountAndTimeVO" databaseId="dameng">
+    SELECT COUNT(*) AS totalCount, MAX(create_time) AS latestCreateTime
+    FROM (
+      SELECT create_time FROM iot_device_log
+      WHERE iot_id = #{iotId} AND product_key = #{productKey}
+        AND message_type = 'EVENT' AND event = #{event}
+      ORDER BY create_time DESC FETCH FIRST 100 ROWS ONLY
+    ) recent_events
+  </select>
+  <!-- Bound each event before aggregation; UNION ALL avoids one database round trip per event. -->
+  <select id="queryHistoryEventSummaries" timeout="8"
+    resultType="cn.universal.persistence.entity.vo.EventCountAndTimeVO" databaseId="dameng">
+    <foreach collection="events" item="eventId" separator=" UNION ALL ">
+      SELECT #{eventId,jdbcType=VARCHAR} AS event, COUNT(*) AS totalCount, MAX(create_time) AS latestCreateTime
+      FROM (
+        SELECT create_time FROM iot_device_log
+        WHERE iot_id = #{iotId} AND product_key = #{productKey}
+          AND message_type = 'EVENT' AND event = #{eventId}
+        ORDER BY create_time DESC FETCH FIRST 100 ROWS ONLY
+      ) recent_events
+    </foreach>
+  </select>
+</mapper>

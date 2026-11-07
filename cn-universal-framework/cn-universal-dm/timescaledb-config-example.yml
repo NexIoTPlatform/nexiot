@@ -1,0 +1,29 @@
+# TimescaleDB 设备日志存储配置示例
+#
+# 说明：
+# 1. TimescaleDB 复用当前应用的 PostgreSQL 主数据源，不需要额外单独配置 JDBC
+# 2. 仅在当前主库是 PostgreSQL 时生效
+# 3. 启动时会自动：
+#    - 注册 log_store_policy = timescaledb 字典项（可关闭）
+#    - 创建/补齐 iot_device_log、iot_device_log_metadata 表
+#    - 尝试启用 timescaledb 扩展并转换为 hypertable
+# 4. 如果数据库未安装 TimescaleDB 扩展，也不会影响普通 PostgreSQL 日志读写
+
+timescaledb:
+  # 是否启用 TimescaleDB 存储策略
+  enable: true
+
+  # 是否在启动时自动初始化日志表 / hypertable / 索引
+  auto-init: true
+
+  # 是否自动补齐 log_store_policy 字典，便于前端直接选择
+  ensure-dict: true
+
+  # hypertable 分块时间间隔
+  chunk-time-interval: 7 days
+
+# 产品示例：
+# storePolicy: timescaledb
+#
+# 兼容写法：
+# storePolicy: timescaleDb

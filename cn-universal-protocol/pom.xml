@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>cn-universal-protocol</artifactId>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <!-- 不保留方法参数名 -->
+          <debug>false</debug>
+          <!-- 不生成调试信息 -->
+          <debuglevel>none</debuglevel>
+          <!-- 不生成行号信息 -->
+          <optimize>true</optimize>
+          <!-- 优化字节码 -->
+          <parameters>true</parameters>
+        </configuration>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>3.14.0</version>
+      </plugin>
+    </plugins>
+  </build>
+  <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <module>cn-universal-mqtt-protocol</module>
+    <module>cn-http-access-protocol</module>
+  </modules>
+
+  <packaging>pom</packaging>
+
+  <parent>
+    <artifactId>cn-universal</artifactId>
+    <groupId>cn.universal.iot</groupId>
+    <version>1.6-SNAPSHOT</version>
+  </parent>
+</project> 

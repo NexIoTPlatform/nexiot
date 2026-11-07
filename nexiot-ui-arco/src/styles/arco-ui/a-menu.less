@@ -1,0 +1,94 @@
+.arco-trigger-menu-item.arco-trigger-menu-selected,
+.arco-trigger-menu-pop-header.arco-trigger-menu-selected {
+  color: rgb(var(--primary-6));
+}
+
+.arco-menu-icon-suffix {
+  transition: all 0.2s;
+}
+
+.arco-menu-horizontal .arco-menu-pop {
+  display: inline-flex;
+}
+
+.arco-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 仅统一应用导航，业务页面内的菜单继续使用 Arco 默认主题。
+.asider,
+.layout-columns__menu,
+.drawer .menu {
+  --color-menu-light-bg: color-mix(in srgb, var(--color-fill-1) 65%, var(--color-bg-1));
+}
+
+.asider .arco-menu-vertical,
+.layout-columns__menu,
+.drawer .menu {
+  --nexiot-menu-text: var(--color-text-2);
+  --nexiot-menu-active: var(--color-text-1);
+  --nexiot-menu-hover: var(--color-fill-2);
+  --nexiot-menu-selected: var(--color-fill-3);
+
+  &.arco-menu-dark {
+    --nexiot-menu-text: color-mix(in srgb, var(--color-white) 78%, transparent);
+    --nexiot-menu-active: var(--color-white);
+    --nexiot-menu-hover: var(--color-menu-dark-hover);
+    --nexiot-menu-selected: var(--color-menu-dark-hover);
+  }
+
+  .arco-menu-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .arco-menu-item,
+  .arco-menu-inline-header,
+  .arco-menu-pop-header {
+    border-radius: 6px;
+
+    &:not(.arco-menu-disabled) {
+      color: var(--nexiot-menu-text);
+
+      &:hover {
+        color: var(--nexiot-menu-active);
+        background-color: var(--nexiot-menu-hover);
+      }
+
+      &.arco-menu-selected {
+        color: var(--nexiot-menu-active);
+      }
+
+      .arco-menu-icon,
+      .arco-icon {
+        color: inherit;
+      }
+    }
+  }
+
+  .arco-menu-item.arco-menu-selected:not(.arco-menu-disabled) {
+    background-color: var(--nexiot-menu-selected);
+  }
+
+  &:not(.arco-menu-collapsed) .arco-menu-icon {
+    margin-right: 12px;
+  }
+
+  .arco-menu-indent {
+    width: 32px;
+  }
+}
+
+.one-level-menu {
+  .one-level-menu__item {
+    border-radius: 6px;
+  }
+
+  .one-level-menu__item.one-level-menu__item--active {
+    color: var(--color-text-1);
+    background-color: var(--color-fill-3);
+  }
+}

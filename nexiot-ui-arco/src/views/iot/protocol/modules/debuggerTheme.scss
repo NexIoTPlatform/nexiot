@@ -1,0 +1,107 @@
+// Teleport 弹窗的局部主题，只影响驱动调试与历史对比，不修改平台全局主题。
+.driver-debugger-shell,
+.driver-history-shell {
+  --ide-editor: #fff;
+  --ide-line: #fff8d6;
+  --ide-toolbar: #f7f8fa;
+  --ide-sidebar: #f7f8fa;
+  --ide-accent: rgb(var(--primary-6));
+  --ide-title: #f2f3f5;
+  --ide-run: #008a45;
+  --ide-file: #b5822e;
+  --ide-variable: #0451a5;
+  --ide-class: #795eaa;
+  --ide-value: #a31515;
+  --ide-status: #f2f3f5;
+  --ide-status-text: #4e5969;
+  --color-bg-1: #fff;
+  --color-bg-2: #fff;
+  --color-bg-3: #fff;
+  --color-bg-white: #fff;
+  --color-text-1: #1d2129;
+  --color-text-2: #4e5969;
+  --color-text-3: #86909c;
+  --color-text-4: #c9cdd4;
+  --color-fill-1: #f7f8fa;
+  --color-fill-2: #f2f3f5;
+  --color-fill-3: #e5e6eb;
+  --color-fill-4: #c9cdd4;
+  --color-border-1: #f2f3f5;
+  --color-border-2: #e5e6eb;
+  --color-border-3: #c9cdd4;
+
+  overflow: hidden;
+  background: var(--ide-editor);
+  border: 1px solid var(--color-border-2);
+  border-radius: 6px;
+  box-shadow: 0 16px 64px #0003;
+
+  .arco-modal-header {
+    height: 40px;
+    padding: 0 16px;
+    background: var(--ide-title);
+    border-bottom: 1px solid var(--color-border-2);
+  }
+
+  .arco-modal-title {
+    justify-content: flex-start;
+    font-size: 13px;
+    color: var(--color-text-1);
+    text-align: left;
+  }
+
+  .arco-modal-close-btn {
+    top: 9px;
+    color: var(--color-text-2);
+  }
+
+  .arco-tabs { background: transparent; }
+  .arco-split-trigger { background: var(--color-border-2); }
+  .arco-split-trigger:hover { background: var(--ide-accent); }
+  .arco-split-trigger-icon-wrapper { background: transparent; }
+
+  .arco-split-trigger-icon { opacity: 0; }
+  .driver-debugger__run:not(:disabled) { color: var(--ide-run); }
+}
+
+.driver-debugger-shell--dark,
+.driver-history-shell--dark {
+  --ide-editor: #1e1e1e;
+  --ide-line: #3a351f;
+  --ide-toolbar: #252526;
+  --ide-sidebar: #252526;
+  --ide-accent: #007acc;
+  --ide-title: #323233;
+  --ide-run: #89d185;
+  --ide-file: #dcb67a;
+  --ide-variable: #9cdcfe;
+  --ide-class: #c586c0;
+  --ide-value: #ce9178;
+  --ide-status: #007acc;
+  --ide-status-text: #fff;
+  --color-bg-1: #1e1e1e;
+  --color-bg-white: #252526;
+  --color-bg-2: #252526;
+  --color-bg-3: #2d2d30;
+  --color-bg-4: #333;
+  --color-text-1: #d4d4d4;
+  --color-text-2: #ccc;
+  --color-text-3: #9d9d9d;
+  --color-text-4: #777;
+  --color-fill-1: #2a2a2a;
+  --color-fill-2: #333;
+  --color-fill-3: #3c3c3c;
+  --color-fill-4: #454545;
+  --color-border: #3c3c3c;
+  --color-border-1: #303030;
+  --color-border-2: #373737;
+  --color-border-3: #444;
+  --color-danger-light-1: #442929;
+  --color-warning-light-1: #443822;
+  --color-success-light-1: #263e30;
+  --color-primary-light-1: #193b52;
+  --color-primary-light-2: #234b68;
+  --primary-6: 0, 122, 204;
+  --primary-7: 30, 142, 224;
+  --primary-5: 55, 148, 220;
+}

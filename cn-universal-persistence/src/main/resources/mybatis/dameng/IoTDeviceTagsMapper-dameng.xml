@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceTagsMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceTags">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="tag_name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="tag_type" jdbcType="VARCHAR" property="type" />
+    <result column="tag_value" jdbcType="VARCHAR" property="value" />
+    <result column="tag_key" jdbcType="VARCHAR" property="key" />
+    <result column="tag_instance" jdbcType="VARCHAR" property="instance" />
+  </resultMap>
+  <delete id="deleteByValueId" databaseId="dameng">
+    delete
+    from iot_device_tags
+    where tag_value = cast(#{groupId} as varchar)
+  </delete>
+  <select id="selectDevIds" resultType="java.lang.Integer" databaseId="dameng">
+    select count(1)
+    from iot_device_tags t
+    where t.tag_type = 'devGroup'
+      and t.tag_value = cast(#{groupId} as varchar)
+      and exists (
+        select 1
+        from iot_device d
+        where d.iot_id = t.iot_id
+      )
+  </select>
+  <select id="getOne" resultType="cn.universal.persistence.entity.IoTDeviceTags" parameterType="String" databaseId="dameng">
+    select *
+    from iot_device_tags
+    where iot_id = #{iotId}
+  </select>
+  <select id="selectDevGroupName" resultType="java.lang.String" databaseId="dameng">
+    select b.group_name
+    from iot_device_tags a
+      left join iot_device_group b on a.tag_value = cast(b.id as varchar)
+    where a.iot_id = #{iotId}
+      and a.tag_type = 'devGroup'
+  </select>
+</mapper>

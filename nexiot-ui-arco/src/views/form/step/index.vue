@@ -1,0 +1,75 @@
+<template>
+  <a-card title="分步表单" class="g-page-card" :body-style="{ overflowY: 'auto' }">
+    <template #extra>
+      <a-button>返回</a-button>
+    </template>
+    <div class="step-form__wrapper">
+      <section class="step-form__box">
+        <a-steps :current="current" :direction="!isMobile() ? 'horizontal' : 'vertical'">
+          <a-step description="确保填写正确">填写转账信息</a-step>
+          <a-step description="确认转账信息">确认转账信息</a-step>
+          <a-step description="恭喜您，转账成功">完成转账</a-step>
+        </a-steps>
+
+        <transition name="fade-slide" mode="out-in" appear>
+          <keep-alive>
+            <component :is="ComponentMap[current]" />
+          </keep-alive>
+        </transition>
+      </section>
+    </div>
+  </a-card>
+</template>
+
+<script setup lang="ts">
+import type { StepForm } from './type'
+import { isMobile } from '@/utils'
+import Step1 from './Step1.vue'
+import Step2 from './Step2.vue'
+import Step3 from './Step3.vue'
+import { STEP_FORM_KEY } from './util'
+
+defineOptions({ name: 'FormStep' })
+
+type T_ComponentMap = { [key: string]: typeof Step1 | typeof Step2 | typeof Step3 }
+const ComponentMap: T_ComponentMap = {
+  1: Step1,
+  2: Step2,
+  3: Step3
+}
+
+const current = ref(1)
+
+const getInitForm = () => ({
+  payAccount: '', // 付款账户
+  recAccount: '1997***6962@qq.com', // 收款账户
+  payType: 1, // 支付方式 1微信支付 2支付宝支付
+  recName: 'Lin', // 收款人姓名
+  amount: '1980', // 转账金额
+  password: '' // 支付密码
+} as StepForm)
+const form: StepForm = reactive(getInitForm())
+const resetForm = () => {
+  Object.assign(form, getInitForm())
+}
+
+provide(STEP_FORM_KEY, { form, resetForm, current })
+</script>
+
+<style lang="scss" scoped>
+.step-form__wrapper {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  min-height: 560px;
+  padding: var(--padding);
+  background: var(--color-bg-1);
+}
+
+.step-form__box {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 560px;
+  margin-top: 30px;
+}
+</style>

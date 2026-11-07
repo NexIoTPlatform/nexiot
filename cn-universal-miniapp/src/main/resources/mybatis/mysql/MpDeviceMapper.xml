@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpDeviceMapper">
+
+  <!-- 设备列表结果映射 -->
+  <resultMap id="MpDeviceVOResultMap" type="cn.universal.miniapp.vo.MpDeviceVO">
+    <!-- 基础字段 -->
+    <id column="iot_id" property="iotId"/>
+    <result column="third_platform" property="thirdPlatform"/>
+    <result column="product_key" property="productKey"/>
+    <result column="device_id" property="deviceId"/>
+    <result column="ext_device_id" property="extDeviceId"/>
+    <result column="device_name" property="deviceName"/>
+    <result column="product_name" property="productName"/>
+    <result column="product_image" property="productImage"/>
+    <result column="coordinate" property="coordinate"/>
+    <result column="device_type" property="deviceType"/>
+    <result column="online_status" property="onlineStatus"/>
+    <result column="device_node" property="deviceNode"/>
+    <result column="last_online_time" property="lastOnlineTime"/>
+    <!-- 网关相关 -->
+    <result column="gw_product_key" property="gwProductKey"/>
+    <result column="gw_device_id" property="gwDeviceId"/>
+    <!-- 扩展字段 -->
+    <result column="device_tag" property="deviceTag"/>
+    <result column="device_address" property="deviceAddress"/>
+    <result column="configuration" property="configuration"/>
+    <result column="metadata" property="metaData"/>
+    <result column="create_time" property="createTime"/>
+    <result column="ext1" property="ext1"/>
+    <result column="ext2" property="ext2"/>
+    <result column="ext3" property="ext3"/>
+    <result column="ext4" property="ext4"/>
+  </resultMap>
+
+  <!-- 根据应用ID查询设备列表 -->
+  <select id="selectDeviceListByAppId" resultMap="MpDeviceVOResultMap">
+    SELECT d.iot_id,
+           p.third_platform,
+           d.product_key,
+           d.device_id,
+           d.ext_device_id,
+           d.device_name,
+           d.product_name,
+           p.photo_url                             AS product_image,
+           d.coordinate,
+           p.device_node                           AS device_type,
+           p.device_node,
+           CASE WHEN d.state = 1 THEN 1 ELSE 0 END AS online_status,
+           FROM_UNIXTIME(d.online_time)            AS last_online_time,
+           d.gw_product_key,
+           d.device_tag,
+           d.device_address,
+           d.ext1,
+           d.ext2,
+           d.ext3,
+           d.ext4
+    FROM iot_device d
+           LEFT JOIN iot_product p ON d.product_key = p.product_key
+    WHERE d.application = #{linkedAppId}
+    ORDER BY d.create_time DESC
+  </select>
+
+  <!-- 根据应用ID和查询条件查询设备列表 -->
+  <select id="selectDeviceListByQuery" resultMap="MpDeviceVOResultMap">
+    SELECT DISTINCT d.iot_id,
+    p.third_platform,
+    d.product_key,
+    d.device_id,
+    d.ext_device_id,
+    d.device_name,
+    d.product_name,
+    p.photo_url AS product_image,
+    d.coordinate,
+    p.device_node AS device_type,
+    p.device_node,
+    CASE WHEN d.state = 1 THEN 1 ELSE 0 END AS online_status,
+    FROM_UNIXTIME(d.online_time) AS last_online_time,
+    d.gw_product_key,
+    d.device_tag,
+    d.device_address,
+    d.ext1,
+    d.ext2,
+    d.ext3,
+    d.ext4,
+    FROM_UNIXTIME(d.create_time) AS create_time,
+    -- 新增：显式查询原始create_time字段（可加别名避免冲突）
+    d.create_time AS raw_create_time
+    FROM iot_device d
+    LEFT JOIN iot_product p ON d.product_key = p.product_key
+    LEFT JOIN iot_device_tags tg
+    ON (tg.iot_id = d.iot_id AND (tg.tag_type = 'devGroup'))
+    LEFT JOIN iot_device_group dg ON tg.tag_value = CAST(dg.id AS CHAR)
+    WHERE d.application = #{query.linkedAppId}
+    <if test="query.keyword != null and query.keyword != ''">
+      AND (d.device_name LIKE CONCAT('%', #{query.keyword}, '%')
+      OR d.device_id LIKE CONCAT('%', #{query.keyword}, '%'))
+    </if>
+    <if test="query.deviceName != null and query.deviceName != ''">
+      AND d.device_name LIKE CONCAT('%', #{query.deviceName}, '%')
+    </if>
+    <if test="query.deviceId != null and query.deviceId != ''">
+      AND d.device_id LIKE CONCAT('%', #{query.deviceId}, '%')
+    </if>
+    <if test="query.deviceNode != null and query.deviceNode != ''">
+      AND p.device_node = #{query.deviceNode}
+    </if>
+    <if test="query.deviceTag != null and query.deviceTag != ''">
+      AND d.device_tag LIKE CONCAT('%', #{query.deviceTag}, '%')
+    </if>
+    <if test="query.devGroupName != null and query.devGroupName != ''">
+      AND (dg.group_name LIKE CONCAT('%', #{query.devGroupName}, '%')
+      OR tg.tag_value LIKE CONCAT('%', #{query.devGroupName}, '%'))
+    </if>
+    <if test="query.classifiedId != null and query.classifiedId != ''">
+      AND p.classified_id = #{query.classifiedId}
+    </if>
+    <if test="query.productKey != null and query.productKey != ''">
+      AND d.product_key = #{query.productKey}
+    </if>
+    <if test="query.onlineStatus != null">
+      AND d.state = #{query.onlineStatus}
+    </if>
+    <if test="query.iotIds != null and query.iotIds.size > 0">
+      AND d.iot_id IN
+      <foreach collection="query.iotIds" item="id" open="(" separator="," close=")">
+        #{id}
+      </foreach>
+    </if>
+    -- 修正：使用SELECT列表中存在的别名排序（或原始字段别名）
+    ORDER BY raw_create_time DESC
+  </select>
+
+  <!-- 根据iotId查询设备详情 -->
+  <select id="selectDeviceByIotId" resultMap="MpDeviceVOResultMap">
+    SELECT d.iot_id,
+           p.third_platform,
+           d.product_key,
+           d.device_id,
+           d.ext_device_id,
+           d.device_name,
+           d.product_name,
+           p.photo_url                             AS product_image,
+           d.coordinate,
+           p.device_node                           AS device_type,
+           p.device_node,
+           CASE WHEN d.state = 1 THEN 1 ELSE 0 END AS online_status,
+           FROM_UNIXTIME(d.online_time)            AS last_online_time,
+           d.gw_product_key,
+           d.device_tag,
+           d.device_address,
+           d.configuration,
+           p.metadata,
+           FROM_UNIXTIME(d.create_time)            AS create_time,
+           d.ext1,
+           d.ext2,
+           d.ext3,
+           d.ext4
+    FROM iot_device d
+           LEFT JOIN iot_product p ON d.product_key = p.product_key
+    WHERE d.iot_id = #{iotId} LIMIT 1
+  </select>
+
+  <!-- 根据网关productKey和deviceId查询子设备列表 -->
+  <select id="selectSubDevicesByGateway" resultMap="MpDeviceVOResultMap">
+    SELECT d.iot_id,
+           p.third_platform,
+           d.product_key,
+           d.device_id,
+           d.ext_device_id,
+           d.device_name,
+           d.product_name,
+           p.photo_url                             AS product_image,
+           d.coordinate,
+           p.device_node                           AS device_type,
+           p.device_node,
+           CASE WHEN d.state = 1 THEN 1 ELSE 0 END AS online_status,
+           FROM_UNIXTIME(d.online_time)            AS last_online_time,
+           d.gw_product_key,
+           d.device_tag,
+           d.device_address,
+           d.configuration,
+           d.ext1,
+           d.ext2,
+           d.ext3,
+           d.ext4
+    FROM iot_device d
+           LEFT JOIN iot_product p ON d.product_key = p.product_key
+    WHERE d.gw_product_key = #{productKey}
+      AND d.ext_device_id = #{deviceId}
+    ORDER BY d.create_time ASC
+  </select>
+
+  <!-- 统计应用下设备数量 -->
+  <select id="countDevicesByAppId" resultType="int">
+    SELECT COUNT(1)
+    FROM iot_device
+    WHERE application = #{linkedAppId}
+  </select>
+
+  <!-- 统计应用下在线设备数量 -->
+  <select id="countOnlineDevicesByAppId" resultType="int">
+    SELECT COUNT(1)
+    FROM iot_device
+    WHERE application = #{linkedAppId}
+      AND state = 1
+  </select>
+
+</mapper>

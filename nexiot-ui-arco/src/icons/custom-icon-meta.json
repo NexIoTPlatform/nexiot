@@ -1,0 +1,513 @@
+{
+  "brand-dahua": {
+    "label": "大华云",
+    "keywords": [
+      "大华",
+      "dahua",
+      "安防",
+      "视频监控"
+    ],
+    "source": "https://open.cloud-dahua.com/_nuxt/logozh.WDCnWfvM.png",
+    "design": "根据官网 D + 云标识重绘的菜单尺寸矢量"
+  },
+  "brand-hikvision": {
+    "label": "海康威视",
+    "keywords": [
+      "海康",
+      "hikvision",
+      "安防",
+      "视频监控"
+    ],
+    "source": "https://www.hikvision.com/cep/resource/resources/icons/Hikvision-Logo-R.svg"
+  },
+  "brand-ezviz": {
+    "label": "萤石云",
+    "keywords": [
+      "萤石",
+      "ezviz",
+      "摄像头",
+      "视频监控"
+    ],
+    "source": "https://mfs.ys7.com/mall/c3c0d060e2d402aa2405259276a7a1db.svg?0960607871"
+  },
+  "brand-imou": {
+    "label": "乐橙云",
+    "keywords": [
+      "乐橙",
+      "imou",
+      "摄像头",
+      "视频监控"
+    ],
+    "source": "https://oauth.imou.com/_nuxt/iconfont.C_nff_tu.svg"
+  },
+  "wechat": {
+    "label": "微信",
+    "keywords": [
+      "wechat",
+      "weixin",
+      "腾讯",
+      "社交"
+    ]
+  },
+  "alipay": {
+    "label": "支付宝",
+    "keywords": [
+      "alipay",
+      "阿里",
+      "支付"
+    ]
+  },
+  "brand-aliyun": {
+    "label": "阿里云",
+    "keywords": [
+      "阿里",
+      "aliyun",
+      "alibaba",
+      "云服务"
+    ],
+    "source": "https://www.aliyun.com/"
+  },
+  "brand-tencent-cloud": {
+    "label": "腾讯云",
+    "keywords": [
+      "腾讯",
+      "tencent",
+      "云服务"
+    ],
+    "source": "https://cloudcache.tencent-cloud.com/qcloud/portal/kit/images/slice/logo.23996906.svg"
+  },
+  "brand-huawei-cloud": {
+    "label": "华为云",
+    "keywords": [
+      "华为",
+      "huawei",
+      "云服务"
+    ],
+    "source": "https://res-static.hc-cdn.cn/cloudbu-site/china/zh-cn/wangxue/header/logo.svg"
+  },
+  "brand-wecom": {
+    "label": "企业微信",
+    "keywords": [
+      "微信",
+      "wecom",
+      "wework",
+      "腾讯",
+      "办公"
+    ],
+    "source": "https://wwcdn.weixin.qq.com/node/wwnl/wwnl/style/images/officialImages$h66b2153.svg"
+  },
+  "brand-dingtalk": {
+    "label": "钉钉",
+    "keywords": [
+      "dingtalk",
+      "阿里",
+      "办公"
+    ],
+    "source": "https://raw.githubusercontent.com/ant-design/ant-design-icons/master/packages/icons-svg/svg/outlined/dingtalk.svg"
+  },
+  "iot-product": {
+    "label": "产品中心",
+    "keywords": [
+      "物联网",
+      "产品管理",
+      "product"
+    ]
+  },
+  "iot-device": {
+    "label": "设备中心",
+    "keywords": [
+      "物联网",
+      "设备管理",
+      "device",
+      "传感器"
+    ]
+  },
+  "iot-model": {
+    "label": "物模型",
+    "keywords": [
+      "物联网",
+      "模型",
+      "model",
+      "属性",
+      "服务",
+      "事件"
+    ]
+  },
+  "iot-network": {
+    "label": "通信组件",
+    "keywords": [
+      "物联网",
+      "通信",
+      "网络",
+      "network",
+      "连接"
+    ]
+  },
+  "iot-mqtt": {
+    "label": "MQTT 服务",
+    "keywords": [
+      "物联网",
+      "mqtt",
+      "消息",
+      "订阅",
+      "发布"
+    ]
+  },
+  "iot-protocol": {
+    "label": "产品驱动",
+    "keywords": [
+      "物联网",
+      "协议解析",
+      "协议",
+      "驱动",
+      "protocol"
+    ]
+  },
+  "iot-edge": {
+    "label": "边云协同",
+    "keywords": [
+      "物联网",
+      "边缘计算",
+      "网关",
+      "edge",
+      "云"
+    ]
+  },
+  "iot-rule": {
+    "label": "规则引擎",
+    "keywords": [
+      "物联网",
+      "规则",
+      "联动",
+      "流程",
+      "rule"
+    ]
+  },
+  "iot-ota": {
+    "label": "固件升级",
+    "keywords": [
+      "IoT",
+      "OTA",
+      "固件",
+      "升级",
+      "上传",
+      "设备更新"
+    ]
+  },
+  "iot-bridge": {
+    "label": "数据桥接",
+    "keywords": [
+      "IoT",
+      "桥接",
+      "数据桥接",
+      "数据转发",
+      "数据源",
+      "互联"
+    ]
+  },
+  "iot-group": {
+    "label": "设备群组",
+    "keywords": [
+      "IoT",
+      "设备",
+      "群组",
+      "分组",
+      "设备分组",
+      "组织"
+    ]
+  },
+  "iot-shadow": {
+    "label": "设备状态",
+    "keywords": [
+      "IoT",
+      "设备影子",
+      "设备状态",
+      "在线",
+      "心跳",
+      "健康"
+    ]
+  },
+  "iot-certificate": {
+    "label": "设备凭证",
+    "keywords": [
+      "IoT",
+      "证书",
+      "设备凭证",
+      "身份认证",
+      "密钥",
+      "安全"
+    ]
+  },
+  "iot-policy": {
+    "label": "告警策略",
+    "keywords": [
+      "IoT",
+      "告警策略",
+      "规则配置",
+      "策略",
+      "阈值",
+      "安全策略"
+    ]
+  },
+  "iot-notice": {
+    "label": "通知渠道",
+    "keywords": [
+      "IoT",
+      "通知",
+      "渠道",
+      "模板",
+      "信封",
+      "消息推送",
+      "广播"
+    ]
+  },
+  "iot-task": {
+    "label": "任务中心",
+    "keywords": [
+      "IoT",
+      "任务",
+      "设备作业",
+      "作业",
+      "任务中心",
+      "调度"
+    ]
+  },
+  "iot-application": {
+    "label": "应用集成",
+    "keywords": [
+      "IoT",
+      "应用",
+      "集成",
+      "应用管理",
+      "模块",
+      "扩展"
+    ]
+  },
+  "iot-market": {
+    "label": "驱动市场",
+    "keywords": [
+      "IoT",
+      "驱动",
+      "驱动市场",
+      "市场",
+      "插件",
+      "商店"
+    ]
+  },
+  "menu-workbench": {
+    "label": "工作台",
+    "keywords": [
+      "工作台",
+      "仪表盘",
+      "首页",
+      "dashboard",
+      "workbench"
+    ]
+  },
+  "menu-system": {
+    "label": "系统管理",
+    "keywords": [
+      "系统",
+      "管理",
+      "齿轮",
+      "system",
+      "administration"
+    ]
+  },
+  "menu-users": {
+    "label": "用户与角色",
+    "keywords": [
+      "用户",
+      "角色",
+      "权限",
+      "人员",
+      "user",
+      "role"
+    ]
+  },
+  "menu-organization": {
+    "label": "组织与租户",
+    "keywords": [
+      "部门",
+      "租户",
+      "组织",
+      "机构",
+      "organization",
+      "tenant"
+    ]
+  },
+  "menu-dictionary": {
+    "label": "字典与字段库",
+    "keywords": [
+      "字典",
+      "字段",
+      "书册",
+      "dictionary",
+      "field"
+    ]
+  },
+  "menu-log": {
+    "label": "日志中心",
+    "keywords": [
+      "操作日志",
+      "登录日志",
+      "执行日志",
+      "审计",
+      "记录",
+      "log"
+    ]
+  },
+  "menu-settings": {
+    "label": "参数配置",
+    "keywords": [
+      "参数",
+      "配置",
+      "设置",
+      "滑杆",
+      "settings",
+      "configuration"
+    ]
+  },
+  "menu-storage": {
+    "label": "文件与存储",
+    "keywords": [
+      "文件",
+      "存储",
+      "资源",
+      "硬盘",
+      "file",
+      "storage"
+    ]
+  },
+  "menu-analysis": {
+    "label": "数据分析",
+    "keywords": [
+      "数据分析",
+      "分析",
+      "统计",
+      "报表",
+      "趋势",
+      "analysis",
+      "report"
+    ]
+  },
+  "iot-ai": {
+    "label": "人工智能",
+    "keywords": [
+      "视频AIoT",
+      "人工智能",
+      "平台AI",
+      "神经网络",
+      "ai",
+      "intelligence"
+    ]
+  },
+  "iot-dataset": {
+    "label": "数据集工厂",
+    "keywords": [
+      "数据集",
+      "数据工厂",
+      "图片",
+      "标注",
+      "dataset",
+      "annotation"
+    ]
+  },
+  "iot-training": {
+    "label": "模型训练",
+    "keywords": [
+      "模型训练",
+      "训练任务",
+      "学习",
+      "training",
+      "learning"
+    ]
+  },
+  "iot-inference": {
+    "label": "模型推理",
+    "keywords": [
+      "模型推理",
+      "推理任务",
+      "识别",
+      "预测",
+      "inference",
+      "prediction"
+    ]
+  },
+  "iot-model-deploy": {
+    "label": "模型部署",
+    "keywords": [
+      "模型部署",
+      "AI节点",
+      "算力",
+      "服务",
+      "部署",
+      "deploy",
+      "compute"
+    ]
+  },
+  "iot-tcp": {
+    "label": "TCP 服务",
+    "keywords": [
+      "tcp",
+      "双向",
+      "长连接",
+      "通信"
+    ]
+  },
+  "iot-udp": {
+    "label": "UDP 服务",
+    "keywords": [
+      "udp",
+      "报文",
+      "数据包",
+      "通信"
+    ]
+  },
+  "iot-http": {
+    "label": "HTTP 接入",
+    "keywords": [
+      "http",
+      "https",
+      "接口",
+      "api",
+      "网络"
+    ]
+  },
+  "iot-digital-twin": {
+    "label": "3D 大屏",
+    "keywords": [
+      "3d",
+      "数字孪生",
+      "组态",
+      "大屏"
+    ]
+  },
+  "menu-code": {
+    "label": "代码生成",
+    "keywords": [
+      "code",
+      "代码",
+      "开发",
+      "生成"
+    ]
+  },
+  "menu-template": {
+    "label": "模板与布局",
+    "keywords": [
+      "template",
+      "布局",
+      "模板",
+      "套餐"
+    ]
+  },
+  "menu-menu": {
+    "label": "菜单管理",
+    "keywords": [
+      "menu",
+      "导航",
+      "目录",
+      "菜单"
+    ]
+  }
+}

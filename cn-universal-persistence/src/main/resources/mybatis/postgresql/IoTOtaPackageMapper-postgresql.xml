@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTOtaPackageMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTOtaPackage">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="package_name" jdbcType="VARCHAR" property="packageName" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+    <result column="package_type" jdbcType="VARCHAR" property="packageType" />
+    <result column="custom_type" jdbcType="VARCHAR" property="customType" />
+    <result column="module" jdbcType="VARCHAR" property="module" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="file_name" jdbcType="VARCHAR" property="fileName" />
+    <result column="file_url" jdbcType="VARCHAR" property="fileUrl" />
+    <result column="file_size" jdbcType="BIGINT" property="fileSize" />
+    <result column="checksum" jdbcType="VARCHAR" property="checksum" />
+    <result column="checksum_algorithm" jdbcType="VARCHAR" property="checksumAlgorithm" />
+    <result column="signature_url" jdbcType="VARCHAR" property="signatureUrl" />
+    <result column="min_hardware_version" jdbcType="VARCHAR" property="minHardwareVersion" />
+    <result column="max_hardware_version" jdbcType="VARCHAR" property="maxHardwareVersion" />
+    <result column="min_software_version" jdbcType="VARCHAR" property="minSoftwareVersion" />
+    <result column="force_upgrade" jdbcType="INTEGER" property="forceUpgrade" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="release_notes" jdbcType="LONGVARCHAR" property="releaseNotes" />
+    <result column="extra_info" jdbcType="LONGVARCHAR" property="extraInfo" />
+    <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap id="PackageWithExtMap" type="cn.universal.persistence.entity.IoTOtaPackage" extends="BaseResultMap">
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="tag_ids_text" jdbcType="VARCHAR" property="tagIdsText" />
+    <result column="tag_names_text" jdbcType="VARCHAR" property="tagNamesText" />
+  </resultMap>
+  <sql id="selectPackageColumns">
+    select p.id, p.product_id, p.product_key, p.package_name, p.version, p.package_type, p.custom_type,
+           p.module, p.description, p.file_name, p.file_url, p.file_size, p.checksum,
+           p.checksum_algorithm, p.signature_url, p.min_hardware_version, p.max_hardware_version,
+           p.min_software_version, p.force_upgrade, p.status, p.release_notes, p.extra_info,
+           p.creator_id, p.tenant_id, p.create_time, p.update_time,
+           prod.name as product_name,
+           (select string_agg(t.id::text, ',' order by t.id)
+              from iot_ota_package_tag_rel rel
+              left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id) as tag_ids_text,
+           (select string_agg(t.tag_name, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+              left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id) as tag_names_text
+      from iot_ota_package p
+      left join iot_product prod
+        on lower(prod.product_key) = lower(p.product_key)
+  </sql>
+  <select id="selectPackageList" parameterType="cn.universal.persistence.entity.IoTOtaPackage" resultMap="PackageWithExtMap" databaseId="postgresql">
+    select p.id,
+           p.product_id,
+           p.product_key,
+           p.package_name,
+           p.version,
+           p.package_type,
+           p.custom_type,
+           p.module,
+           p.description,
+           p.file_name,
+           p.file_url,
+           p.file_size,
+           p.checksum,
+           p.checksum_algorithm,
+           p.signature_url,
+           p.min_hardware_version,
+           p.max_hardware_version,
+           p.min_software_version,
+           p.force_upgrade,
+           p.status,
+           p.release_notes,
+           p.extra_info,
+           p.creator_id,
+           p.tenant_id,
+           p.create_time,
+           p.update_time,
+           prod.name as product_name,
+           (
+             select string_agg(t.id::text, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+             left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id
+           ) as tag_ids_text,
+           (
+             select string_agg(t.tag_name, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+             left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id
+           ) as tag_names_text
+    from iot_ota_package p
+    left join iot_product prod on lower(prod.product_key) = lower(p.product_key)
+    <where>
+      <if test="id != null">and p.id = #{id}</if>
+      <if test="productId != null">and p.product_id = #{productId}</if>
+      <if test="productKey != null and productKey != ''">
+        and lower(p.product_key) = lower(#{productKey})
+      </if>
+      <if test="packageName != null and packageName != ''">
+        and p.package_name ilike concat('%', #{packageName}, '%')
+      </if>
+      <if test="version != null and version != ''">
+        and p.version ilike concat('%', #{version}, '%')
+      </if>
+      <if test="packageType != null and packageType != ''">
+        and lower(p.package_type) = lower(#{packageType})
+      </if>
+      <if test="customType != null and customType != ''">
+        and lower(p.custom_type) = lower(#{customType})
+      </if>
+      <if test="description != null and description != ''">
+        and p.description ilike concat('%', #{description}, '%')
+      </if>
+      <if test="status != null and status != ''">
+        and lower(p.status) = lower(#{status})
+      </if>
+      <choose>
+        <when test="tenantId != null and tenantId != '' and creatorId != null and creatorId != ''">
+          and (p.tenant_id = #{tenantId}
+          or ((p.tenant_id is null or p.tenant_id = '') and lower(p.creator_id) = lower(#{creatorId})))
+        </when>
+        <when test="tenantId != null and tenantId != ''">
+          and p.tenant_id = #{tenantId}
+        </when>
+        <when test="creatorId != null and creatorId != ''">
+          and lower(p.creator_id) = lower(#{creatorId})
+        </when>
+      </choose>
+    </where>
+    order by p.create_time desc, p.id desc
+  </select>
+  <select id="selectPackageById" parameterType="Long" resultMap="PackageWithExtMap" databaseId="postgresql">
+    select p.id,
+           p.product_id,
+           p.product_key,
+           p.package_name,
+           p.version,
+           p.package_type,
+           p.custom_type,
+           p.module,
+           p.description,
+           p.file_name,
+           p.file_url,
+           p.file_size,
+           p.checksum,
+           p.checksum_algorithm,
+           p.signature_url,
+           p.min_hardware_version,
+           p.max_hardware_version,
+           p.min_software_version,
+           p.force_upgrade,
+           p.status,
+           p.release_notes,
+           p.extra_info,
+           p.creator_id,
+           p.tenant_id,
+           p.create_time,
+           p.update_time,
+           prod.name as product_name,
+           (
+             select string_agg(t.id::text, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+             left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id
+           ) as tag_ids_text,
+           (
+             select string_agg(t.tag_name, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+             left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id
+           ) as tag_names_text
+    from iot_ota_package p
+    left join iot_product prod on lower(prod.product_key) = lower(p.product_key)
+    where p.id = #{id}
+  </select>
+  <select id="selectRecentPackagesByProductKey" parameterType="String" resultMap="PackageWithExtMap" databaseId="postgresql">
+    select p.id,
+           p.product_id,
+           p.product_key,
+           p.package_name,
+           p.version,
+           p.package_type,
+           p.custom_type,
+           p.module,
+           p.description,
+           p.file_name,
+           p.file_url,
+           p.file_size,
+           p.checksum,
+           p.checksum_algorithm,
+           p.signature_url,
+           p.min_hardware_version,
+           p.max_hardware_version,
+           p.min_software_version,
+           p.force_upgrade,
+           p.status,
+           p.release_notes,
+           p.extra_info,
+           p.creator_id,
+           p.tenant_id,
+           p.create_time,
+           p.update_time,
+           prod.name as product_name,
+           (
+             select string_agg(t.id::text, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+             left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id
+           ) as tag_ids_text,
+           (
+             select string_agg(t.tag_name, ',' order by t.id)
+             from iot_ota_package_tag_rel rel
+             left join iot_ota_tag t on t.id = rel.tag_id
+             where rel.package_id = p.id
+           ) as tag_names_text
+    from iot_ota_package p
+    left join iot_product prod on lower(prod.product_key) = lower(p.product_key)
+    where lower(p.product_key) = lower(#{productKey})
+    order by p.create_time desc, p.id desc
+    limit 5
+  </select>
+  <select id="countTaskByPackageId" parameterType="Long" resultType="int" databaseId="postgresql">
+    select count(*) from iot_ota_task where package_id = #{packageId}
+  </select>
+  <insert id="insertPackage" parameterType="cn.universal.persistence.entity.IoTOtaPackage" useGeneratedKeys="true" keyProperty="id" databaseId="postgresql">
+    insert into iot_ota_package
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="productId != null">product_id,</if>
+      <if test="productKey != null and productKey != ''">product_key,</if>
+      <if test="packageName != null and packageName != ''">package_name,</if>
+      <if test="version != null and version != ''">version,</if>
+      <if test="packageType != null and packageType != ''">package_type,</if>
+      <if test="customType != null">custom_type,</if>
+      <if test="module != null">module,</if>
+      <if test="description != null">description,</if>
+      <if test="fileName != null">file_name,</if>
+      <if test="fileUrl != null and fileUrl != ''">file_url,</if>
+      <if test="fileSize != null">file_size,</if>
+      <if test="checksum != null">checksum,</if>
+      <if test="checksumAlgorithm != null">checksum_algorithm,</if>
+      <if test="signatureUrl != null">signature_url,</if>
+      <if test="minHardwareVersion != null">min_hardware_version,</if>
+      <if test="maxHardwareVersion != null">max_hardware_version,</if>
+      <if test="minSoftwareVersion != null">min_software_version,</if>
+      <if test="forceUpgrade != null">force_upgrade,</if>
+      <if test="status != null">status,</if>
+      <if test="releaseNotes != null">release_notes,</if>
+      <if test="extraInfo != null">extra_info,</if>
+      <if test="creatorId != null">creator_id,</if>
+      <if test="tenantId != null">tenant_id,</if>
+      create_time,
+      update_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="productId != null">#{productId},</if>
+      <if test="productKey != null and productKey != ''">#{productKey},</if>
+      <if test="packageName != null and packageName != ''">#{packageName},</if>
+      <if test="version != null and version != ''">#{version},</if>
+      <if test="packageType != null and packageType != ''">#{packageType},</if>
+      <if test="customType != null">#{customType},</if>
+      <if test="module != null">#{module},</if>
+      <if test="description != null">#{description},</if>
+      <if test="fileName != null">#{fileName},</if>
+      <if test="fileUrl != null and fileUrl != ''">#{fileUrl},</if>
+      <if test="fileSize != null">#{fileSize},</if>
+      <if test="checksum != null">#{checksum},</if>
+      <if test="checksumAlgorithm != null">#{checksumAlgorithm},</if>
+      <if test="signatureUrl != null">#{signatureUrl},</if>
+      <if test="minHardwareVersion != null">#{minHardwareVersion},</if>
+      <if test="maxHardwareVersion != null">#{maxHardwareVersion},</if>
+      <if test="minSoftwareVersion != null">#{minSoftwareVersion},</if>
+      <if test="forceUpgrade != null">#{forceUpgrade},</if>
+      <if test="status != null">#{status},</if>
+      <if test="releaseNotes != null">#{releaseNotes},</if>
+      <if test="extraInfo != null">#{extraInfo},</if>
+      <if test="creatorId != null">#{creatorId},</if>
+      <if test="tenantId != null">#{tenantId},</if>
+      now(),
+      now()
+    </trim>
+  </insert>
+  <update id="updatePackage" parameterType="cn.universal.persistence.entity.IoTOtaPackage" databaseId="postgresql">
+    update iot_ota_package
+    <set>
+      <if test="productId != null">product_id = #{productId},</if>
+      <if test="productKey != null and productKey != ''">product_key = #{productKey},</if>
+      <if test="packageName != null">package_name = #{packageName},</if>
+      <if test="version != null">version = #{version},</if>
+      <if test="packageType != null">package_type = #{packageType},</if>
+      <if test="customType != null">custom_type = #{customType},</if>
+      <if test="module != null">module = #{module},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="fileName != null">file_name = #{fileName},</if>
+      <if test="fileUrl != null">file_url = #{fileUrl},</if>
+      <if test="fileSize != null">file_size = #{fileSize},</if>
+      <if test="checksum != null">checksum = #{checksum},</if>
+      <if test="checksumAlgorithm != null">checksum_algorithm = #{checksumAlgorithm},</if>
+      <if test="signatureUrl != null">signature_url = #{signatureUrl},</if>
+      <if test="minHardwareVersion != null">min_hardware_version = #{minHardwareVersion},</if>
+      <if test="maxHardwareVersion != null">max_hardware_version = #{maxHardwareVersion},</if>
+      <if test="minSoftwareVersion != null">min_software_version = #{minSoftwareVersion},</if>
+      <if test="forceUpgrade != null">force_upgrade = #{forceUpgrade},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="releaseNotes != null">release_notes = #{releaseNotes},</if>
+      <if test="extraInfo != null">extra_info = #{extraInfo},</if>
+      <if test="tenantId != null">tenant_id = #{tenantId},</if>
+      update_time = now()
+    </set>
+    where id = #{id}
+  </update>
+  <delete id="deletePackageById" parameterType="Long" databaseId="postgresql">
+    delete from iot_ota_package where id = #{id}
+  </delete>
+</mapper>

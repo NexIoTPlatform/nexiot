@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.admin.SysUserRoleMapper">
+  <resultMap type="cn.universal.persistence.entity.admin.SysUserRole" id="SysUserRoleResult">
+    <result property="uuid" column="uuid" />
+    <result property="unionId" column="union_id" />
+    <result property="roleId" column="role_id" />
+  </resultMap>
+  <insert id="batchInsert" databaseId="postgresql">
+    INSERT INTO sys_user_role (
+      uuid,
+      union_id,
+      role_id
+    )
+    VALUES
+    <foreach collection="userRoles" item="item" separator=",">
+      (
+        #{item.uuid},
+        #{item.unionId},
+        #{item.roleId}
+      )
+    </foreach>
+  </insert>
+  <delete id="deleteUserRoleByUserIds" parameterType="String" databaseId="postgresql">
+    delete from sys_user_role
+    where union_id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+</mapper>

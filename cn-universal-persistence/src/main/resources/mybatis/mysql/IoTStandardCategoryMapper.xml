@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTStandardCategoryMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTStandardCategory">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="parent_id" jdbcType="BIGINT" property="parentId"/>
+    <result column="category_key" jdbcType="VARCHAR" property="categoryKey"/>
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+    <result column="level" jdbcType="TINYINT" property="level"/>
+    <result column="list_order" jdbcType="INTEGER" property="listOrder"/>
+    <result column="description" jdbcType="VARCHAR" property="description"/>
+    <result column="icon" jdbcType="VARCHAR" property="icon"/>
+    <result column="status" jdbcType="TINYINT" property="status"/>
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId"/>
+    <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+  </resultMap>
+
+  <sql id="selectCategoryVo">
+    select id, parent_id, category_key, category_name, level, list_order, 
+           description, icon, status, tenant_id, create_by, create_time, update_by, update_time
+    from iot_standard_category
+  </sql>
+
+  <select id="selectCategoryList" parameterType="cn.universal.persistence.entity.IoTStandardCategory"
+          resultMap="BaseResultMap">
+    <include refid="selectCategoryVo"/>
+    <where>
+      <if test="parentId != null">and parent_id = #{parentId}</if>
+      <if test="categoryKey != null and categoryKey != ''">and category_key like concat('%', #{categoryKey}, '%')</if>
+      <if test="categoryName != null and categoryName != ''">and category_name like concat('%', #{categoryName}, '%')</if>
+      <if test="level != null">and level = #{level}</if>
+      <if test="status != null">and status = #{status}</if>
+      <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    </where>
+    order by list_order asc, id asc
+  </select>
+
+  <select id="selectCategoryById" resultMap="BaseResultMap">
+    <include refid="selectCategoryVo"/>
+    where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+
+  <select id="selectCategoryByKey" resultMap="BaseResultMap">
+    <include refid="selectCategoryVo"/>
+    where category_key = #{categoryKey}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+
+  <select id="selectChildrenByParentId" resultMap="BaseResultMap">
+    <include refid="selectCategoryVo"/>
+    where parent_id = #{parentId}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    order by list_order asc, id asc
+  </select>
+
+  <select id="selectCategoryByLevel" resultMap="BaseResultMap">
+    <include refid="selectCategoryVo"/>
+    where level = #{level} and status = 1
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    order by list_order asc, id asc
+  </select>
+
+  <insert id="insertCategory" parameterType="cn.universal.persistence.entity.IoTStandardCategory"
+          useGeneratedKeys="true" keyProperty="id">
+    insert into iot_standard_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="parentId != null">parent_id,</if>
+      <if test="categoryKey != null and categoryKey != ''">category_key,</if>
+      <if test="categoryName != null and categoryName != ''">category_name,</if>
+      <if test="level != null">level,</if>
+      <if test="listOrder != null">list_order,</if>
+      <if test="description != null">description,</if>
+      <if test="icon != null">icon,</if>
+      <if test="status != null">status,</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+      <if test="createBy != null and createBy != ''">create_by,</if>
+      create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="parentId != null">#{parentId},</if>
+      <if test="categoryKey != null and categoryKey != ''">#{categoryKey},</if>
+      <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+      <if test="level != null">#{level},</if>
+      <if test="listOrder != null">#{listOrder},</if>
+      <if test="description != null">#{description},</if>
+      <if test="icon != null">#{icon},</if>
+      <if test="status != null">#{status},</if>
+      <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+      <if test="createBy != null and createBy != ''">#{createBy},</if>
+      now()
+    </trim>
+  </insert>
+
+  <update id="updateCategory" parameterType="cn.universal.persistence.entity.IoTStandardCategory">
+    update iot_standard_category
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="parentId != null">parent_id = #{parentId},</if>
+      <if test="categoryKey != null and categoryKey != ''">category_key = #{categoryKey},</if>
+      <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+      <if test="level != null">level = #{level},</if>
+      <if test="listOrder != null">list_order = #{listOrder},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="icon != null">icon = #{icon},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+      <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+      update_time = now()
+    </trim>
+    where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </update>
+
+  <delete id="deleteCategoryById">
+    delete from iot_standard_category where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </delete>
+
+  <delete id="deleteCategoryByIds">
+    delete from iot_standard_category where id in
+    <foreach item="id" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </delete>
+
+  <select id="countChildrenByParentId" resultType="int">
+    select count(*) from iot_standard_category where parent_id = #{parentId}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+
+  <select id="checkCategoryKeyUnique" resultType="int">
+    select count(*) from iot_standard_category
+    where category_key = #{categoryKey}
+    <if test="excludeId != null">and id != #{excludeId}</if>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+
+</mapper>

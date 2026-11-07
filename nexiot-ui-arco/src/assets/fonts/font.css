@@ -1,0 +1,5 @@
+@font-face {
+  font-family: DIGITAL;
+  src: url('./DS-DIGIT.TTF') format('truetype');
+  font-display: swap; /* 先显示默认字体，字体加载完成后替换 */
+}

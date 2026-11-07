@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.ossm.mapper.SysOssConfigMapper">
+  <resultMap type="cn.universal.ossm.entity.SysOssConfig" id="SysOssConfigResult">
+    <id property="configId" column="config_id" />
+    <result property="provider" column="provider" />
+    <result property="tenantId" column="tenant_id" />
+    <result property="endpoint" column="endpoint" />
+    <result property="publicEndpoint" column="public_endpoint" />
+    <result property="domain" column="domain" />
+    <result property="prefix" column="prefix" />
+    <result property="accessKey" column="access_key" />
+    <result property="secretKey" column="secret_key" />
+    <result property="bucketName" column="bucket_name" />
+    <result property="region" column="region" />
+    <result property="isHttps" column="is_https" />
+    <result property="active" column="active" />
+    <result property="createBy" column="create_by" />
+    <result property="createTime" column="create_time" />
+    <result property="updateBy" column="update_by" />
+    <result property="updateTime" column="update_time" />
+    <result property="remark" column="remark" />
+  </resultMap>
+  <sql id="selectOssConfigVo">
+    select config_id,
+           provider,
+           tenant_id,
+           endpoint,
+           public_endpoint,
+           domain,
+           prefix,
+           access_key,
+           secret_key,
+           bucket_name,
+           region,
+           is_https,
+           active,
+           create_by,
+           create_time,
+           update_by,
+           update_time,
+           remark
+    from sys_oss_config
+  </sql>
+  <select id="listAll" resultMap="SysOssConfigResult" databaseId="postgresql">
+    <include refid="selectOssConfigVo" />
+    <where>
+      <choose>
+        <when test="tenantId != null and tenantId != ''">
+          tenant_id = #{tenantId}
+        </when>
+        <otherwise>
+          (tenant_id is null or tenant_id = '')
+        </otherwise>
+      </choose>
+    </where>
+    order by provider asc
+  </select>
+  <select id="selectByProvider" resultMap="SysOssConfigResult" databaseId="postgresql">
+    <include refid="selectOssConfigVo" />
+    where provider = #{provider}
+    <choose>
+      <when test="tenantId != null and tenantId != ''">
+        and tenant_id = #{tenantId}
+      </when>
+      <otherwise>
+        and (tenant_id is null or tenant_id = '')
+      </otherwise>
+    </choose>
+    limit 1
+  </select>
+  <select id="selectActive" resultMap="SysOssConfigResult" databaseId="postgresql">
+    <include refid="selectOssConfigVo" />
+    where active = true
+    <choose>
+      <when test="tenantId != null and tenantId != ''">
+        and tenant_id = #{tenantId}
+      </when>
+      <otherwise>
+        and (tenant_id is null or tenant_id = '')
+      </otherwise>
+    </choose>
+    limit 1
+  </select>
+  <insert id="insertConfig" parameterType="cn.universal.ossm.entity.SysOssConfig" databaseId="postgresql">
+    insert into sys_oss_config (
+      config_id, provider, tenant_id, endpoint, public_endpoint, domain, prefix, access_key, secret_key,
+      bucket_name, region, is_https, active, create_by, create_time, remark
+    ) values (
+      #{configId}, #{provider}, #{tenantId}, #{endpoint}, #{publicEndpoint}, #{domain}, #{prefix}, #{accessKey}, #{secretKey},
+      #{bucketName}, #{region}, #{isHttps}, coalesce(#{active}, false), #{createBy}, now(), #{remark}
+    )
+  </insert>
+  <update id="updateConfig" parameterType="cn.universal.ossm.entity.SysOssConfig" databaseId="postgresql">
+    update sys_oss_config
+    set endpoint = #{endpoint},
+        public_endpoint = #{publicEndpoint},
+        domain = #{domain},
+        prefix = #{prefix},
+        access_key = #{accessKey},
+        secret_key = #{secretKey},
+        bucket_name = #{bucketName},
+        region = #{region},
+        is_https = #{isHttps},
+        update_by = #{updateBy},
+        update_time = now(),
+        remark = #{remark}
+    where config_id = #{configId}
+  </update>
+  <update id="clearActive" databaseId="postgresql">
+    update sys_oss_config set active = false
+    <where>
+      <choose>
+        <when test="tenantId != null and tenantId != ''">
+          tenant_id = #{tenantId}
+        </when>
+        <otherwise>
+          (tenant_id is null or tenant_id = '')
+        </otherwise>
+      </choose>
+    </where>
+  </update>
+  <update id="activateProvider" databaseId="postgresql">
+    update sys_oss_config set active = true, update_time = now() where provider = #{provider}
+    <choose>
+      <when test="tenantId != null and tenantId != ''">
+        and tenant_id = #{tenantId}
+      </when>
+      <otherwise>
+        and (tenant_id is null or tenant_id = '')
+      </otherwise>
+    </choose>
+  </update>
+</mapper>

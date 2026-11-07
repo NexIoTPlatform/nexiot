@@ -1,0 +1,29 @@
+# Build and tool output
+**/target/
+**/node_modules/
+**/dist/
+**/coverage/
+*.log
+*.pid
+.DS_Store
+.idea/
+.vscode/
+*.iml
+*.local
+**/__pycache__/
+**/.stylelintcache
+# Private deployment settings and test artifacts
+.env
+.env.*
+!.env.example
+!**/.env.example
+!nexiot-ui-arco/.env.development
+!nexiot-ui-arco/.env.production
+!nexiot-ui-arco/.env.test
+**/runtime.env
+.runtime/
+logs/
+uploadPath/
+*.key
+*.p12
+*.pfx

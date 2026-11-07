@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <springProperty scope="context" name="log.path" source="logging.file.path" defaultValue="./logs"/>
+  <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook"/>
+
+  <!-- ========================================== -->
+  <!-- 日志格式定义 -->
+  <!-- ========================================== -->
+  <property name="all.pattern"
+    value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%X{ctxId}] [%logger] %-5level - %msg%n%ex{full}"/>
+  <property name="module.pattern"
+    value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%X{ctxId}] %-5level - %msg%n%ex{full}"/>
+  <property name="console.pattern"
+    value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId}] [%logger] %-5level - %msg%n%ex{full}"/>
+
+  <!-- ========================================== -->
+  <!-- 1. 全局汇总日志（所有日志包含错误） -->
+  <!-- ========================================== -->
+  <appender name="ALL_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/all.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/all.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>1GB</maxFileSize>
+      <maxHistory>15</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${all.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>DEBUG</level>
+    </filter>
+  </appender>
+
+  <!-- ========================================== -->
+  <!-- 2. 协议模块独立日志文件 -->
+  <!-- ========================================== -->
+
+  <!-- 错误日志 -->
+  <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/error.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${all.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+  </appender>
+
+  <!-- API日志 -->
+  <appender name="API_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/api.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/api.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- MQTT协议日志 -->
+  <appender name="MQTT_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/mqtt.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/mqtt.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- TCP协议日志 -->
+  <appender name="TCP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/tcp.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/tcp.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- UDP协议日志 -->
+  <appender name="UDP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/udp.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/udp.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- HTTP协议日志 -->
+  <appender name="HTTP_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/http.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/http.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- 第三方平台协议日志 (CTAIOT, ONENET, IMOULIFE, EZVIZ等) -->
+  <appender name="THIRD_PARTY_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/third-party.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/third-party.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- 视频平台协议日志 (WVP, HIK-ISC, DAHUA-ICC) -->
+  <appender name="VIDEO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.path}/video.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>${log.path}/video.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${module.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
+
+  <!-- ========================================== -->
+  <!-- 3. 控制台输出 -->
+  <!-- ========================================== -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${console.pattern}</pattern>
+      <charset>UTF-8</charset>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>DEBUG</level>
+    </filter>
+  </appender>
+
+  <!-- ========================================== -->
+  <!-- 4. 异步日志包装：日志量升高时不阻塞业务线程 -->
+  <!-- ========================================== -->
+  <appender name="ASYNC_ALL_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>16384</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="ALL_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_ERROR_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>8192</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="ERROR_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_API_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>8192</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="API_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_MQTT_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>8192</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="MQTT_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_TCP_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>8192</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="TCP_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_UDP_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>8192</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="UDP_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_HTTP_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>4096</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="HTTP_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_THIRD_PARTY_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>4096</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="THIRD_PARTY_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_VIDEO_LOG" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>4096</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="VIDEO_LOG"/>
+  </appender>
+
+  <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>4096</queueSize>
+    <discardingThreshold>0</discardingThreshold>
+    <neverBlock>true</neverBlock>
+    <includeCallerData>false</includeCallerData>
+    <appender-ref ref="CONSOLE"/>
+  </appender>
+
+  <!-- PLC4X 在协议不匹配或模拟端点异常时会输出高频底层堆栈；工业运行时已记录端点状态和失败原因。 -->
+  <logger name="org.apache.plc4x.java.spi.drivers.ConnectionBase" level="WARN"/>
+  <logger name="org.apache.plc4x.java.transport.tcp.TcpTransportInstance" level="WARN"/>
+  <logger name="org.apache.plc4x.java.ads.AdsTcpConnection" level="WARN"/>
+  <logger name="org.apache.plc4x.java.eip.base.EipTcpConnection" level="OFF"/>
+  <logger name="org.apache.plc4x.java.opcua.context.SecureChannel" level="OFF"/>
+
+  <!-- ========================================== -->
+  <!-- 5. 开发环境配置 -->
+  <!-- ========================================== -->
+  <springProfile name="dev,pg,postgresql,dameng,ecloud">
+    <root level="INFO">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </root>
+
+    <!-- API日志 -->
+    <logger name="api" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_API_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- MQTT协议日志 -->
+    <logger name="mqtt" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_MQTT_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- TCP协议日志 -->
+    <logger name="tcp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_TCP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- UDP协议日志 -->
+    <logger name="udp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_UDP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- HTTP协议日志 -->
+    <logger name="cn.universal.http.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_HTTP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 第三方平台协议 -->
+    <logger name="cn.ctaiot.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.onenet.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.imoulife.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.ezviz.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 视频平台协议 -->
+    <logger name="cn.wvp.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.hik.isc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.dahua.icc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 框架日志 -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="cn.hutool" level="INFO"/>
+
+    <!-- MyBatis SQL日志 -->
+    <logger name="cn.universal.persistence.mapper" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="org.apache.ibatis" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="java.sql" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+  </springProfile>
+
+  <!-- ========================================== -->
+  <!-- 5. 测试环境配置 -->
+  <!-- ========================================== -->
+  <springProfile name="test,test2,huo,feng">
+    <root level="INFO">
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </root>
+
+    <!-- API日志 -->
+    <logger name="api" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_API_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- MQTT协议日志 -->
+    <logger name="mqtt" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_MQTT_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- TCP协议日志 -->
+    <logger name="tcp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_TCP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- UDP协议日志 -->
+    <logger name="udp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_UDP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- HTTP协议日志 -->
+    <logger name="cn.universal.http.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_HTTP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 第三方平台协议 -->
+    <logger name="cn.ctaiot.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.onenet.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.imoulife.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.ezviz.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 视频平台协议 -->
+    <logger name="cn.wvp.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.hik.isc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.dahua.icc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 框架日志 -->
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="cn.hutool" level="INFO"/>
+
+    <!-- MyBatis SQL日志 -->
+    <logger name="cn.universal.persistence.mapper" level="DEBUG" additivity="false">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="org.apache.ibatis" level="DEBUG" additivity="false">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="java.sql" level="DEBUG" additivity="false">
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+  </springProfile>
+  <!--动态开启SQL -->
+  <!--http://ip:port/test/v1/debug/log?name=cn.universal.persistence.mapper&level=DEBUG-->
+  <!-- ========================================== -->
+  <!-- 6. 生产环境配置 -->
+  <!-- ========================================== -->
+  <springProfile name="prod,beta,out">
+    <root level="WARN">
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </root>
+
+    <!-- API日志 -->
+    <logger name="api" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_API_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- MQTT协议日志 -->
+    <logger name="mqtt" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_MQTT_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- TCP协议日志 -->
+    <logger name="tcp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_TCP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- UDP协议日志 -->
+    <logger name="udp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_UDP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- HTTP协议日志 -->
+    <logger name="cn.universal.http.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_HTTP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 第三方平台协议 -->
+    <logger name="cn.ctaiot.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.onenet.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.imoulife.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.ezviz.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 视频平台协议 -->
+    <logger name="cn.wvp.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.hik.isc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.dahua.icc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 框架日志 -->
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="cn.hutool" level="WARN"/>
+
+    <!-- MyBatis SQL日志 -->
+    <logger name="cn.universal.persistence.mapper" level="WARN" additivity="false">
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+  </springProfile>
+
+  <!-- ========================================== -->
+  <!-- 7. Docker环境配置 -->
+  <!-- ========================================== -->
+  <springProfile name="docker">
+    <root level="INFO">
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_CONSOLE"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </root>
+
+    <!-- API日志 -->
+    <logger name="api" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_API_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- MQTT协议日志 -->
+    <logger name="mqtt" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_MQTT_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- TCP协议日志 -->
+    <logger name="tcp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_TCP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- UDP协议日志 -->
+    <logger name="udp" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_UDP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- HTTP协议日志 -->
+    <logger name="cn.universal.http.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_HTTP_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 第三方平台协议 -->
+    <logger name="cn.ctaiot.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.onenet.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.imoulife.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.ezviz.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_THIRD_PARTY_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 视频平台协议 -->
+    <logger name="cn.wvp.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.hik.isc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+    <logger name="cn.dahua.icc.protocol" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_VIDEO_LOG"/>
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+
+    <!-- 框架日志 -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="cn.hutool" level="INFO"/>
+
+    <!-- MyBatis SQL日志 -->
+    <logger name="cn.universal.persistence.mapper" level="INFO" additivity="false">
+      <appender-ref ref="ASYNC_ALL_LOG"/>
+      <appender-ref ref="ASYNC_ERROR_LOG"/>
+    </logger>
+  </springProfile>
+</configuration>

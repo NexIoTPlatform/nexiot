@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceSubscribeMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceSubscribe">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
+    <result column="sub_type" jdbcType="VARCHAR" property="subType"/>
+    <result column="product_key" jdbcType="VARCHAR" property="productKey"/>
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId"/>
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId"/>
+    <result column="url" jdbcType="VARCHAR" property="url"/>
+    <result column="topic" jdbcType="VARCHAR" property="topic"/>
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+    <result column="creater" jdbcType="VARCHAR" property="creater"/>
+    <result column="subscribe_instance" jdbcType="VARCHAR" property="instance"/>
+    <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+  </resultMap>
+
+  <select id="selectSubscribeBO" resultMap="BaseResultMap">
+    select * from iot_device_subscribe
+    WHERE enabled = 1
+    <if test="iotId!=null and iotId!=''">
+      AND iot_id = #{iotId}
+    </if>
+    <if test="productKey!=null and productKey!=''">
+      AND product_key = #{productKey}
+    </if>
+    <if test="msgType!=null and msgType!=''">
+      AND msg_type = #{msgType}
+    </if>
+    <if test="subType!=null and subType!=''">
+      AND sub_type = #{subType}
+    </if>
+  </select>
+
+  <select id="selectByMsgAndType" resultMap="BaseResultMap">
+    select * from iot_device_subscribe
+    WHERE enabled = 1
+    <if test="iotId!=null and iotId!=''">
+      AND iot_id = #{iotId}
+    </if>
+    <if test="productKey!=null and productKey!=''">
+      AND product_key = #{productKey}
+    </if>
+    <if test="msgType!=null and msgType!=''">
+      AND (FIND_IN_SET(#{msgType},msg_type) or msg_type="ALL")
+    </if>
+    <if test="subType!=null and subType!=''">
+      AND sub_type = #{subType}
+    </if>
+  </select>
+
+  <select id="selectSubscribesBO" resultMap="BaseResultMap">
+    select * from iot_device_subscribe
+    WHERE enabled = 1
+
+    <if test="subType!=null and subType!='' and subType=='PRODUCT'">
+      AND sub_type = 'PRODUCT'
+      AND product_key = #{productKey}
+      <if test="msgType!=null and msgType!=''">
+        AND msg_type = #{msgType}
+      </if>
+    </if>
+
+    <if test="subType!=null and subType!='' and subType=='DEVICE'">
+      AND sub_type = 'DEVICE'
+      AND iot_id = #{iotId}
+      AND product_key = #{productKey}
+      <if test="msgType!=null and msgType!=''">
+        AND msg_type = #{msgType}
+      </if>
+    </if>
+
+    <if test="subType==null or subType==''">
+      AND (sub_type = 'PRODUCT' AND product_key = #{productKey}
+      <if test="msgType!=null and msgType!=''">
+        AND msg_type = #{msgType}
+      </if>
+      or sub_type = 'DEVICE' AND iot_id = #{iotId} AND product_key = #{productKey}
+      <if test="msgType!=null and msgType!=''">
+        AND msg_type = #{msgType}
+      </if>)
+    </if>
+  </select>
+
+</mapper>

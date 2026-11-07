@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTOtaTaskMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTOtaTask">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="package_id" jdbcType="BIGINT" property="packageId" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="target_version" jdbcType="VARCHAR" property="targetVersion" />
+    <result column="package_type" jdbcType="VARCHAR" property="packageType" />
+    <result column="custom_type" jdbcType="VARCHAR" property="customType" />
+    <result column="module" jdbcType="VARCHAR" property="module" />
+    <result column="rollout_mode" jdbcType="VARCHAR" property="rolloutMode" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="device_count" jdbcType="INTEGER" property="deviceCount" />
+    <result column="waiting_count" jdbcType="INTEGER" property="waitingCount" />
+    <result column="in_progress_count" jdbcType="INTEGER" property="inProgressCount" />
+    <result column="success_count" jdbcType="INTEGER" property="successCount" />
+    <result column="failed_count" jdbcType="INTEGER" property="failedCount" />
+    <result column="canceled_count" jdbcType="INTEGER" property="canceledCount" />
+    <result column="skipped_count" jdbcType="INTEGER" property="skippedCount" />
+    <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="strategy_json" jdbcType="LONGVARCHAR" property="strategyJson" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
+    <result column="cancel_time" jdbcType="TIMESTAMP" property="cancelTime" />
+  </resultMap>
+  <resultMap id="TaskWithExtMap" type="cn.universal.persistence.entity.IoTOtaTask" extends="BaseResultMap">
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="package_name" jdbcType="VARCHAR" property="packageName" />
+    <result column="package_version" jdbcType="VARCHAR" property="packageVersion" />
+  </resultMap>
+  <sql id="selectTaskColumns">
+    select t.id, t.task_no, t.product_id, t.product_key, t.package_id, t.task_name, t.target_version,
+           t.package_type, t.custom_type, t.module, t.rollout_mode, t.description, t.status,
+           t.device_count, t.waiting_count, t.in_progress_count, t.success_count, t.failed_count,
+           t.canceled_count, t.skipped_count, t.creator_id, t.tenant_id, t.strategy_json, t.create_time,
+           t.update_time,
+           t.start_time, t.finish_time, t.cancel_time,
+           prod.name as product_name, p.package_name, p.version as package_version
+      from iot_ota_task t
+      left join iot_product prod on lower(prod.product_key) = lower(t.product_key)
+      left join iot_ota_package p on p.id = t.package_id
+  </sql>
+  <select id="selectTaskList" parameterType="cn.universal.persistence.entity.IoTOtaTask" resultMap="TaskWithExtMap" databaseId="dameng">
+    select t.id,
+           t.task_no,
+           t.product_id,
+           t.product_key,
+           t.package_id,
+           t.task_name,
+           t.target_version,
+           t.package_type,
+           t.custom_type,
+           t.module,
+           t.rollout_mode,
+           t.description,
+           t.status,
+           t.device_count,
+           t.waiting_count,
+           t.in_progress_count,
+           t.success_count,
+           t.failed_count,
+           t.canceled_count,
+           t.skipped_count,
+           t.creator_id,
+           t.tenant_id,
+           t.strategy_json,
+           t.create_time,
+           t.update_time,
+           t.start_time,
+           t.finish_time,
+           t.cancel_time,
+           prod.name as product_name,
+           p.package_name,
+           p.version as package_version
+    from iot_ota_task t
+    left join iot_product prod on lower(prod.product_key) = lower(t.product_key)
+    left join iot_ota_package p on p.id = t.package_id
+    <where>
+      <if test="id != null">and t.id = #{id}</if>
+      <if test="taskNo != null and taskNo != ''">
+        and lower(t.task_no) like lower(concat('%', #{taskNo}, '%'))
+      </if>
+      <if test="productId != null">and t.product_id = #{productId}</if>
+      <if test="productKey != null and productKey != ''">
+        and lower(t.product_key) = lower(#{productKey})
+      </if>
+      <if test="packageId != null">and t.package_id = #{packageId}</if>
+      <if test="taskName != null and taskName != ''">
+        and lower(t.task_name) like lower(concat('%', #{taskName}, '%'))
+      </if>
+      <if test="status != null and status != ''">
+        and lower(t.status) = lower(#{status})
+      </if>
+      <choose>
+        <when test="tenantId != null and tenantId != '' and creatorId != null and creatorId != ''">
+          and (t.tenant_id = #{tenantId}
+          or ((t.tenant_id is null or t.tenant_id = '') and lower(t.creator_id) = lower(#{creatorId})))
+        </when>
+        <when test="tenantId != null and tenantId != ''">
+          and t.tenant_id = #{tenantId}
+        </when>
+        <when test="creatorId != null and creatorId != ''">
+          and lower(t.creator_id) = lower(#{creatorId})
+        </when>
+      </choose>
+    </where>
+    order by t.create_time desc, t.id desc
+  </select>
+  <select id="selectTaskById" parameterType="Long" resultMap="TaskWithExtMap" databaseId="dameng">
+    select t.id,
+           t.task_no,
+           t.product_id,
+           t.product_key,
+           t.package_id,
+           t.task_name,
+           t.target_version,
+           t.package_type,
+           t.custom_type,
+           t.module,
+           t.rollout_mode,
+           t.description,
+           t.status,
+           t.device_count,
+           t.waiting_count,
+           t.in_progress_count,
+           t.success_count,
+           t.failed_count,
+           t.canceled_count,
+           t.skipped_count,
+           t.creator_id,
+           t.tenant_id,
+           t.strategy_json,
+           t.create_time,
+           t.update_time,
+           t.start_time,
+           t.finish_time,
+           t.cancel_time,
+           prod.name as product_name,
+           p.package_name,
+           p.version as package_version
+    from iot_ota_task t
+    left join iot_product prod on lower(prod.product_key) = lower(t.product_key)
+    left join iot_ota_package p on p.id = t.package_id
+    where t.id = #{id}
+  </select>
+  <select id="selectRecentTasksByProductKey" parameterType="String" resultMap="TaskWithExtMap" databaseId="dameng">
+    select t.id,
+           t.task_no,
+           t.product_id,
+           t.product_key,
+           t.package_id,
+           t.task_name,
+           t.target_version,
+           t.package_type,
+           t.custom_type,
+           t.module,
+           t.rollout_mode,
+           t.description,
+           t.status,
+           t.device_count,
+           t.waiting_count,
+           t.in_progress_count,
+           t.success_count,
+           t.failed_count,
+           t.canceled_count,
+           t.skipped_count,
+           t.creator_id,
+           t.tenant_id,
+           t.strategy_json,
+           t.create_time,
+           t.update_time,
+           t.start_time,
+           t.finish_time,
+           t.cancel_time,
+           prod.name as product_name,
+           p.package_name,
+           p.version as package_version
+    from iot_ota_task t
+    left join iot_product prod on lower(prod.product_key) = lower(t.product_key)
+    left join iot_ota_package p on p.id = t.package_id
+    where lower(t.product_key) = lower(#{productKey})
+    order by t.create_time desc, t.id desc
+    limit 5
+  </select>
+  <insert id="insertTask" parameterType="cn.universal.persistence.entity.IoTOtaTask" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into iot_ota_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskNo != null">task_no,</if>
+      <if test="productId != null">product_id,</if>
+      <if test="productKey != null">product_key,</if>
+      <if test="packageId != null">package_id,</if>
+      <if test="taskName != null">task_name,</if>
+      <if test="targetVersion != null">target_version,</if>
+      <if test="packageType != null">package_type,</if>
+      <if test="customType != null">custom_type,</if>
+      <if test="module != null">module,</if>
+      <if test="rolloutMode != null">rollout_mode,</if>
+      <if test="description != null">description,</if>
+      <if test="status != null">status,</if>
+      <if test="deviceCount != null">device_count,</if>
+      <if test="waitingCount != null">waiting_count,</if>
+      <if test="inProgressCount != null">in_progress_count,</if>
+      <if test="successCount != null">success_count,</if>
+      <if test="failedCount != null">failed_count,</if>
+      <if test="canceledCount != null">canceled_count,</if>
+      <if test="skippedCount != null">skipped_count,</if>
+      <if test="creatorId != null">creator_id,</if>
+      <if test="tenantId != null">tenant_id,</if>
+      <if test="strategyJson != null">strategy_json,</if>
+      create_time,
+      <if test="startTime != null">start_time,</if>
+      <if test="finishTime != null">finish_time,</if>
+      <if test="cancelTime != null">cancel_time,</if>
+      update_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskNo != null">#{taskNo},</if>
+      <if test="productId != null">#{productId},</if>
+      <if test="productKey != null">#{productKey},</if>
+      <if test="packageId != null">#{packageId},</if>
+      <if test="taskName != null">#{taskName},</if>
+      <if test="targetVersion != null">#{targetVersion},</if>
+      <if test="packageType != null">#{packageType},</if>
+      <if test="customType != null">#{customType},</if>
+      <if test="module != null">#{module},</if>
+      <if test="rolloutMode != null">#{rolloutMode},</if>
+      <if test="description != null">#{description},</if>
+      <if test="status != null">#{status},</if>
+      <if test="deviceCount != null">#{deviceCount},</if>
+      <if test="waitingCount != null">#{waitingCount},</if>
+      <if test="inProgressCount != null">#{inProgressCount},</if>
+      <if test="successCount != null">#{successCount},</if>
+      <if test="failedCount != null">#{failedCount},</if>
+      <if test="canceledCount != null">#{canceledCount},</if>
+      <if test="skippedCount != null">#{skippedCount},</if>
+      <if test="creatorId != null">#{creatorId},</if>
+      <if test="tenantId != null">#{tenantId},</if>
+      <if test="strategyJson != null">#{strategyJson},</if>
+      now(),
+      <if test="startTime != null">#{startTime},</if>
+      <if test="finishTime != null">#{finishTime},</if>
+      <if test="cancelTime != null">#{cancelTime},</if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateTask" parameterType="cn.universal.persistence.entity.IoTOtaTask" databaseId="dameng">
+    update iot_ota_task
+    <set>
+      <if test="taskNo != null">task_no = #{taskNo},</if>
+      <if test="productId != null">product_id = #{productId},</if>
+      <if test="productKey != null">product_key = #{productKey},</if>
+      <if test="packageId != null">package_id = #{packageId},</if>
+      <if test="taskName != null">task_name = #{taskName},</if>
+      <if test="targetVersion != null">target_version = #{targetVersion},</if>
+      <if test="packageType != null">package_type = #{packageType},</if>
+      <if test="customType != null">custom_type = #{customType},</if>
+      <if test="module != null">module = #{module},</if>
+      <if test="rolloutMode != null">rollout_mode = #{rolloutMode},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="deviceCount != null">device_count = #{deviceCount},</if>
+      <if test="waitingCount != null">waiting_count = #{waitingCount},</if>
+      <if test="inProgressCount != null">in_progress_count = #{inProgressCount},</if>
+      <if test="successCount != null">success_count = #{successCount},</if>
+      <if test="failedCount != null">failed_count = #{failedCount},</if>
+      <if test="canceledCount != null">canceled_count = #{canceledCount},</if>
+      <if test="skippedCount != null">skipped_count = #{skippedCount},</if>
+      <if test="tenantId != null">tenant_id = #{tenantId},</if>
+      <if test="strategyJson != null">strategy_json = #{strategyJson},</if>
+      <if test="startTime != null">start_time = #{startTime},</if>
+      <if test="finishTime != null">finish_time = #{finishTime},</if>
+      <if test="cancelTime != null">cancel_time = #{cancelTime},</if>
+      update_time = now()
+    </set>
+    where id = #{id}
+  </update>
+  <select id="selectTaskForUpdate" parameterType="Long" resultMap="BaseResultMap" databaseId="dameng">
+    select * from iot_ota_task where id = #{id} for update
+  </select>
+</mapper>

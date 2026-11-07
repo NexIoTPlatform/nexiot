@@ -1,0 +1,11 @@
+{
+  "themeColor": "#165DFF",
+  "layout": "left",
+  "tabStyle": "card",
+  "isTabVisible": true,
+  "transitionName": "zoom-fade",
+  "isTransitionEnabled": true,
+  "isMenuCollapsed": false,
+  "isMenuAccordion": false,
+  "isMenuDark": false
+}

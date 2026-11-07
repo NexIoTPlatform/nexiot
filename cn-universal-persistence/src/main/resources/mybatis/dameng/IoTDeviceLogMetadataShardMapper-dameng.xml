@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceLogMetadataShardMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceLogMetadata">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="event" jdbcType="VARCHAR" property="event" />
+    <result column="property" jdbcType="VARCHAR" property="property" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <insert id="batchInsertByIotId" parameterType="map" databaseId="dameng">
+    insert into iot_device_log_metadata (
+    id, iot_id, product_key, device_name, device_id,
+    message_type, event, property, ext1, ext2, ext3, create_time, content
+    ) values
+    <foreach collection="metadatas" item="metadata" separator=",">
+      (
+      #{metadata.id}, #{metadata.iotId}, #{metadata.productKey}, #{metadata.deviceName}, #{metadata.deviceId},
+      #{metadata.messageType}, #{metadata.event}, #{metadata.property},
+      #{metadata.ext1}, #{metadata.ext2}, #{metadata.ext3}, #{metadata.createTime}, #{metadata.content}
+      )
+    </foreach>
+  </insert>
+  <select id="selectLogMetaList" timeout="8" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogMetadataVO" databaseId="dameng">
+    select * from iot_device_log_metadata
+    <where>
+      <if test="iotId != null and iotId != ''">
+        AND iot_id = #{iotId}
+      </if>
+      <if test="messageType != null and messageType != ''">
+        AND message_type = #{messageType}
+      </if>
+      <if test="property != null and property != ''">
+        AND property = #{property}
+      </if>
+      <if test="event != null and event != ''">
+        AND event = #{event}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        AND device_id = #{deviceId}
+      </if>
+      <if test="beginCreateTime != null">
+        AND create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="endCreateTime != null">
+        AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+    ORDER BY create_time DESC, id DESC
+  </select>
+  <select id="queryEventTotalByEventAndId" resultType="java.lang.String" databaseId="dameng">
+    
+    SELECT create_time
+    FROM iot_device_log_metadata
+    WHERE iot_id = #{iotId}
+      AND message_type = 'EVENT'
+      AND event = #{event}
+    ORDER BY id desc LIMIT 1
+  </select>
+  <resultMap id="PropertyTrendSampleMap" type="cn.universal.persistence.entity.vo.PropertyTrendSampleVO">
+    <result column="window_index" property="windowIndex" />
+    <result column="content" property="content" />
+  </resultMap>
+  <select id="selectPropertyTrendSamples" resultMap="PropertyTrendSampleMap" databaseId="dameng" timeout="8">
+    <!-- Seek independently in every time window; LIMIT runs before parsing numbers. -->
+    <foreach collection="sampleWindows" item="window" separator=" UNION ALL ">
+      SELECT #{window.index,jdbcType=INTEGER} AS window_index, sample.content
+      FROM (
+        SELECT CASE WHEN LENGTH(content) &lt;= 1024 THEN content END AS content
+        FROM iot_device_log_metadata
+        WHERE iot_id = #{iotId} AND property = #{property}
+          AND product_key = #{productKey} AND message_type = 'PROPERTIES'
+          <if test="deviceId != null and deviceId != ''">AND device_id = #{deviceId}</if>
+          AND create_time &gt;= #{window.beginTime,jdbcType=TIMESTAMP}
+          AND create_time &lt; #{window.endExclusiveTime,jdbcType=TIMESTAMP}
+          AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+        ORDER BY create_time DESC, id DESC LIMIT #{sampleFetchSize}
+      ) AS sample
+    </foreach>
+  </select>
+  <select id="selectPropertyTrend" resultType="cn.universal.persistence.entity.vo.PropertyTrendVO$Bucket" databaseId="dameng" timeout="8">
+    <!-- Decimal scientific values are validated before conversion. Text over 1024 chars
+         remains in COUNT(*) but is nonnumeric. The 308-digit threshold is the exact
+         IEEE-754 overflow rounding boundary, not DECIMAL saturation. -->
+    <!-- Separate large/small magnitude sums avoid native DOUBLE AVG overflow while
+         retaining ordinary small values; both terms use the same numeric denominator. -->
+    SELECT ( #{beginCreateTime} + bucket * #{intervalSeconds} ) * 1000 AS time,
+      COUNT(*) AS count, COUNT(numeric_value) AS numeric_count,
+      MIN(numeric_value) AS min, MAX(numeric_value) AS max,
+      AVG(CASE WHEN numeric_value IS NULL THEN NULL
+          WHEN ABS(numeric_value) &gt;= 1e154 THEN numeric_value / 1.7976931348623157e308 ELSE 0.0 END) * 1.7976931348623157e308
+        + AVG(CASE WHEN numeric_value IS NULL THEN NULL
+          WHEN ABS(numeric_value) &lt; 1e154 THEN numeric_value ELSE 0.0 END) AS avg
+    FROM (
+      SELECT FLOOR(DATEDIFF(SECOND, #{beginTime,jdbcType=TIMESTAMP}, create_time) / #{intervalSeconds}) AS bucket, numeric_value
+      FROM (
+        SELECT create_time, CAST(CASE WHEN number_text IS NULL THEN NULL WHEN (digits IS NULL OR digits = '') OR decimal_order &lt; -324 THEN '0' WHEN decimal_order &gt; 308 OR (decimal_order = 308 AND digits &gt;= '179769313486231580793728971405303415079934132710037826936173778980444968292764750946649017977587207096330286416692887910946555547851940402630657488671505820681908902000708383676273854845817711531764475730270069855571366959622842914819860834936475292719074168444365510704342711559699508093042880177904174497792') THEN NULL WHEN decimal_order = 308 AND digits &gt;= '17976931348623157' THEN CONCAT(CASE WHEN SUBSTR(number_text, 1, 1) = '-' THEN '-' ELSE '' END, '1.7976931348623157e308') ELSE CONCAT(CASE WHEN SUBSTR(number_text, 1, 1) = '-' THEN '-' ELSE '' END, SUBSTR(digits, 1, 1), '.', SUBSTR(digits, 2, 18), 'e', CAST(decimal_order AS VARCHAR(20))) END AS DOUBLE) AS numeric_value
+        FROM (SELECT create_time, number_text, digits, (CASE WHEN (exponent_digits IS NULL OR exponent_digits = '') THEN 0 WHEN LENGTH(exponent_digits) &gt; 6 THEN exponent_sign * 10000000 ELSE exponent_sign * CAST(exponent_digits AS INTEGER) END) + LENGTH(digits) - (CASE WHEN INSTR(coefficient, '.') &gt; 0 THEN LENGTH(coefficient) - INSTR(coefficient, '.') ELSE 0 END) - 1 AS decimal_order
+        FROM (SELECT create_time, number_text, coefficient, LTRIM(REPLACE(coefficient, '.', ''), '0') AS digits, LTRIM(REPLACE(REPLACE(exponent_text, '+', ''), '-', ''), '0') AS exponent_digits, CASE WHEN SUBSTR(exponent_text, 1, 1) = '-' THEN -1 ELSE 1 END AS exponent_sign
+        FROM (SELECT create_time, number_text, REPLACE(REPLACE(CASE WHEN INSTR(number_text, 'e') &gt; 0 THEN SUBSTR(number_text, 1, INSTR(number_text, 'e') - 1) ELSE number_text END, '+', ''), '-', '') AS coefficient, CASE WHEN INSTR(number_text, 'e') &gt; 0 THEN SUBSTR(number_text, INSTR(number_text, 'e') + 1) ELSE '0' END AS exponent_text
+        FROM (SELECT create_time, CASE WHEN LENGTH(original_text) BETWEEN 1 AND 1024 THEN CASE WHEN REGEXP_LIKE(original_text, '^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?$') THEN LOWER(original_text) END END AS number_text
+        FROM (SELECT create_time, TRIM(content) AS original_text
+        FROM iot_device_log_metadata
+        WHERE product_key = #{productKey} AND iot_id = #{iotId}
+        AND message_type = 'PROPERTIES' AND property = #{property}
+        <if test="deviceId != null and deviceId != ''">AND device_id = #{deviceId}</if>
+        AND create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+        AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}) raw_values) validated_values) split_values) decimal_parts) bounded_values
+      ) finite_values
+    ) trend_values
+    GROUP BY bucket
+    ORDER BY bucket
+  </select>
+  <select id="selectLogMetaCursor" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogMetadataVO" databaseId="dameng" timeout="8">
+    SELECT * FROM iot_device_log_metadata
+    WHERE iot_id = #{iotId} AND product_key = #{productKey}
+      AND create_time &gt;= #{beginTime,jdbcType=TIMESTAMP}
+      AND create_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+      <if test="deviceId != null and deviceId != ''">AND device_id = #{deviceId}</if>
+      <if test="messageType != null and messageType != ''">AND message_type = #{messageType}</if>
+      <if test="event != null and event != ''">AND event = #{event}</if>
+      <if test="property != null and property != ''">AND property = #{property}</if>
+      <if test="beforeTime != null">
+        AND create_time &lt;= #{beforeTime,jdbcType=TIMESTAMP}
+        AND (create_time &lt; #{beforeTime,jdbcType=TIMESTAMP}
+          OR (create_time = #{beforeTime,jdbcType=TIMESTAMP} AND id &lt; #{beforeId,jdbcType=BIGINT}))
+      </if>
+    ORDER BY create_time DESC, id DESC LIMIT #{fetchSize}
+  </select>
+</mapper>

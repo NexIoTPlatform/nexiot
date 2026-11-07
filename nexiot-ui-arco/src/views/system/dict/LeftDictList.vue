@@ -1,0 +1,185 @@
+<template>
+  <GiFlex column flex="1" gap="10px" class="left-dict-list">
+    <a-input v-model="typeSearch" allow-clear placeholder="输入字典名称搜索" />
+    <a-space wrap>
+      <GiButton type="add" size="mini" @click="onTypeAdd" />
+      <GiButton type="edit" size="mini" @click="onTypeEdit" />
+      <Popconfirm type="warning" content="确定删除该字典类型吗?" @before-ok="onTypeDelete">
+        <GiButton type="delete" size="mini" :disabled="!selectedType" />
+      </Popconfirm>
+    </a-space>
+    <a-radio-group v-model="statusFilter" type="button" size="small">
+      <a-radio value="1">启用</a-radio>
+      <a-radio value="0">禁用</a-radio>
+    </a-radio-group>
+    <a-spin :loading="typeLoading" class="left-dict-list__spin">
+      <div class="left-dict-list__scroll">
+        <div v-for="item in filteredTypeList" :key="item.id" class="left-dict-list__item"
+          :class="{ 'left-dict-list__item--active': selectedType?.id === item.id }" @click="selectType(item)">
+          <icon-folder v-if="item.status === '1'" class="left-dict-list__item-icon" />
+          <icon-stop v-else class="left-dict-list__item-icon"></icon-stop>
+          <span class="left-dict-list__item-text">{{ item.name }} ({{ item.code }})</span>
+        </div>
+        <a-empty v-if="!filteredTypeList.length" description="暂无字典类型" />
+      </div>
+    </a-spin>
+
+    <DictFormModal ref="DictFormModalRef" @save-success="onDictFormSaved" />
+  </GiFlex>
+</template>
+
+<script setup lang="ts">
+import type * as T from '@/apis/system/dict'
+import { Message, Popconfirm } from '@arco-design/web-vue'
+import { deleteDictType, getDictTypeList } from '@/apis/system/dict'
+import DictFormModal from './DictFormModal.vue'
+
+defineOptions({ name: 'LeftDictList' })
+
+const emit = defineEmits<{
+  /** 左侧选中字典类型变化或列表刷新后，通知父级刷新右侧字典数据表格 */
+  refresh: [payload: { code: string | null }]
+}>()
+
+const DictFormModalRef = useTemplateRef('DictFormModalRef')
+
+const typeLoading = ref(false)
+const typeList = ref<T.ListItem[]>([])
+const typeSearch = ref('')
+const selectedType = ref<T.ListItem | null>(null)
+const statusFilter = ref('1')
+const filteredTypeList = computed(() => {
+  const q = typeSearch.value.trim().toLowerCase()
+  return typeList.value.filter((item) => {
+    const matchesStatus = item.status === statusFilter.value
+    const matchesKeyword = !q || item.name.toLowerCase().includes(q) || item.code.toLowerCase().includes(q)
+    return matchesStatus && matchesKeyword
+  })
+})
+
+const emitRefresh = () => {
+  emit('refresh', { code: selectedType.value?.code ?? null })
+}
+
+const syncSelectionAfterLoad = () => {
+  if (!typeList.value.length) {
+    selectedType.value = null
+    return
+  }
+  const cur = selectedType.value
+  const next = cur ? typeList.value.find((i) => i.id === cur.id) : undefined
+  if (next) {
+    selectedType.value = next
+    return
+  }
+  selectedType.value = typeList.value[0] ?? null
+}
+
+const loadTypes = async () => {
+  typeLoading.value = true
+  try {
+    const res = await getDictTypeList({ page: 1, size: 500 })
+    typeList.value = res.data.records
+    syncSelectionAfterLoad()
+  } finally {
+    typeLoading.value = false
+  }
+  emitRefresh()
+}
+
+onMounted(() => {
+  loadTypes()
+})
+
+const selectType = (item: T.ListItem) => {
+  selectedType.value = item
+  emitRefresh()
+}
+
+const onTypeAdd = () => {
+  DictFormModalRef.value?.add()
+}
+
+const onTypeEdit = () => {
+  if (!selectedType.value) {
+    Message.warning('请先选择字典类型')
+    return
+  }
+  DictFormModalRef.value?.edit(selectedType.value.id)
+}
+
+const onTypeDelete = async () => {
+  if (!selectedType.value) {
+    Message.warning('请先选择字典类型')
+    return false
+  }
+  const res = await deleteDictType([selectedType.value.id])
+  if (res.success) {
+    Message.success('删除成功')
+    await loadTypes()
+  }
+  return res.success
+}
+
+const onDictFormSaved = async () => {
+  await loadTypes()
+}
+</script>
+
+<style lang="scss" scoped>
+.left-dict-list {
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.left-dict-list__spin {
+  display: block;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+
+  :deep(.arco-spin-children) {
+    height: 100%;
+    min-height: 0;
+  }
+}
+
+.left-dict-list__scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.left-dict-list__item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  border-radius: var(--border-radius-small);
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: var(--color-fill-2);
+  }
+
+  &--active {
+    color: rgb(var(--primary-6));
+    background-color: var(--color-primary-light-1);
+  }
+}
+
+.left-dict-list__item-icon {
+  flex-shrink: 0;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.left-dict-list__item-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+</style>

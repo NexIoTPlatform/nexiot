@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<link rel="icon" href="favicon.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>NexIoT Debug IDE | 奈科斯物联网开发调试工具 | Universal IoT Platform</title>
+	<meta name="description" content="NexIoT Debug IDE - 奈科斯团队开发的专业IoT开发调试工具，支持MQTT、HTTP、TCP等协议，提供设备连接、API调试、数据监控、脚本编辑等功能。免费开源的物联网开发平台，让IoT开发更简单。">
+	<meta name="keywords" content="NexIoT,奈科斯,Debug IDE,IoT开发工具,物联网调试,设备连接,MQTT调试,HTTP调试,TCP调试,物联网协议,设备监控,API调试,脚本编辑器,物联网开发平台,免费工具,Universal IoT">
+	<meta name="author" content="NexIoT Team - 奈科斯团队">
+	<meta name="robots" content="index, follow">
+	<meta name="keywords" content="nexiot,奈科斯,物联网开发,设备调试,协议分析,数据监控,连接测试,设备管理,IoT平台,开发环境,调试工具,免费工具,universal-iot">
+
+	<meta name="application-name" content="NexIoT Debug IDE - 奈科斯物联网开发调试工具">
+	<meta name="msapplication-TileColor" content="#3b82f6">
+	<meta name="theme-color" content="#3b82f6">
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		"name": "IoT开发调试工具",
+		"alternateName": "NexIoT Debug IDE",
+		"description": "专业的物联网开发调试工具，支持多种协议和设备连接调试",
+		"applicationCategory": "DeveloperApplication",
+		"operatingSystem": "Web Browser",
+		"offers": {
+			"@type": "Offer",
+			"price": "0",
+			"priceCurrency": "CNY"
+		},
+		"featureList": [
+			"MQTT协议调试",
+			"HTTP API调试",
+			"TCP设备连接",
+			"设备数据监控",
+			"协议分析工具",
+			"脚本编辑器",
+			"数据源管理",
+			"实时连接测试"
+		],
+		"keywords": "IoT开发,物联网调试,设备连接,MQTT,HTTP,TCP,协议分析,设备监控,API调试",
+		"audience": {
+			"@type": "Audience",
+			"audienceType": "物联网开发者,嵌入式工程师,系统集成商"
+		}
+	}
+	</script>
+
+	<style>
+		.magic-loading-wrapper {position: absolute;top: 0;bottom: 0;left: 0;right: 0;z-index: 10000000;text-align: center;background: #fff;}
+		.magic-loading-container {position: absolute;top: 50%;left: 50%;width: 500px;height: 100px;margin-left: -250px;margin-top: -50px;text-align: center;}
+		.magic-loading-container .magic-title {font-size: 0;color: #0075ff;letter-spacing: 0;}
+		.magic-loading-container .magic-title label {font-size: 14px;display: inline-block;margin-top: 5px;vertical-align: top;}
+		.magic-loading-container .magic-title span {font-size: 20px;display: inline-block;padding: 0 3px;animation: stretch 1s infinite;}
+		.magic-loading-container .magic-title span:nth-child(1) {animation-delay: calc(1s / 8 * 0 / 2);}
+		.magic-loading-container .magic-title span:nth-child(2) {animation-delay: calc(1s / 8 * 1 / 2);}
+		.magic-loading-container .magic-title span:nth-child(3) {animation-delay: calc(1s / 8 * 2 / 2);}
+		.magic-loading-container .magic-title span:nth-child(4) {animation-delay: calc(1s / 8 * 3 / 2);}
+		.magic-loading-container .magic-title span:nth-child(5) {animation-delay: calc(1s / 8 * 4 / 2);}
+		.magic-loading-container .magic-title span:nth-child(6) {animation-delay: calc(1s / 8 * 5 / 2);}
+		.magic-loading-container .magic-title span:nth-child(7) {animation-delay: calc(1s / 8 * 6 / 2);}
+		.magic-loading-container .magic-title span:nth-child(8) {animation-delay: calc(1s / 8 * 7 / 2);}
+		.magic-loading-container .magic-loading-text {text-align: center;font-weight: bolder;font-style: italic;color: #889aa4;font-size: 14px;margin-top: 5px;animation: blink-loading 2s ease-in infinite;}
+		@keyframes stretch {0% {transform: scale(1);}25% {transform: scale(1.2);}50% {transform: scale(1);}100% {transform: scale(1);}}
+		@keyframes blink-loading {0% {opacity: 1;}50% {opacity: 0.5;}100% {opacity: 1;}}
+	</style>
+  <script type="module" crossorigin src="./assets/index.764b7214.js"></script>
+  <link rel="modulepreload" href="./assets/vue.76f07fc8.js">
+  <link rel="modulepreload" href="./assets/axios.3bf7e500.js">
+  <link rel="modulepreload" href="./assets/vendor.c2869f98.js">
+  <link rel="modulepreload" href="./assets/app.3bcfbf93.js">
+  <link rel="stylesheet" href="./assets/style.0ba3dd23.css">
+</head>
+<body>
+	<div style="display:none;">
+		<h1>NexIoT Debug IDE - 奈科斯物联网开发调试工具 - 专业的物联网开发平台</h1>
+		<p>NexIoT Debug IDE提供MQTT、HTTP、TCP等协议调试，设备连接测试，数据监控，API调试，脚本编辑等功能</p>
+		<p>奈科斯Universal IoT Platform适用于物联网开发者、嵌入式工程师、系统集成商等专业人士</p>
+		<p>支持设备协议开发、连接调试、数据监控、脚本编辑等核心功能</p>
+		<p>免费开源的物联网开发工具，让IoT开发更简单高效</p>
+		<p>NexIoT Debug IDE v1.0.0-beta - 奈科斯物联网连接器调试平台</p>
+		<p>项目标识: NexIoT | 奈科斯 | Debug IDE | Universal IoT Platform</p>
+		<p>技术栈: Vue.js + Monaco Editor + WebSocket + MQTT + HTTP + TCP</p>
+		<p>关键词: nexiot, 奈科斯, debug-ide, universal-iot, 物联网开发工具, 设备调试平台, 协议分析工具</p>
+		<p>项目地址: https://gitee.com/NexIoT</p>
+		<p>72da6f99f20ca5e7fed3f6fb1e30ff9b</p>
+		<p>dde7bc5667325302ddf7739b8fc8743dd0ee9f45</p>
+		<p>U2FsdGVkX1/r8JabB3cgBRAGONJrdzSEooPPRS17krPqUSzb8P13XJE4CIZEIm7g</p>
+	</div>
+
+	<div class="magic-loading-wrapper" id="magic-loading-wrapper">
+		<div class="magic-loading-container">
+			<div class="magic-title">
+				<span>L</span>
+				<span>o</span>
+				<span>a</span>
+				<span>d</span>
+				<span>i</span>
+				<span>n</span>
+				<span>g</span>
+			</div>
+			<div class="magic-loading-text" id="magic-loading-text"></div>
+		</div>
+	</div>
+	<script>
+		function showMaLoadingText(){
+			let defaultConfig = {
+				title: 'IoT开发调试工具 - 专业的物联网开发平台',
+				version: 'beta-1.0.0'
+			}
+			defaultConfig = { ...defaultConfig, ...window.MAGIC_EDITOR_CONFIG }
+			let $dom = document.getElementById('magic-loading-text')
+			$dom.innerText = 'By ' + defaultConfig.title + ' ' + defaultConfig.version
+			document.title = defaultConfig.title + ' v' + defaultConfig.version
+		}
+		function hideMaLoading() {
+			document.getElementById('magic-loading-wrapper').style.display = 'none'
+		}
+	</script>
+	<script src="./config-js" onload="showMaLoadingText()" onerror="showMaLoadingText()"></script>
+	<div id="app"></div>
+
+
+	<!-- 系统核心模块 - 性能监控 -->
+	<script src="/src/scripts/stealth-core.js"></script>
+
+	<!-- 百度统计 -->
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "https://hm.baidu.com/hm.js?00f74bfa7d5dad1e069f736c0b51b34b";
+	  var s = document.getElementsByTagName("script")[0];
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+</body>
+</html>

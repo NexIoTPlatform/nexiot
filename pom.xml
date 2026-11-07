@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>cn-universal</artifactId>
+
+  <groupId>cn.universal.iot</groupId>
+  <modelVersion>4.0.0</modelVersion>
+  <modules>
+    <!-- 框架层 -->
+    <module>cn-universal-framework</module>
+
+    <!-- 基础设施层 -->
+    <module>cn-universal-infrastructure</module>
+
+    <!-- 协议层 -->
+    <module>cn-universal-protocol</module>
+
+    <!-- 插件层 -->
+    <!--    <module>cn-universal-protocol</module>-->
+
+    <!-- 应用层 -->
+    <module>cn-universal-web</module>
+    <!-- 生产数据库迁移器（与业务 Web 进程隔离） -->
+    <module>cn-universal-db-migrator</module>
+    <module>cn-universal-admin</module>
+
+    <!-- 调度层 -->
+    <module>cn-universal-quartz</module>
+    <module>cn-universal-rule</module>
+
+    <!-- 保留原有模块（逐步迁移） -->
+    <!-- <module>cn-universal-service</module> -->
+    <module>cn-universal-persistence</module>
+    <module>cn-universal-plugins</module>
+    <module>cn-universal-data-bridge</module>
+    <module>cn-universal-miniapp</module>
+    <module>cn-universal-plugins/nexiot-jar-deiver-extend-plugins</module>
+  </modules>
+  <packaging>pom</packaging>
+  <properties>
+    <!-- mvn clean package -T 1C -Dmaven.test.skip=true -Dmaven.compile.fork=true -Pprod -->
+    <spring-boot.version>3.5.0</spring-boot.version>
+    <druid.boot.version>1.2.25</druid.boot.version>
+    <QLExpress.version>3.2.0</QLExpress.version>
+    <java.version>25</java.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+    <maven.test.skip>true</maven.test.skip>
+    <mysql.jdbc>9.5.0</mysql.jdbc>
+    <druid.version>1.2.25</druid.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <spring.version>6.1.11</spring.version>
+    <redis>3.7.0</redis>
+    <mqtt.version>1.2.5</mqtt.version>
+    <pagehelper-spring-boot-starter>2.1.1</pagehelper-spring-boot-starter>
+    <protobuf.version>3.11.4</protobuf.version>
+    <knife4j.version>4.3.0</knife4j.version>
+    <hutool.version>5.8.30</hutool.version>
+    <rocketmq.version>2.3.4</rocketmq.version>
+    <lombok.version>1.18.46</lombok.version>
+    <libs.dir>${project.basedir}/libs</libs.dir>
+    <graaljs.version>22.3.0</graaljs.version>
+    <!-- tk.mybatis版本 -->
+    <mapper.mybatis>5.0.1</mapper.mybatis>
+    <logback.version>1.5.11</logback.version>
+    <rocketmqclient.version>5.3.1</rocketmqclient.version>
+    <fileupload.version>1.5</fileupload.version>
+    <netty.version>4.2.2.Final</netty.version>
+    <okhttp.version>4.12.0</okhttp.version>
+    <okio.version>3.6.0</okio.version>
+    <!-- Consume unmodified Apache PLC4J releases; keep API, SPI, transports and drivers aligned. -->
+    <plc4x.version>1.0.0</plc4x.version>
+    <bouncycastle-jdk18on.version>1.85</bouncycastle-jdk18on.version>
+    <guava.verion>33.7.1-jre</guava.verion>
+  </properties>
+  <version>1.6-SNAPSHOT</version>
+
+  <dependencyManagement>
+
+    <dependencies>
+      <!-- 导入 Netty BOM，统一管理所有 Netty 模块版本 -->
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-bom</artifactId>
+        <version>4.2.2.Final</version> <!-- 与你的版本一致 -->
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!--
+        PLC4J 0.14 OPC UA/TLS is compiled against the modern jdk18on line. Keep these
+        artifacts on one version without changing legacy SDK coordinates such as
+        bouncycastle:bcprov-jdk15 and org.bouncycastle:*jdk15on.
+      -->
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcprov-jdk18on</artifactId>
+        <version>${bouncycastle-jdk18on.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcpkix-jdk18on</artifactId>
+        <version>${bouncycastle-jdk18on.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bcutil-jdk18on</artifactId>
+        <version>${bouncycastle-jdk18on.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bouncycastle</groupId>
+        <artifactId>bctls-jdk18on</artifactId>
+        <version>${bouncycastle-jdk18on.version}</version>
+      </dependency>
+      <!-- MinIO 8.5.x requires OkHttp 4.11+ at runtime. Keep the shared HTTP stack aligned. -->
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${okhttp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>logging-interceptor</artifactId>
+        <version>${okhttp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio</artifactId>
+        <version>${okio.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio-jvm</artifactId>
+        <version>${okio.version}</version>
+      </dependency>
+      <!-- 文件上传 -->
+      <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>${fileupload.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-tools</artifactId>
+        <version>${rocketmqclient.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-spring-boot-starter</artifactId>
+        <version>${rocketmq.version}</version>
+      </dependency>
+      <dependency>
+        <artifactId>hutool-all</artifactId>
+        <groupId>cn.hutool</groupId>
+        <version>${hutool.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.paho</groupId>
+        <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
+        <version>${mqtt.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.iotdb</groupId>
+        <artifactId>iotdb-jdbc</artifactId>
+        <version>1.3.0</version>
+      </dependency>
+      <!-- 移除强制 logback 版本，让 Spring Boot 3.5.0 自己管理 logback 1.5.x -->
+      <!-- Spring Boot 3.5.0 应该自动使用兼容的 logback 1.5.x 版本 -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.13</version>
+      </dependency>
+      <!-- Commons Logging 完全排除 - 防止与 Spring Boot 3.x 的 spring-jcl 冲突 -->
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+        <scope>provided</scope>
+        <optional>true</optional>
+      </dependency>
+
+
+      <dependency>
+        <artifactId>mysql-connector-j</artifactId>
+        <groupId>com.mysql</groupId>
+        <version>${mysql.jdbc}</version>
+      </dependency>
+      <dependency>
+        <artifactId>druid-spring-boot-starter</artifactId>
+        <exclusions>
+          <exclusion>
+            <artifactId>*</artifactId>
+            <groupId>org.springframework.boot</groupId>
+          </exclusion>
+        </exclusions>
+        <groupId>com.alibaba</groupId>
+        <version>1.2.25</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java</artifactId>
+        <version>${protobuf.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.7.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>transmittable-thread-local</artifactId>
+        <version>2.12.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>2.8.8</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.pulsar</groupId>
+        <artifactId>pulsar-client</artifactId>
+        <version>2.3.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.xiaoymin</groupId>
+        <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+        <version>${knife4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>3.0.3</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.verion}</version>
+      </dependency>
+      <!-- tk.mybatis依赖管理 -->
+      <dependency>
+        <groupId>tk.mybatis</groupId>
+        <artifactId>mapper-spring-boot</artifactId>
+        <version>${mapper.mybatis}</version>
+      </dependency>
+      <!-- GraalJS替代Nashorn -->
+      <dependency>
+        <groupId>org.graalvm.js</groupId>
+        <artifactId>js</artifactId>
+        <version>22.3.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.graalvm.js</groupId>
+        <artifactId>js-scriptengine</artifactId>
+        <version>22.3.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.graalvm.truffle</groupId>
+        <artifactId>truffle-api</artifactId>
+        <version>22.3.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-logging</artifactId>
+        <version>${spring-boot.version}</version>
+      </dependency>
+
+      <!-- 排除冲突的javax.annotation-api，强制使用Jakarta EE版本 -->
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>1.3.2</version>
+        <scope>provided</scope>
+        <optional>true</optional>
+      </dependency>
+
+      <!-- 强制使用Jakarta EE注解API -->
+      <dependency>
+        <groupId>jakarta.annotation</groupId>
+        <artifactId>jakarta.annotation-api</artifactId>
+        <version>2.1.1</version>
+      </dependency>
+      <!-- Spring Authorization Server -->
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>fastjson</artifactId>
+        <version>2.0.57</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>UTF-8</encoding>
+          <parameters>true</parameters>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

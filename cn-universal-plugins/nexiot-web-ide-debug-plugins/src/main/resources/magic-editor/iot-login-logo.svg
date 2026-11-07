@@ -1,0 +1,6 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="50" fill="#E3F2FD" stroke="#1BC47D" stroke-width="4"/>
+  <rect x="40" y="40" width="40" height="40" rx="8" fill="#fff" stroke="#00B5E2" stroke-width="2"/>
+  <circle cx="60" cy="60" r="10" fill="#1BC47D"/>
+  <text x="60" y="68" text-anchor="middle" font-size="24" font-family="Arial" fill="#00B5E2" font-weight="bold">IoT</text>
+</svg>

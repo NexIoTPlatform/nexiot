@@ -1,0 +1,170 @@
+<!--
+  @file SettingDrawer 组件
+  @description 系统设置抽屉组件，用于配置系统主题、布局、动画等全局设置
+-->
+<template>
+  <div>
+    <a-space :size="15" direction="vertical" fill>
+      <section>
+        <a-divider orientation="center">系统布局</a-divider>
+        <a-row :gutter="[8, 8]">
+          <a-col v-for="item in LAYOUT_OPTIONS" :key="item.value" :span="8">
+            <LayoutModeItem :mode="item.value" :name="item.label" @click="toggleLayout(item.value)"></LayoutModeItem>
+          </a-col>
+        </a-row>
+      </section>
+
+      <!-- 系统主题设置 -->
+      <section>
+        <a-divider orientation="center">系统主题</a-divider>
+        <a-row justify="center">
+          <ColorPicker theme="dark" :color="appStore.themeColor" :sucker-hide="true" :colors-default="defaultColorList"
+            @change-color="changeColor"></ColorPicker>
+        </a-row>
+      </section>
+
+      <!-- 界面显示设置 -->
+      <section>
+        <a-divider orientation="center">界面显示</a-divider>
+        <a-descriptions :column="1" :align="{ value: 'right' }" :value-style="{ paddingRight: 0 }">
+          <!-- 页签设置 -->
+          <a-descriptions-item label="页签显示">
+            <a-switch v-model="appStore.isTabVisible" />
+          </a-descriptions-item>
+          <a-descriptions-item label="页签风格">
+            <a-select v-model="appStore.tabStyle" placeholder="请选择" :options="TAB_MODE_OPTIONS"
+              :disabled="!appStore.isTabVisible" :trigger-props="{ autoFitPopupMinWidth: true }"
+              :style="{ width: '120px' }">
+            </a-select>
+          </a-descriptions-item>
+
+          <!-- 动画设置 -->
+          <a-descriptions-item label="动画显示">
+            <a-switch v-model="appStore.isTransitionEnabled" />
+          </a-descriptions-item>
+          <a-descriptions-item label="动画效果">
+            <a-select v-model="appStore.transitionName" placeholder="请选择" :options="ANIMATE_MODE_OPTIONS"
+              :disabled="!appStore.isTransitionEnabled" :style="{ width: '120px' }">
+            </a-select>
+          </a-descriptions-item>
+
+          <!-- 菜单设置 -->
+          <a-descriptions-item label="深色菜单">
+            <a-switch v-model="appStore.isMenuDark" />
+          </a-descriptions-item>
+          <a-descriptions-item label="手风琴效果">
+            <a-switch v-model="appStore.isMenuAccordion" />
+          </a-descriptions-item>
+        </a-descriptions>
+      </section>
+    </a-space>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ColorPicker } from 'vue-color-kit'
+import AppSetting from '@/config/setting.json'
+import { useTheme } from '@/hooks'
+import { useAppStore } from '@/stores'
+import LayoutModeItem from './components/LayoutModeItem.vue'
+import 'vue-color-kit/dist/vue-color-kit.css'
+
+/** 组件名称 */
+defineOptions({ name: 'SettingDrawerPanel' })
+
+/** 状态管理 */
+const appStore = useAppStore()
+const { setThemeColor } = useTheme()
+
+type LayoutItem = { label: string, value: App.SettingConfig['layout'] }
+const HEX_COLOR_RE = /^#[0-9A-Z]{6}/i
+
+/** 布局选项 */
+const LAYOUT_OPTIONS: LayoutItem[] = [
+  { label: '默认布局', value: 'left' },
+  { label: '顶部布局', value: 'top' },
+  { label: '混合布局', value: 'mix' },
+  { label: '双列布局', value: 'columns' }
+]
+
+type TabItem = { label: string, value: App.SettingConfig['tabStyle'] }
+/** 页签模式选项 */
+const TAB_MODE_OPTIONS: TabItem[] = [
+  { label: '卡片', value: 'card' },
+  { label: '间隔卡片', value: 'card-gutter' },
+  { label: '圆角', value: 'rounded' },
+  { label: '自定义1', value: 'custom1' },
+  { label: '自定义2', value: 'custom2' }
+]
+
+type AnimateItem = { label: string, value: App.SettingConfig['transitionName'] }
+/** 动画模式选项 */
+const ANIMATE_MODE_OPTIONS: AnimateItem[] = [
+  { label: '默认', value: 'zoom-fade' },
+  { label: '滑动', value: 'fade-slide' },
+  { label: '渐变', value: 'fade' },
+  { label: '底部滑出', value: 'fade-bottom' },
+  { label: '缩放消退', value: 'fade-scale' }
+]
+
+/** 初始化设置 */
+const initSetting = () => {
+  const layouts = LAYOUT_OPTIONS.map((i) => i.value)
+  if (!layouts.includes(appStore.layout)) {
+    appStore.layout = AppSetting.layout as App.SettingConfig['layout']
+  }
+  const tabs = TAB_MODE_OPTIONS.map((i) => i.value)
+  if (!tabs.includes(appStore.tabStyle)) {
+    appStore.tabStyle = AppSetting.tabStyle as App.SettingConfig['tabStyle']
+  }
+  const animates = ANIMATE_MODE_OPTIONS.map((i) => i.value)
+  if (!animates.includes(appStore.transitionName)) {
+    appStore.transitionName = AppSetting.transitionName as App.SettingConfig['transitionName']
+  }
+}
+initSetting()
+
+/** 默认主题色列表 */
+const defaultColorList = [
+  '#165DFF',
+  '#409EFF',
+  '#18A058',
+  '#2d8cf0',
+  '#007AFF',
+  '#5ac8fa',
+  '#5856D6',
+  '#536dfe',
+  '#9c27b0',
+  '#AF52DE',
+  '#0096c7',
+  '#00C1D4',
+  '#43a047',
+  '#e53935',
+  '#f4511e',
+  '#6d4c41'
+]
+
+/** 颜色选择器返回值类型 */
+interface ColorObj {
+  hex: string
+  hsv: { h: number, s: number, v: number }
+  rgba: { r: number, g: number, b: number, a: number }
+}
+
+/** 更改主题色 */
+const changeColor = (colorObj: ColorObj) => {
+  if (!HEX_COLOR_RE.test(colorObj.hex)) return
+  setThemeColor(colorObj.hex)
+}
+
+/** 切换布局 */
+const toggleLayout = (layout: App.SettingConfig['layout']) => {
+  appStore.layout = layout
+}
+</script>
+
+<style lang="scss" scoped>
+:deep(.arco-descriptions-item-label-block) {
+  color: var(--color-text-1);
+}
+</style>

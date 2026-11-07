@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.GatewayPollingConfigMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.GatewayPollingConfig">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+    <result column="product_key" property="productKey" jdbcType="VARCHAR" />
+    <result column="iot_id" property="iotId" jdbcType="VARCHAR" />
+    <result column="task_type" property="taskType" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="SMALLINT" />
+    <result column="interval_seconds" property="intervalSeconds" jdbcType="INTEGER" />
+    <result column="timeout_seconds" property="timeoutSeconds" jdbcType="INTEGER" />
+    <result column="retry_times" property="retryTimes" jdbcType="INTEGER" />
+    <result column="command_interval_ms" property="commandIntervalMs" jdbcType="INTEGER" />
+    <result column="next_poll_time" property="nextPollTime" jdbcType="TIMESTAMP" />
+    <result column="last_poll_time" property="lastPollTime" jdbcType="TIMESTAMP" />
+    <result column="last_success_time" property="lastSuccessTime" jdbcType="TIMESTAMP" />
+    <result column="continuous_fail_count" property="continuousFailCount" jdbcType="INTEGER" />
+    <result column="polling_status" property="pollingStatus" jdbcType="VARCHAR" />
+    <result column="total_poll_count" property="totalPollCount" jdbcType="BIGINT" />
+    <result column="success_count" property="successCount" jdbcType="BIGINT" />
+    <result column="fail_count" property="failCount" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="creator_id" property="creatorId" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectDuePolling" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM iot_gateway_polling_config
+    WHERE enabled = 1
+      AND polling_status = 'NORMAL'
+      AND interval_seconds = #{intervalSeconds}
+      AND COALESCE(task_type, 'CLOUD_POLLING') = #{taskType}
+      AND (next_poll_time IS NULL OR next_poll_time &lt;= NOW())
+    ORDER BY next_poll_time
+  </select>
+  <select id="selectByDevice" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM iot_gateway_polling_config
+    WHERE product_key = #{productKey}
+      AND device_id = #{deviceId}
+      AND COALESCE(task_type, 'CLOUD_POLLING') = #{taskType} LIMIT 1
+  </select>
+  <update id="updatePollingSuccess" databaseId="postgresql">
+    UPDATE iot_gateway_polling_config
+    SET last_poll_time        = NOW(),
+        last_success_time     = NOW(),
+        next_poll_time        = #{nextPollTime},
+        continuous_fail_count = 0,
+        total_poll_count      = total_poll_count + 1,
+        success_count         = success_count + 1,
+        polling_status        = 'NORMAL'
+    WHERE id = #{id}
+  </update>
+  <update id="updatePollingFail" databaseId="postgresql">
+    UPDATE iot_gateway_polling_config
+    SET last_poll_time = NOW(),
+        continuous_fail_count = continuous_fail_count + 1,
+        total_poll_count = total_poll_count + 1,
+        fail_count = fail_count + 1,
+        polling_status = CASE
+                           WHEN continuous_fail_count + 1 &gt;= 5 THEN 'FAILED'
+                           ELSE polling_status
+          END,
+        next_poll_time = #{nextPollTime}
+    WHERE id = #{id}
+  </update>
+  <update id="resetFailCount" databaseId="postgresql">
+    UPDATE iot_gateway_polling_config
+    SET continuous_fail_count = 0,
+        polling_status        = 'NORMAL'
+    WHERE id = #{id}
+  </update>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTTaskDefinitionMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTTaskDefinition">
+    <id column="id" property="id"/>
+    <result column="definition_no" property="definitionNo"/>
+    <result column="task_type" property="taskType"/>
+    <result column="task_name" property="taskName"/>
+    <result column="biz_module" property="bizModule"/>
+    <result column="biz_key" property="bizKey"/>
+    <result column="product_key" property="productKey"/>
+    <result column="product_name" property="productName"/>
+    <result column="schedule_type" property="scheduleType"/>
+    <result column="schedule_status" property="scheduleStatus"/>
+    <result column="cron_expression" property="cronExpression"/>
+    <result column="misfire_policy" property="misfirePolicy"/>
+    <result column="job_id" property="jobId"/>
+    <result column="last_task_id" property="lastTaskId"/>
+    <result column="last_execute_time" property="lastExecuteTime"/>
+    <result column="creator_id" property="creatorId"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="creator_name" property="creatorName"/>
+    <result column="request_snapshot" property="requestSnapshot"/>
+    <result column="ext_json" property="extJson"/>
+    <result column="remark" property="remark"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <select id="selectTaskDefinitionList" resultMap="BaseResultMap">
+    select *
+    from iot_task_definition t
+    <where>
+      <if test="query.taskType != null and query.taskType != ''">
+        and t.task_type = #{query.taskType}
+      </if>
+      <if test="query.taskName != null and query.taskName != ''">
+        and t.task_name like concat('%', #{query.taskName}, '%')
+      </if>
+      <if test="query.productKey != null and query.productKey != ''">
+        and t.product_key = #{query.productKey}
+      </if>
+      <if test="query.scheduleType != null and query.scheduleType != ''">
+        and t.schedule_type = #{query.scheduleType}
+      </if>
+      <if test="query.scheduleStatus != null and query.scheduleStatus != ''">
+        and t.schedule_status = #{query.scheduleStatus}
+      </if>
+      <if test="query.queryBeginTime != null">
+        and t.create_time &gt;= #{query.queryBeginTime}
+      </if>
+      <if test="query.queryEndTime != null">
+        and t.create_time &lt;= #{query.queryEndTime}
+      </if>
+      <choose>
+        <when test="!admin and query.tenantId != null and query.tenantId != ''">
+          and (t.tenant_id = #{query.tenantId} or ((t.tenant_id is null or t.tenant_id = '') and t.creator_id = #{query.creatorId}))
+        </when>
+        <when test="!admin and unionId != null and unionId != ''">
+          and t.creator_id = #{unionId}
+        </when>
+      </choose>
+    </where>
+    order by t.create_time desc, t.id desc
+  </select>
+
+  <select id="selectTaskDefinitionById" resultMap="BaseResultMap">
+    select *
+    from iot_task_definition
+    where id = #{id}
+  </select>
+</mapper>

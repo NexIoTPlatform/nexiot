@@ -1,0 +1,16 @@
+NOTICE file for cn.universal.core.metadata
+
+This project includes code derived from the JetLinks core library,
+which is licensed under the Apache License 2.0.
+
+Original source code:
+- Repository: https://github.com/jetlinks/jetlinks-core
+- Original package: org.jetlinks.core.metadata
+- Original copyright: Copyright 2019-2024 JetLinks Community
+
+Modifications made to the original code:
+- The package name has been changed from "org.jetlinks.core.metadata" to "cn.universal.core.metadata".
+- 因IDE批量修改包名操作，可能导致部分文件头部的原始作者信息被误删，原始作者信息可参考原项目代码库。
+- 为确保代码在当前项目环境中编译通过，对部分方法进行了必要的调整（如依赖类引用路径修正、语法兼容处理等），未改变核心功能逻辑。
+
+For the full text of the Apache License 2.0, see the LICENSE file in this directory.

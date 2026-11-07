@@ -1,0 +1,147 @@
+<template>
+  <GiPageLayout margin>
+    <a-row justify="space-between" class="g-row-tool">
+      <a-space wrap>
+        <GiButton type="add" @click="onAdd"></GiButton>
+        <a-tooltip content="展开/折叠">
+          <a-button type="primary" status="success" @click="onExpanded">
+            <template #icon>
+              <icon-list v-if="!isExpanded" />
+              <icon-mind-mapping v-else />
+            </template>
+          </a-button>
+        </a-tooltip>
+        <a-tooltip content="查看数据结构">
+          <GiCodeButton lang="javascript" :code="JSON.stringify(menuList, null, '\t')"></GiCodeButton>
+        </a-tooltip>
+      </a-space>
+
+      <a-space wrap>
+        <a-input-group>
+          <a-select v-model="queryParams.status" :options="dictData.STATUS" placeholder="菜单状态"
+            style="width: 120px"></a-select>
+          <a-input v-model="queryParams.name" placeholder="输入菜单名称搜索" allow-clear style="width: 250px"></a-input>
+        </a-input-group>
+        <GiButton type="search" @click="search"></GiButton>
+        <GiButton type="reset" @click="reset"></GiButton>
+      </a-space>
+    </a-row>
+
+    <a-table ref="tableRef" class="g-table" row-key="id" :data="menuList" :loading="loading" :bordered="{ cell: true }"
+      :scroll="{ x: '100%', y: '100%', minWidth: 1700 }" :pagination="false" size="mini">
+      <template #expand-icon="{ expanded }">
+        <IconDown v-if="expanded" />
+        <IconRight v-else />
+      </template>
+      <template #columns>
+        <a-table-column title="菜单名称">
+          <template #cell="{ record }">{{ record.title || '' }}</template>
+        </a-table-column>
+        <a-table-column title="类型" :width="80" align="center">
+          <template #cell="{ record }">
+            <a-tag v-if="record.type === 1" color="orangered">目录</a-tag>
+            <a-tag v-if="record.type === 2" color="green">菜单</a-tag>
+            <a-tag v-if="record.type === 3">按钮</a-tag>
+          </template>
+        </a-table-column>
+        <a-table-column title="排序" :width="80" align="center">
+          <template #cell="{ record }">{{ record.sort || 0 }}</template>
+        </a-table-column>
+        <a-table-column title="路由路径" data-index="path"> </a-table-column>
+        <a-table-column title="路由名称">
+          <template #cell="{ record }">{{ transformPathToName(record.path) }}</template>
+        </a-table-column>
+        <a-table-column title="组件路径" data-index="component"> </a-table-column>
+        <a-table-column title="权限标识" data-index="permission"> </a-table-column>
+        <a-table-column title="菜单图标" data-index="icon" :width="100" align="center">
+          <template #cell="{ record }">
+            <MenuIcon :icon="record?.icon"></MenuIcon>
+          </template>
+        </a-table-column>
+        <a-table-column title="状态" :width="80" align="center">
+          <template #cell="{ record }">
+            <a-switch type="round" size="small" :model-value="record.status" checked-value="1" unchecked-value="0" />
+          </template>
+        </a-table-column>
+        <a-table-column title="是否缓存" :width="100" align="center">
+          <template #cell="{ record }">
+            <a-tag v-if="record.keepAlive" color="green">是</a-tag>
+            <a-tag v-else color="red">否</a-tag>
+          </template>
+        </a-table-column>
+        <a-table-column title="是否隐藏" :width="100" align="center">
+          <template #cell="{ record }">
+            <a-tag v-if="record.hidden" color="green">是</a-tag>
+            <a-tag v-else color="red">否</a-tag>
+          </template>
+        </a-table-column>
+        <a-table-column title="是否外链" :width="100" align="center">
+          <template #cell="{ record }">
+            <a-tag v-if="isExternal(record.path)" color="green">是</a-tag>
+            <a-tag v-else color="red">否</a-tag>
+          </template>
+        </a-table-column>
+        <a-table-column title="操作" :width="126" align="center" :fixed="fixed">
+          <template #cell="{ record }">
+            <GiTableActions :actions="[
+              { key: 'edit', label: '编辑', icon: 'edit', disabled: record.disabled, onClick: () => onEdit(record) },
+              { key: 'add', label: '新增子菜单', icon: 'add', visible: [1, 2].includes(record.type), onClick: () => onAdd(record.id) },
+              { key: 'delete', label: '删除', icon: 'delete', status: 'danger', disabled: record.disabled, confirm: '您确定要删除该项吗?', onClick: () => onDelete(record) },
+            ]" />
+          </template>
+        </a-table-column>
+      </template>
+    </a-table>
+
+    <MenuFormModal ref="MenuFormModalRef" :menus="menuList" @save-success="search"></MenuFormModal>
+  </GiPageLayout>
+</template>
+
+<script setup lang="ts">
+import type * as T from '@/apis/system/menu'
+import { deleteMenu, getMenuList } from '@/apis/system/menu'
+import { useDict, useTable } from '@/hooks'
+import MenuIcon from '@/layout/components/Menu/MenuIcon.vue'
+import { transformPathToName } from '@/utils'
+import { isExternal } from '@/utils/validate'
+import MenuFormModal from './MenuFormModal.vue'
+
+defineOptions({ name: 'SystemMenu' })
+
+const { dictData } = useDict(['STATUS'])
+const MenuFormModalRef = useTemplateRef('MenuFormModalRef')
+
+const tableRef = useTemplateRef('tableRef')
+const isExpanded = ref(false)
+const onExpanded = () => {
+  isExpanded.value = !isExpanded.value
+  tableRef.value?.expandAll(isExpanded.value)
+}
+
+const queryParams = reactive({ name: '', status: '' })
+
+const { loading, tableData: menuList, search, fixed, onDelete } = useTable({
+  listAPI: () => getMenuList({
+    name: queryParams.name.trim() || undefined,
+    status: queryParams.status === '' ? undefined : queryParams.status as Status
+  }),
+  deleteAPI: deleteMenu,
+  immediate: true
+})
+
+const reset = () => {
+  queryParams.name = ''
+  queryParams.status = ''
+  search()
+}
+
+const onAdd = (parentId?: string) => {
+  MenuFormModalRef.value?.add(parentId)
+}
+
+const onEdit = (item: T.ListItem) => {
+  MenuFormModalRef.value?.edit(item.id)
+}
+</script>
+
+<style lang="scss" scoped></style>

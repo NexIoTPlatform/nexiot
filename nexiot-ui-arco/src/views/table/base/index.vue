@@ -1,0 +1,87 @@
+<template>
+  <GiPageLayout margin>
+    <GiForm :model-value="form" :columns="columns" search hide-fold-btn :suffix="false"
+      :grid-item-props="{ span: { xs: 24, sm: 12, md: 8, lg: 8, xl: 6, xxl: 6 } }"
+      @update:model-value="Object.assign(form, $event)" @search="search" @reset="search">
+    </GiForm>
+
+    <a-table class="g-full-table" row-key="id" page-position="bottom" :bordered="{ cell: true }" :loading="loading"
+      :data="tableData" :scroll="{ x: '100%', y: '100%', minWidth: 1400 }" :pagination="pagination">
+      <template #columns>
+        <a-table-column title="序号" :width="60" align="center" fixed="left">
+          <template #cell="cell">{{ cell.rowIndex + 1 }}</template>
+        </a-table-column>
+        <a-table-column title="姓名" data-index="name" :width="120">
+          <template #cell="{ record }">
+            <GiCellAvatar :avatar="record.avatar" :name="record.name"></GiCellAvatar>
+          </template>
+        </a-table-column>
+        <a-table-column title="账户" data-index="account" :width="120"></a-table-column>
+        <a-table-column title="状态" :width="100" align="center">
+          <template #cell="{ record }">
+            <GiCellStatus :status="record.status"></GiCellStatus>
+          </template>
+        </a-table-column>
+        <a-table-column title="手机号" data-index="phone" :width="150"></a-table-column>
+        <a-table-column title="性别" data-index="gender" :width="100" align="center">
+          <template #cell="{ record }">
+            <GiCellGender :gender="record.gender"></GiCellGender>
+          </template>
+        </a-table-column>
+        <a-table-column title="爱好" data-index="hobby">
+          <template #cell="{ record }">
+            <GiCellTags :data="record.hobby"></GiCellTags>
+          </template>
+        </a-table-column>
+        <a-table-column title="创建时间" data-index="createTime" :width="180"
+          :sortable="{ sortDirections: ['ascend', 'descend'] }"></a-table-column>
+        <a-table-column title="地址" data-index="address" ellipsis tooltip></a-table-column>
+        <a-table-column title="操作" :width="200" align="center" fixed="right">
+          <template #cell="{ record }">
+            <a-space>
+              <a-button type="primary" size="mini">编辑</a-button>
+              <a-button size="mini">详情</a-button>
+              <a-popconfirm type="warning" content="您确定要删除该项吗?" @before-ok="onDelete(record)">
+                <a-button type="primary" status="danger" size="mini">删除</a-button>
+              </a-popconfirm>
+            </a-space>
+          </template>
+        </a-table-column>
+      </template>
+    </a-table>
+  </GiPageLayout>
+</template>
+
+<script setup lang="ts">
+import type { FormColumnItem } from '@/components/index'
+import { baseAPI } from '@/apis/person'
+import { useTable } from '@/hooks'
+
+defineOptions({ name: 'TableBase' })
+
+const form = reactive({})
+
+const columns = reactive([
+  {
+    type: 'input',
+    label: '姓名',
+    field: 'name'
+  },
+  {
+    type: 'input',
+    label: '手机',
+    field: 'phone',
+    props: {
+      maxLength: 11
+    }
+  }
+] as FormColumnItem[])
+
+const { tableData, pagination, search, loading, onDelete } = useTable({
+  listAPI: (p) => baseAPI.getList(p),
+  deleteAPI: (ids) => baseAPI.delete({ ids }),
+  immediate: true
+})
+</script>
+
+<style lang="scss" scoped></style>

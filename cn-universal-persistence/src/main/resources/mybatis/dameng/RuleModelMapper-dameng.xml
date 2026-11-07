@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.RuleModelMapper">
+  <select id="selectRuleByBo" resultType="cn.universal.persistence.entity.RuleModel" databaseId="dameng">
+    select rm.id, rm.rule_name, rm.description, rm.config, rm.create_time
+    from rule_model_instance rmi
+    left join rule_model rm on rmi.model_id = rm.id
+    <where>
+      <choose>
+        <when test="bo.tenantId != null and bo.tenantId != ''">
+          (rm.tenant_id = #{bo.tenantId} or ((rm.tenant_id is null or rm.tenant_id = '') and rm.creator_id = #{bo.creatorId}))
+        </when>
+        <otherwise>
+          rm.creator_id = #{bo.creatorId}
+        </otherwise>
+      </choose>
+      and status = 'run' and rmi.relation_id in
+      (#{bo.productKey},#{bo.iotId}
+      <if test="bo.groupIds != null and bo.groupIds.size() &gt; 0">
+        <foreach collection="bo.groupIds" separator="," open="," close=" " item="id">
+          #{id}
+        </foreach>
+      </if>
+      )
+    </where>
+  </select>
+  <select id="selectRuleListByBo" resultType="cn.universal.persistence.entity.vo.RuleModelVO" databaseId="dameng">
+    select id, rule_name, description, status, creator_id, create_time
+    from rule_model
+    <where>
+      <choose>
+        <when test="bo.tenantId != null and bo.tenantId != ''">
+          (tenant_id = #{bo.tenantId} or ((tenant_id is null or tenant_id = '') and creator_id = #{bo.creatorId}))
+        </when>
+        <otherwise>
+          creator_id = #{bo.creatorId}
+        </otherwise>
+      </choose>
+      <if test="bo.ruleName != null and bo.ruleName != ''">
+        and rule_name like concat('%',#{bo.ruleName},'%')
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+</mapper>

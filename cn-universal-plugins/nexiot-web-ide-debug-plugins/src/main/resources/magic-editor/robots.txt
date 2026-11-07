@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# 允许搜索引擎爬取所有内容
+Allow: /src/
+Allow: /public/
+Allow: /assets/
+Allow: /components/
+
+# 网站地图位置
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# 爬取延迟
+Crawl-delay: 1

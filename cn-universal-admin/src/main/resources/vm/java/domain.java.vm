@@ -1,0 +1,63 @@
+package ${packageName}.domain;
+
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.Column;
+
+
+import lombok.Data;
+import com.zebra.common.annotation.Excel;
+#if($table.crud)
+import com.zebra.common.core.domain.BussinessEntity;
+#elseif($table.tree)
+#end
+#foreach ($import in $importList)
+import ${import};
+#end
+
+/**
+ * ${tableName}表 ${ClassName}
+ *
+ * @Author ${Author}
+ * @date ${datetime}
+ */
+    #if($table.crud)
+        #set($Entity="BaseEntity")
+    #elseif($table.tree)
+        #set($Entity="TreeEntity")
+    #end
+    @Table(name = "${tableName}" )
+    @Data
+    public class ${ClassName} extends
+
+    BaseEntity {
+      private static final long serialVersionUID = 1L;
+
+        #foreach ($column in $columns)
+            #if(!$column.superColumn)
+              /** $column.columnComment */
+                #if($column.list)
+                    #set($parentheseIndex=$column.columnComment.indexOf("（"))
+                    #if($parentheseIndex != -1)
+                        #set($comment=$column.columnComment.substring(0, $parentheseIndex))
+                    #else
+                        #set($comment=$column.columnComment)
+                    #end
+                    #if($parentheseIndex != -1)
+                    @Excel(name = "${comment}" , readConverterExp = "$column.readConverterExp()" )
+                    #elseif($column.javaType == 'Date')
+                    @Excel(name = "${comment}" , width = 30, dateFormat = "yyyy-MM-dd" )
+                    #else
+                    @Excel(name = "${comment}" )
+                    #end
+                #end
+                #if($column.isPk==1)
+                @Id
+                #else
+                @Column(name = "${column.columnName}" )
+                #end
+            private $column.javaType $column.javaField;
+
+            #end
+        #end
+    }

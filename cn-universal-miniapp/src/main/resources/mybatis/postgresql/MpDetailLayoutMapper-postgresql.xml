@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpDetailLayoutMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.miniapp.entity.MpDetailLayout">
+    <id column="id" property="id" />
+    <result column="app_id" property="appId" />
+    <result column="product_key" property="productKey" />
+    <result column="layout_name" property="layoutName" />
+    <result column="layout_config" property="layoutConfig" />
+    <result column="status" property="status" />
+    <result column="creator_id" property="creatorId" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+  </resultMap>
+  <select id="selectByAppIdAndProductKey" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM mp_detail_layout
+    WHERE app_id = #{appId}
+      AND product_key = #{productKey}
+      AND status = 1
+  </select>
+  <select id="selectByAppId" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM mp_detail_layout
+    WHERE app_id = #{appId}
+    ORDER BY create_time DESC
+  </select>
+</mapper>

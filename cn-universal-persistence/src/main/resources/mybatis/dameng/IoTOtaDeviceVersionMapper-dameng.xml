@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTOtaDeviceVersionMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTOtaDeviceVersion">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="package_type" jdbcType="VARCHAR" property="packageType" />
+    <result column="custom_type" jdbcType="VARCHAR" property="customType" />
+    <result column="module" jdbcType="VARCHAR" property="module" />
+    <result column="current_version" jdbcType="VARCHAR" property="currentVersion" />
+    <result column="target_version" jdbcType="VARCHAR" property="targetVersion" />
+    <result column="hardware_version" jdbcType="VARCHAR" property="hardwareVersion" />
+    <result column="last_task_id" jdbcType="BIGINT" property="lastTaskId" />
+    <result column="last_status" jdbcType="VARCHAR" property="lastStatus" />
+    <result column="protocol" jdbcType="VARCHAR" property="protocol" />
+    <result column="retry_count" jdbcType="INTEGER" property="retryCount" />
+    <result column="status_detail" jdbcType="VARCHAR" property="statusDetail" />
+    <result column="ext_info" jdbcType="LONGVARCHAR" property="extInfo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="last_report_time" jdbcType="TIMESTAMP" property="lastReportTime" />
+    <result column="last_success_time" jdbcType="TIMESTAMP" property="lastSuccessTime" />
+  </resultMap>
+  <resultMap id="VersionWithDeviceMap" type="cn.universal.persistence.entity.IoTOtaDeviceVersion" extends="BaseResultMap">
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+  </resultMap>
+  <sql id="selectVersionColumns">
+    select v.id, v.product_key, v.device_id, v.iot_id, v.package_type, v.custom_type, v.module,
+           v.current_version, v.target_version, v.hardware_version, v.last_task_id, v.last_status,
+           v.protocol, v.retry_count, v.status_detail, v.ext_info, v.create_time, v.update_time,
+           v.last_report_time, v.last_success_time, d.device_name
+      from iot_ota_device_version v
+      left join iot_device d
+        on lower(d.product_key) = lower(v.product_key)
+       and lower(d.device_id) = lower(v.device_id)
+  </sql>
+  <select id="selectVersionByDevice" resultMap="VersionWithDeviceMap" databaseId="dameng">
+    <include refid="selectVersionColumnsPg" />
+    where v.product_key = #{productKey}
+      and v.device_id = #{deviceId}
+      and v.package_type = #{packageType}
+      and COALESCE(v.module, 'APPLICATION') = #{module}
+    limit 1
+  </select>
+  <select id="selectLatestVersionByDevice" resultMap="VersionWithDeviceMap" databaseId="dameng">
+    <include refid="selectVersionColumnsPg" />
+    where v.product_key = #{productKey}
+      and v.device_id = #{deviceId}
+    order by v.last_report_time desc, v.update_time desc, v.id desc
+    limit 1
+  </select>
+  <select id="selectVersionListByProductKey" parameterType="String" resultMap="VersionWithDeviceMap" databaseId="dameng">
+    <include refid="selectVersionColumnsPg" />
+    where v.product_key = #{productKey}
+    order by v.last_report_time desc, v.id desc
+  </select>
+  <select id="selectVersionDistributionByProductKey" parameterType="String" resultType="java.util.HashMap" databaseId="dameng">
+    select current_version as version, count(*) as count
+      from iot_ota_device_version
+     where product_key = #{productKey}
+       and current_version is not null
+       and current_version != ''
+     group by current_version
+     order by count(*) desc, current_version desc
+     limit 10
+  </select>
+  <insert id="upsertVersion" parameterType="cn.universal.persistence.entity.IoTOtaDeviceVersion" databaseId="dameng">
+    MERGE INTO iot_ota_device_version tgt
+    USING (
+      SELECT #{productKey} AS product_key,
+             #{deviceId} AS device_id,
+             #{iotId} AS iot_id,
+             #{packageType} AS package_type,
+             #{customType} AS custom_type,
+             #{module} AS module,
+             #{currentVersion} AS current_version,
+             #{targetVersion} AS target_version,
+             #{hardwareVersion} AS hardware_version,
+             #{lastTaskId} AS last_task_id,
+             #{lastStatus} AS last_status,
+             #{protocol} AS protocol,
+             #{retryCount} AS retry_count,
+             #{statusDetail} AS status_detail,
+             #{extInfo} AS ext_info,
+             #{lastReportTime} AS last_report_time,
+             #{lastSuccessTime} AS last_success_time
+      FROM dual
+    ) src
+    ON (
+      tgt.product_key = src.product_key
+      AND tgt.device_id = src.device_id
+      AND tgt.package_type = src.package_type
+      AND NVL(tgt.module, 'APPLICATION') = NVL(src.module, 'APPLICATION')
+    )
+    WHEN MATCHED THEN
+      UPDATE SET
+        tgt.iot_id = src.iot_id,
+        tgt.custom_type = src.custom_type,
+        tgt.current_version = src.current_version,
+        tgt.target_version = src.target_version,
+        tgt.hardware_version = src.hardware_version,
+        tgt.last_task_id = src.last_task_id,
+        tgt.last_status = src.last_status,
+        tgt.protocol = src.protocol,
+        tgt.retry_count = src.retry_count,
+        tgt.status_detail = src.status_detail,
+        tgt.ext_info = src.ext_info,
+        tgt.update_time = CURRENT_TIMESTAMP,
+        tgt.last_report_time = src.last_report_time,
+        tgt.last_success_time = src.last_success_time
+    WHEN NOT MATCHED THEN
+      INSERT (
+        product_key, device_id, iot_id, package_type, custom_type, module, current_version,
+        target_version, hardware_version, last_task_id, last_status, protocol, retry_count,
+        status_detail, ext_info, create_time, update_time, last_report_time, last_success_time
+      )
+      VALUES (
+        src.product_key, src.device_id, src.iot_id, src.package_type, src.custom_type, src.module,
+        src.current_version, src.target_version, src.hardware_version, src.last_task_id,
+        src.last_status, src.protocol, src.retry_count, src.status_detail, src.ext_info,
+        CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, src.last_report_time, src.last_success_time
+      )
+  </insert>
+  <sql id="selectVersionColumnsPg">
+    select v.id, v.product_key, v.device_id, v.iot_id, v.package_type, v.custom_type, v.module,
+           v.current_version, v.target_version, v.hardware_version, v.last_task_id, v.last_status,
+           v.protocol, v.retry_count, v.status_detail, v.ext_info, v.create_time, v.update_time,
+           v.last_report_time, v.last_success_time, d.device_name
+      from iot_ota_device_version v
+      left join iot_device d
+        on d.product_key = v.product_key
+       and d.device_id = v.device_id
+  </sql>
+</mapper>

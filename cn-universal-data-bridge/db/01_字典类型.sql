@@ -1,0 +1,45 @@
+-- 数据桥接字典类型定义
+-- 删除现有数据（如果需要重新导入）
+-- DELETE FROM sys_dict_data WHERE dict_type LIKE 'databridge_%';
+-- DELETE FROM sys_dict_type WHERE dict_type LIKE 'databridge_%';
+
+-- 插入字典类型
+INSERT INTO `sys_dict_type` (`dict_id`, `dict_name`, `dict_type`, `status`, `create_by`,
+                             `create_time`, `update_by`,
+                             `update_time`, `remark`)
+VALUES (192, '数据桥接资源类型', 'databridge_resource_type', '0', 'admin', NOW(), '', NULL,
+        '数据桥接支持的资源类型'),
+       (193, '资源能力', 'databridge_resource_capability', '0', 'admin', NOW(), '', NULL,
+        '资源支持的数据流向'),
+       (194, 'MySQL配置字段', 'databridge_mysql_fields', '0', 'admin', NOW(), '', NULL,
+        'MySQL资源配置字段定义'),
+       (195, 'Kafka配置字段', 'databridge_kafka_fields', '0', 'admin', NOW(), '', NULL,
+        'Kafka资源配置字段定义'),
+       (196, 'MQTT配置字段', 'databridge_mqtt_fields', '0', 'admin', NOW(), '', NULL,
+        'MQTT资源配置字段定义'),
+       (197, 'HTTP配置字段', 'databridge_http_fields', '0', 'admin', NOW(), '', NULL,
+        'HTTP资源配置字段定义'),
+       (198, 'IoTDB配置字段', 'databridge_iotdb_fields', '0', 'admin', NOW(), '', NULL,
+        'IoTDB资源配置字段定义'),
+       (199, 'InfluxDB配置字段', 'databridge_influxdb_fields', '0', 'admin', NOW(), '', NULL,
+        'InfluxDB资源配置字段定义'),
+       (200, 'Elasticsearch配置字段', 'databridge_elasticsearch_fields', '0', 'admin', NOW(), '',
+        NULL,
+        'Elasticsearch资源配置字段定义'),
+       (201, '云平台类型', 'databridge_cloud_platform', '0', 'admin', NOW(), '', NULL,
+        '支持的云平台类型'),
+       (202, '阿里云配置字段', 'databridge_aliyun_iot_fields', '0', 'admin', NOW(), '', NULL,
+        '阿里云IoT平台配置字段'),
+       (203, '腾讯云配置字段', 'databridge_tencent_iot_fields', '0', 'admin', NOW(), '', NULL,
+        '腾讯云IoT平台配置字段'),
+       (205, 'Redis配置字段', 'databridge_redis_fields', '0', 'admin', NOW(), '', NULL,
+        'Redis缓存配置字段定义'),
+       (206, '数据流向', 'databridge_direction', '0', 'admin', NOW(), '', NULL,
+        '数据桥接流向类型定义'),
+       (207, '桥接状态', 'databridge_status', '0', 'admin', NOW(), '', NULL,
+        '数据桥接配置状态定义'),
+       (208, '桥接类型', 'databridge_type', '0', 'admin', NOW(), '', NULL, '数据桥接类型定义'),
+       (209, '消息类型', 'databridge_message_type', '0', 'admin', NOW(), '', NULL,
+        'IoT消息类型定义'),
+       (211, '华为云配置字段', 'databridge_huawei_iot_fields', '0', 'admin', NOW(), '', NULL,
+        '华为云IoT平台配置字段定义');

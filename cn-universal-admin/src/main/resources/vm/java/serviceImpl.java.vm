@@ -1,0 +1,142 @@
+package ${packageName}.service.impl;
+
+import cn.universal.security.utils.SecurityUtils;
+
+import java.util.Date;
+import java.util.List;
+    #if($table.tree)
+    import java.util.ArrayList;
+
+    import com.zebra.common.core.domain.Ztree;
+    #end
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+
+/**
+ * ${functionName}Service业务层处理
+ *
+ * @Author ${Author}
+ * @date ${datetime}
+ */
+@Service
+public class ${ClassName}ServiceImpl implements I${ClassName}Service {
+
+  @Resource
+  private ${ClassName}Mapper ${className}Mapper;
+
+  /**
+   * 查询${functionName}
+   *
+   * @param ${pkColumn.javaField} ${functionName}ID
+   * @return ${functionName}
+   */
+  @Override
+  public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField}) {
+    return ${className}Mapper.select${ClassName}ById(${pkColumn.javaField});
+  }
+
+  /**
+   * 查询${functionName}列表
+   *
+   * @param ${className} ${functionName}
+   * @return ${functionName}
+   */
+  @Override
+  public List<${ClassName}> select${ClassName}List(${ClassName} ${className}) {
+    return ${className}Mapper.select${ClassName}List(${className});
+  }
+
+  /**
+   * 新增${functionName}
+   *
+   * @param ${className} ${functionName}
+   * @return 结果
+   */
+  @Override
+  public int insert${ClassName}(${ClassName} ${className}) {
+      #foreach ($column in $columns)
+          #if($column.javaField == 'createTime')
+              ${className}.setCreateTime(new Date());
+          #end
+          #if($column.javaField == 'updateTime')
+              ${className}.setUpdateTime(new Date());
+          #end
+          #if($column.javaField == 'updateBy')
+              ${className}.setUpdateBy(SecurityUtils.getUnionId());
+          #end
+      #end
+    return ${className}Mapper.insert${ClassName}(${className});
+  }
+
+  /**
+   * 修改${functionName}
+   *
+   * @param ${className} ${functionName}
+   * @return 结果
+   */
+  @Override
+  public int update${ClassName}(${ClassName} ${className}) {
+      #foreach ($column in $columns)
+          #if($column.javaField == 'updateTime')
+              ${className}.setUpdateTime(new Date());
+          #end
+          #if($column.javaField == 'updateBy')
+              ${className}.setUpdateBy(SecurityUtils.getUnionId());
+          #end
+      #end
+    return ${className}Mapper.update${ClassName}(${className});
+  }
+
+  /**
+   * 删除${functionName}对象
+   *
+   * @param ${pkColumn.javaType}[] ${pkColumn.javaField}s 需要删除的数据ID
+   * @return 结果
+   */
+  @Override
+  public int delete${ClassName}ByIds(${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+    return ${className}Mapper.delete${ClassName}ByIds(${pkColumn.javaType}[]${pkColumn.javaField}s);
+  }
+
+  /**
+   * 删除${functionName}信息
+   *
+   * @param ${pkColumn.javaField} ${functionName}ID
+   * @return 结果
+   */
+  @Override
+  public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField}) {
+    return ${className}Mapper.delete${ClassName}ById(${pkColumn.javaField});
+  }
+    #if($table.tree)
+
+      /**
+       * 查询${functionName}树列表
+       *
+       * @return 所有${functionName}信息
+       */
+      @Override
+      public List<Ztree> select${ClassName}Tree() {
+        List<${ClassName}> ${className}List = ${className}Mapper.select${ClassName}List(
+            new ${ClassName}());
+        List<Ztree> ztrees = new ArrayList<Ztree>();
+        for (${ClassName} ${className} :${className}List)
+        {
+          Ztree ztree = new Ztree();
+            #set($TreeCode=$treeCode.substring(0,1).toUpperCase() + ${treeCode.substring(1)})
+            #set($TreeParentCode=$treeParentCode.substring(0,1).toUpperCase() + ${treeParentCode.substring(1)})
+            #set($TreeName=$treeName.substring(0,1).toUpperCase() + ${treeName.substring(1)})
+          ztree.setId(${className}.get${TreeCode}());
+          ztree.setpId(${className}.get${TreeParentCode}());
+          ztree.setName(${className}.get${TreeName}());
+          ztree.setTitle(${className}.get${TreeName}());
+          ztrees.add(ztree);
+        }
+        return ztrees;
+      }
+    #end
+}

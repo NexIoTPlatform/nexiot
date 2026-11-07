@@ -1,0 +1,340 @@
+.device-history-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-right: 28px;
+
+  &__main {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+
+  &__code {
+    padding: 1px 6px;
+    font-family: var(--font-family-code, monospace);
+    font-size: 12px;
+    color: var(--color-text-2);
+    background: var(--color-fill-2);
+    border-radius: 3px;
+  }
+
+  &__type {
+    padding: 1px 6px;
+    font-family: var(--font-family-code, monospace);
+    font-size: 11px;
+    color: var(--color-text-3);
+    text-transform: uppercase;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-2);
+    border-radius: 3px;
+  }
+
+  &__device {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+}
+
+.device-history {
+  &__control-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--color-border-1);
+
+    .control-left,
+    .control-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+
+  &__picker {
+    width: 350px;
+    max-width: 100%;
+  }
+
+  &__status-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0 8px;
+    font-size: 12px;
+
+    .status-left,
+    .status-right {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .status-label {
+      color: var(--color-text-3);
+    }
+
+    .status-value {
+      color: var(--color-text-2);
+    }
+
+    .status-count {
+      color: var(--color-text-3);
+    }
+  }
+
+  &__spin {
+    display: block;
+    width: 100%;
+  }
+
+  &__alert {
+    margin-bottom: 8px;
+  }
+
+  &__metric-strip {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 6px 12px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    font-size: 12px;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-2);
+    border-radius: 4px;
+
+    .metric-item {
+      display: inline-flex;
+      flex-shrink: 0;
+      gap: 5px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .metric-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+
+      &.dot-avg {
+        background: #165dff;
+      }
+
+      &.dot-max {
+        background: #ff7d00;
+      }
+
+      &.dot-min {
+        background: #00b42a;
+      }
+    }
+
+    .metric-label {
+      color: var(--color-text-3);
+    }
+
+    .metric-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-1);
+    }
+
+    .metric-unit {
+      font-size: 11px;
+      color: var(--color-text-3);
+    }
+
+    .metric-sub {
+      font-size: 11px;
+      color: var(--color-text-4);
+    }
+
+    .metric-sep {
+      width: 1px;
+      height: 12px;
+      background: var(--color-border-2);
+    }
+  }
+
+  &__chart-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 12px 0 4px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  &__query-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    align-items: center;
+    margin: 4px 0 12px;
+    font-size: 12px;
+  }
+
+  &__query-control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    color: var(--color-text-2);
+  }
+
+  &__query-hint {
+    color: var(--color-text-3);
+  }
+
+  &__chart-hint {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  &__chart-wrap {
+    position: relative;
+    height: min(380px, calc(100vh - 370px));
+    min-height: 220px;
+
+    > div {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 32px 0;
+  }
+
+  &__cell-time {
+    font-family: var(--font-family-code, monospace);
+    font-size: 12px;
+    color: var(--color-text-2);
+  }
+
+  &__cell-val-wrap {
+    display: flex;
+    gap: 4px;
+    align-items: baseline;
+
+    .cell-val {
+      font-family: var(--font-family-code, monospace);
+      font-weight: 600;
+      color: var(--color-text-1);
+    }
+
+    .cell-unit {
+      font-size: 11px;
+      color: var(--color-text-3);
+    }
+  }
+
+  &__cell-raw {
+    display: inline-block;
+    max-width: 100%;
+    padding: 1px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--font-family-code, monospace);
+    font-size: 11px;
+    color: var(--color-text-2);
+    white-space: nowrap;
+    cursor: pointer;
+    background: var(--color-fill-2);
+    border-radius: 3px;
+    transition: all 0.15s ease-in-out;
+
+    &:hover {
+      color: var(--color-primary-6);
+      background: var(--color-fill-3);
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    font-size: 12px;
+    color: var(--color-text-3);
+
+    .pagination-info {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+
+      .pagination-end {
+        color: var(--color-text-4);
+      }
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+    }
+  }
+}
+
+.font-mono {
+  font-family: var(--font-family-code, monospace);
+}
+
+@media (width <= 768px) {
+  .device-history {
+    &__control-bar {
+      flex-direction: column;
+      align-items: stretch;
+
+      .control-left,
+      .control-right {
+        justify-content: space-between;
+      }
+    }
+
+    &__picker {
+      width: 100%;
+    }
+
+    &__metric-strip {
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .metric-sep {
+        display: none;
+      }
+    }
+  }
+}

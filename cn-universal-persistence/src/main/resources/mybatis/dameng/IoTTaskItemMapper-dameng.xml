@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTTaskItemMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTTaskItem">
+    <id column="id" property="id"/>
+    <result column="task_id" property="taskId"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="item_no" property="itemNo"/>
+    <result column="item_key" property="itemKey"/>
+    <result column="item_name" property="itemName"/>
+    <result column="row_no" property="rowNo"/>
+    <result column="status" property="status"/>
+    <result column="message" property="message"/>
+    <result column="raw_data" property="rawData"/>
+    <result column="result_data" property="resultData"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <select id="selectTaskItemList" resultMap="BaseResultMap" databaseId="dameng">
+    select *
+    from iot_task_item
+    <where>
+      task_id = #{query.taskId}
+      <if test="query.status != null and query.status != ''">
+        and status = #{query.status}
+      </if>
+      <if test="query.keyword != null and query.keyword != ''">
+        and (
+          item_key like '%' || #{query.keyword} || '%'
+          or item_name like '%' || #{query.keyword} || '%'
+          or message like '%' || #{query.keyword} || '%'
+        )
+      </if>
+    </where>
+    order by row_no asc, id asc
+  </select>
+
+  <select id="selectByTaskId" resultMap="BaseResultMap" databaseId="dameng">
+    select *
+    from iot_task_item
+    where task_id = #{taskId}
+      and status = 'PENDING'
+    order by row_no asc, id asc
+  </select>
+
+  <insert id="insertTaskItemBatch" databaseId="dameng">
+    insert into iot_task_item
+    (id, task_id, tenant_id, item_no, item_key, item_name, row_no, status, message, raw_data, result_data, start_time, end_time, create_time, update_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.id}, #{item.taskId}, #{item.tenantId}, #{item.itemNo}, #{item.itemKey}, #{item.itemName}, #{item.rowNo},
+       #{item.status}, #{item.message}, #{item.rawData}, #{item.resultData}, #{item.startTime},
+       #{item.endTime}, #{item.createTime}, #{item.updateTime})
+    </foreach>
+  </insert>
+
+  <select id="selectTaskStatistics" resultType="cn.universal.persistence.entity.vo.IoTTaskCenterStatisticsVO" databaseId="dameng">
+    select
+      count(1) as totalCount,
+      sum(case when status = 'SUCCESS' then 1 else 0 end) as successCount,
+      sum(case when status = 'FAILED' then 1 else 0 end) as failCount,
+      sum(case when status = 'PENDING' then 1 else 0 end) as pendingCount,
+      sum(case when status = 'RUNNING' then 1 else 0 end) as runningCount
+    from iot_task_item
+    where task_id = #{taskId}
+  </select>
+</mapper>

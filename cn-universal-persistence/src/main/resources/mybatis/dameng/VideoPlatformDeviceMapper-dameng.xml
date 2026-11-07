@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.VideoPlatformDeviceMapper">
+  <select id="selectDevicesByQuery" parameterType="cn.universal.persistence.query.VideoPlatformDeviceQuery" resultType="cn.universal.persistence.entity.VideoPlatformDevice" databaseId="dameng">
+    select
+    id,
+    instance_key,
+    device_id,
+    device_name,
+    device_status,
+    device_model,
+    manufacturer,
+    device_ip,
+    device_port,
+    enabled,
+    org_id,
+    org_name,
+    create_time,
+    update_time
+    from video_platform_device
+    <where>
+      instance_key = #{instanceKey}
+      <if test="tenantId != null and tenantId != ''">
+        and tenant_id = #{tenantId}
+      </if>
+      <if test="keyword != null and keyword != ''">
+        and (device_name like concat('%', #{keyword}, '%')
+        or device_id like concat('%', #{keyword}, '%'))
+      </if>
+      <if test="status != null and status != ''">
+        and device_status = #{status}
+      </if>
+      <if test="orgId != null and orgId != ''">
+        and org_id = #{orgId}
+      </if>
+      <if test="enabled != null and enabled != ''">
+        and enabled = #{enabled}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <update id="batchUpdateEnabledByInstanceKey" databaseId="dameng">
+    UPDATE video_platform_device
+    SET enabled     = #{enabled},
+        update_time = NOW()
+    WHERE instance_key = #{instanceKey}
+  </update>
+</mapper>

@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>cn-universal-web</artifactId>
+  <description>Demo project for Spring Boot</description>
+  <modelVersion>4.0.0</modelVersion>
+  <name>cn-universal-web</name>
+  <parent>
+    <artifactId>cn-universal</artifactId>
+    <groupId>cn.universal.iot</groupId>
+    <version>1.6-SNAPSHOT</version>
+  </parent>
+  <properties>
+    <maven.test.skip>true</maven.test.skip>
+    <java.version>25</java.version>
+    <mysql-connector-java.version>9.5.0</mysql-connector-java.version>
+    <dameng-jdbc.version>8.1.3.140</dameng-jdbc.version>
+  </properties>
+  <dependencies>
+    <!-- 以spring-boot-starter的方式引用 -->
+    <!-- knife4j & SpringDoc -->
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+      <version>4.5.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springdoc</groupId>
+          <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>2.8.13</version>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>transmittable-thread-local</artifactId>
+      <version>2.12.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>1.9.6</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-log4j12</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-tomcat</artifactId>
+        </exclusion>
+      </exclusions>
+      <!--排除这个slf4j-log4j12-->
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-undertow</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <artifactId>cn-universal-core</artifactId>
+      <groupId>cn.universal.iot</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>cn-universal-quartz</artifactId>
+      <groupId>cn.universal.iot</groupId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <artifactId>cn-universal-admin</artifactId>
+      <groupId>cn.universal.iot</groupId>
+      <version>${project.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <artifactId>cn-universal-dm</artifactId>
+      <groupId>cn.universal.iot</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <artifactId>cn-universal-rocketmq</artifactId>-->
+    <!--      <groupId>cn.universal.platform</groupId>-->
+    <!--      <version>${project.version}</version>-->
+    <!--    </dependency>-->
+    <dependency>
+      <artifactId>mysql-connector-j</artifactId>
+      <groupId>com.mysql</groupId>
+      <version>${mysql-connector-java.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dameng</groupId>
+      <artifactId>DmJdbcDriver18</artifactId>
+      <version>${dameng-jdbc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.12.3</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.12.3</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.12.3</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.vaadin.external.google</groupId>
+          <artifactId>android-json</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!--    阿里云日志推送-->
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.11.4</version>
+    </dependency>
+    <!-- Validation依赖 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+    
+    
+    
+    
+    
+    <!-- cn-modbus-protocol 已弃用 -->
+    <!--  -->
+    
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>cn-universal-miniapp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>cn-universal-mqtt-protocol</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>cn-http-access-protocol</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    
+    
+    
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>nexiot-jar-deiver-extend-plugins</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.pulsar</groupId>
+      <artifactId>pulsar-client</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- 强制指定 logback 1.4.14 版本，兼容 Spring Boot 3.x -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.rocketmq</groupId>-->
+    <!--      <artifactId>rocketmq-spring-boot-starter</artifactId>-->
+    <!--      <version>${rocketmq.version}</version>-->
+    <!--      <exclusions>-->
+    <!--        <exclusion>-->
+    <!--          <groupId>commons-logging</groupId>-->
+    <!--          <artifactId>commons-logging</artifactId>-->
+    <!--        </exclusion>-->
+    <!--        &lt;!&ndash; 排除冲突的javax.annotation依赖 &ndash;&gt;-->
+    <!--        <exclusion>-->
+    <!--          <groupId>org.apache.tomcat</groupId>-->
+    <!--          <artifactId>annotations-api</artifactId>-->
+    <!--        </exclusion>-->
+    <!--      </exclusions>-->
+    <!--    </dependency>-->
+    <dependency>
+      <groupId>io.lettuce</groupId>
+      <artifactId>lettuce-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>cn-universal-security</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-oauth2-authorization-server</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- Spring Boot Cache Starter -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-cache</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>nexiot-web-ide-debug-plugins</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>cn.universal.iot</groupId>
+      <artifactId>cn-universal-data-bridge-web</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- 算法插件（可选） -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </dependencies>
+  <build>
+    <finalName>cn-universal-web</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <!--2 按需复制所有需的profile文件-->
+        <filtering>true</filtering>
+        <includes>
+          <include>application.properties</include>
+          <include>ip2region_v4.xdb</include>
+          <include>application-${profileActive}.properties</include>
+          <include>application-pg.properties</include>
+          <include>application-postgresql.properties</include>
+          <include>/log/logback-${profileActive}.xml</include>
+          <include>banner.txt</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <!--2 按需复制所有需的profile文件-->
+        <filtering>true</filtering>
+        <includes>
+          <include>logback-spring.xml</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <!-- 依赖与重复类安全规则，避免引入高风险组件与类冲突 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>enforce-security</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <!-- 当前阶段以警告提示为主，不中断构建。后续可切换为严格失败。 -->
+              <fail>false</fail>
+              <rules>
+                <requireMavenVersion>
+                  <version>[3.8.1,)</version>
+                </requireMavenVersion>
+                <!-- 依赖版本上限与收敛性检查，避免冲突与潜在风险 -->
+                <requireUpperBoundDeps/>
+                <dependencyConvergence/>
+                <bannedDependencies>
+                  <excludes>
+                    <!-- 避免引入已知风险日志组件 -->
+                    <exclude>commons-logging:commons-logging</exclude>
+                    <exclude>log4j:log4j</exclude>
+                  </excludes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <!--           去除resources下的所有文件-->
+          <excludes>
+            <exclude>**/*.yml</exclude>
+            <exclude>**/*.properties</exclude>
+            <exclude>**/*.settings</exclude>
+            <exclude>**/*.xml</exclude>
+            <exclude>static/**</exclude>
+            <exclude>templates/**</exclude>
+          </excludes>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <!--MANIFEST.MF 中 Class-Path 加入前缀-->
+              <classpathPrefix>lib/</classpathPrefix>
+              <!--jar包不包含唯一版本标识-->
+              <useUniqueVersions>false</useUniqueVersions>
+              <!--指定入口类-->
+              <mainClass>cn.universal.CnUniversalIoTApplication</mainClass>
+            </manifest>
+            <manifestEntries>
+              <!--MANIFEST.MF 中 Class-Path 加入资源文件目录-->
+              <Class-Path>/resources</Class-Path>
+            </manifestEntries>
+          </archive>
+          <outputDirectory>${project.build.directory}/dist</outputDirectory>
+        </configuration>
+      </plugin>
+
+      <!--拷贝依赖 copy-dependencies-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <delimiters>
+            <delimiter>${*}</delimiter><!-- to keep the default behavior -->
+            <delimiter>@</delimiter><!-- Spring Boot 的方式 -->
+          </delimiters>
+          <encoding>utf-8</encoding>
+          <useDefaultDelimiters>true</useDefaultDelimiters>
+          <nonFilteredFileExtensions><!-- 不替换的文件类型 -->
+            <nonFilteredFileExtension>jar</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+        </configuration>
+      </plugin>
+
+
+      <!--spring boot repackage，依赖 maven-jar-plugin 打包的jar包 重新打包成 spring boot 的jar包-->
+      <!--      <plugin>-->
+      <!--        <groupId>org.springframework.boot</groupId>-->
+      <!--        <artifactId>spring-boot-maven-plugin</artifactId>-->
+      <!--        <version>${spring-boot.version}</version>-->
+      <!--        <configuration>-->
+      <!--          <mainClass>cn.universal.CnUniversalIoTApplicationtion</mainClass>-->
+      <!--          <classifier>${profileActive}</classifier>-->
+      <!--          <executable>true</executable>-->
+      <!--          <includeSystemScope>true</includeSystemScope>-->
+      <!--          <addResources>true</addResources>-->
+      <!--        </configuration>-->
+      <!--        <executions>-->
+      <!--          <execution>-->
+      <!--            <goals>-->
+      <!--              <goal>repackage</goal>-->
+      <!--            </goals>-->
+      <!--          </execution>-->
+      <!--        </executions>-->
+      <!--      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <!-- not append assembly id in release file name -->
+          <appendAssemblyId>false</appendAssemblyId>
+          <descriptors>
+            <descriptor>src/main/assembly/release.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+
+      </plugin>
+      <!--git-commit-id-plugin 插件，用于实现打包带git版本信息-->
+      <!-- https://github.com/git-commit-id/git-commit-id-maven-plugin/blob/version4.x-old-coordinates/maven/docs/using-the-plugin.md -->
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <version>4.0.0</version>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+            <phase>initialize</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <failOnNoGitDirectory>false</failOnNoGitDirectory>
+          <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+          <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+          <generateGitPropertiesFile>true</generateGitPropertiesFile>
+          <format>json</format>
+          <generateGitPropertiesFilename>${project.build.directory}/dist/version.json
+          </generateGitPropertiesFilename>
+          <includeOnlyProperties>
+            <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+            <includeOnlyProperty>^git.commit.id.(full)$</includeOnlyProperty>
+            <includeOnlyProperty>^git.commit.user.name$</includeOnlyProperty>
+            <includeOnlyProperty>^git.commit.time</includeOnlyProperty>
+            <includeOnlyProperty>^git.commit.message.short</includeOnlyProperty>
+            <includeOnlyProperty>^git.branch</includeOnlyProperty>
+          </includeOnlyProperties>
+          <commitIdGenerationMode>full</commitIdGenerationMode>
+        </configuration>
+      </plugin>
+
+      <!-- Spring Boot Maven 插件 -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+      </plugin>
+
+
+      <!-- GraalVM Native Maven 插件 -->
+
+      <!-- Maven 编译插件 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.14.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>UTF-8</encoding>
+          <!-- 默认保留参数名（开发/测试友好），在 prod/docker profile 中覆盖为更严格设置 -->
+          <parameters>true</parameters>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <!-- 如需在 IDE 中忽略 maven-dependency-plugin 的执行，请将 m2e lifecycle-mapping
+         放置在顶层聚合 POM 的 pluginManagement 中，避免子模块触发 Plugin not found。 -->
+  </build>
+  <!--MAVEN打包选择运行环境-->
+  <!-- 1:local(默认) 本地 2:platform:开发环境 3:test 4:uat 用户验收测试 5.pro:生产环境-->
+  <profiles>
+    <profile>
+      <id>postgresql</id>
+      <properties><profileActive>postgresql</profileActive></properties>
+      <activation><activeByDefault>true</activeByDefault></activation>
+    </profile>
+  </profiles>
+</project>

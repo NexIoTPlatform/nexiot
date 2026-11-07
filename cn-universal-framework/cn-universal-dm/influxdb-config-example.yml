@@ -1,0 +1,53 @@
+# InfluxDB 配置示例
+# 请将此配置添加到 application.yml 或 application-dev.yml 中
+
+influxdb:
+  # 是否启用 InfluxDB 存储策略
+  enable: false
+  
+  # InfluxDB 服务地址
+  url: http://127.0.0.1:8086
+  
+  # InfluxDB Token（用于身份验证）
+  # 在 InfluxDB 2.x 中，使用 Token 而不是用户名密码
+  token: your-influxdb-token-here
+  
+  # 组织名称（Organization）
+  org: nexiot
+  
+  # 存储桶名称（Bucket）
+  # 类似于数据库的概念，用于存储时序数据
+  bucket: device_logs
+
+# InfluxDB 数据保留策略说明：
+# 1. InfluxDB 2.x 使用 Retention Policy 自动清理过期数据
+# 2. 建议在 InfluxDB 管理界面配置保留策略，例如：
+#    - 设备日志保留 30 天
+#    - 属性元数据保留 90 天
+#    - 事件元数据保留 365 天
+# 3. 这样可以避免在应用层手动删除超出 maxStorage 的旧记录
+
+# InfluxDB 数据模型说明：
+# Measurement（测量值，类似表名）:
+#   - device_log: 设备主日志
+#   - property_metadata: 属性元数据日志
+#   - event_metadata: 事件元数据日志
+#
+# Tags（标签，用于索引和过滤）:
+#   - productKey: 产品标识
+#   - deviceId: 设备ID
+#   - iotId: 设备唯一ID
+#   - messageType: 消息类型（PROPERTIES/EVENT/FUNCTIONS等）
+#   - event: 事件标识
+#   - property: 属性标识
+#
+# Fields（字段，存储实际数据）:
+#   - content: 内容数据
+#   - deviceName: 设备名称
+#   - commandId: 命令ID
+#   - commandStatus: 命令状态
+#   - point: 地理位置
+#   - ext1/ext2/ext3: 扩展字段
+#
+# Timestamp（时间戳）:
+#   - 使用数据产生的实际时间作为时间戳

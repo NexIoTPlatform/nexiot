@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTAlgorithmConfigMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTAlgorithmConfig">
+    <id column="id" property="id"/>
+    <result column="product_id" property="productId"/>
+    <result column="product_key" property="productKey"/>
+    <result column="algorithm_type" property="algorithmType"/>
+    <result column="algorithm_name" property="algorithmName"/>
+    <result column="description" property="description"/>
+    <result column="enable" property="enable"/>
+    <result column="config_json" property="configJson"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="creator_id" property="creatorId"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, product_id, product_key, algorithm_type, algorithm_name, description,
+    enable, config_json, create_time, update_time, creator_id
+  </sql>
+
+  <select id="selectByProductKey" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM iot_algorithm_config
+    WHERE product_key = #{productKey}
+    ORDER BY create_time DESC
+  </select>
+
+  <select id="selectEnabledByProductKey" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM iot_algorithm_config
+    WHERE product_key = #{productKey} AND enable = 1
+    ORDER BY create_time DESC
+  </select>
+
+  <select id="selectByProductKeyAndType" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM iot_algorithm_config
+    WHERE product_key = #{productKey} AND algorithm_type = #{algorithmType}
+    LIMIT 1
+  </select>
+
+  <update id="updateEnableStatus">
+    UPDATE iot_algorithm_config
+    SET enable = #{enable}, update_time = NOW()
+    WHERE id = #{id}
+  </update>
+
+  <select id="countEnabledByAlgorithmType" resultType="int">
+    SELECT COUNT(1)
+    FROM iot_algorithm_config
+    WHERE algorithm_type = #{algorithmType}
+      AND enable = 1
+  </select>
+
+</mapper>

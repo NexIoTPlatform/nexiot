@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceProtocolMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceProtocol">
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="state" jdbcType="SMALLINT" property="state" />
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="configuration" jdbcType="LONGVARCHAR" property="configuration" />
+    <result column="example" jdbcType="LONGVARCHAR" property="example" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="version" jdbcType="VARCHAR" property="version" />
+  </resultMap>
+  <sql id="selectDevProtocolVo">
+    select pl.id,
+           pl.name,
+           pl.description,
+           pl.state,
+           pl.tenant_id,
+           pl.type,
+           pl.configuration,
+           pl.example,
+           pl.create_time,
+           pl.version
+    from iot_device_protocol pl
+  </sql>
+  <sql id="protocolScopeCondition">
+    <if test="ioTDeviceProtocol.scopeDenied == true">and 1 = 0</if>
+    <if test="ioTDeviceProtocol.scopeDenied != true and ((ioTDeviceProtocol.scopeDeptIds != null and ioTDeviceProtocol.scopeDeptIds.size() > 0) or (ioTDeviceProtocol.scopeUnionIds != null and ioTDeviceProtocol.scopeUnionIds.size() > 0))">
+      and (
+      <if test="ioTDeviceProtocol.scopeDeptIds != null and ioTDeviceProtocol.scopeDeptIds.size() > 0">
+        au.dept_id in
+        <foreach item="deptId" collection="ioTDeviceProtocol.scopeDeptIds" open="(" separator="," close=")">
+          #{deptId}
+        </foreach>
+      </if>
+      <if test="ioTDeviceProtocol.scopeDeptIds != null and ioTDeviceProtocol.scopeDeptIds.size() > 0 and ioTDeviceProtocol.scopeUnionIds != null and ioTDeviceProtocol.scopeUnionIds.size() > 0">
+        or
+      </if>
+      <if test="ioTDeviceProtocol.scopeUnionIds != null and ioTDeviceProtocol.scopeUnionIds.size() > 0">
+        pt.creator_id in
+        <foreach item="scopeUnionId" collection="ioTDeviceProtocol.scopeUnionIds" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+    </if>
+  </sql>
+  <select id="selectDevProtocolList" parameterType="cn.universal.persistence.entity.IoTDeviceProtocol" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectDevProtocolVo" />
+    left join iot_product pt on pt.product_key=pl.id
+    left join iot_user au on pt.creator_id = au.union_id
+    <where>
+      <if test="ioTDeviceProtocol.id!=null and ioTDeviceProtocol.id != ''">and pl.id like
+        concat('%',#{ioTDeviceProtocol.id},'%')
+      </if>
+      <if test="ioTDeviceProtocol.name != null  and ioTDeviceProtocol.name != ''">and pl.name like
+        concat('%',
+        #{ioTDeviceProtocol.name}, '%')
+      </if>
+      <if test="ioTDeviceProtocol.description != null  and ioTDeviceProtocol.description != ''">and
+        pl.description = #{ioTDeviceProtocol.description}
+      </if>
+      <if test="ioTDeviceProtocol.state != null ">and pl.state = #{ioTDeviceProtocol.state}</if>
+      <if test="ioTDeviceProtocol.type != null  and ioTDeviceProtocol.type != ''">and pl.type =
+        #{ioTDeviceProtocol.type}
+      </if>
+      <if test="ioTDeviceProtocol.configuration != null  and ioTDeviceProtocol.configuration != ''">
+        and
+        pl.configuration =
+        #{ioTDeviceProtocol.configuration}
+      </if>
+      <if test="ioTDeviceProtocol.version != null  and ioTDeviceProtocol.version != ''">
+        and
+        pl.version =
+        #{ioTDeviceProtocol.version}
+      </if>
+      <choose>
+        <when test="ioTDeviceProtocol.tenantId != null and ioTDeviceProtocol.tenantId != ''">
+          and (pl.tenant_id = #{ioTDeviceProtocol.tenantId} or ((pl.tenant_id is null or pl.tenant_id = '') and pt.creator_id = #{unionId}))
+        </when>
+        <when test="unionId != null and unionId != ''">
+          and pt.creator_id=#{unionId}
+        </when>
+      </choose>
+      <include refid="protocolScopeCondition" />
+    </where>
+    order by pl.create_time DESC
+  </select>
+  <select id="selectDevProtocolById" parameterType="String" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectDevProtocolVo" />
+    left join iot_product dp on pl.id=dp.product_key
+    <where>
+      pl.id = #{id}
+      <choose>
+        <when test="tenantId != null and tenantId != ''">
+          and (pl.tenant_id = #{tenantId} or ((pl.tenant_id is null or pl.tenant_id = '') and dp.creator_id = #{unionId}))
+        </when>
+        <when test="unionId != null and unionId != ''">
+          and dp.creator_id=#{unionId}
+        </when>
+      </choose>
+    </where>
+  </select>
+  <select id="countByProvider" parameterType="String" resultType="Integer" databaseId="dameng">
+    select count(id)
+    from iot_device_protocol
+    where JSON_UNQUOTE(JSON_EXTRACT(coalesce(nullif(configuration, ''), '{}'), '$.provider')) = #{provider}
+  </select>
+  <select id="selectDevProtocolByIds" parameterType="String" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectDevProtocolVo" />
+    where pl.id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+  <select id="selectDevProtocolByProductKey" resultType="cn.universal.persistence.entity.IoTDeviceProtocol" databaseId="dameng">
+    select *
+    from iot_device_protocol
+    where id = #{productKey}
+      and state = 1
+  </select>
+  <select id="selectProductsWithoutProtocol" resultType="cn.universal.persistence.entity.IoTProduct" databaseId="dameng">
+    SELECT
+    p.id,
+    p.product_key as productKey,
+    p.name
+    FROM iot_product p
+    LEFT JOIN iot_user au ON p.creator_id = au.union_id
+    <where>
+      <choose>
+        <when test="tenantId != null and tenantId != ''">
+          AND (p.tenant_id = #{tenantId} OR ((p.tenant_id IS NULL OR p.tenant_id = '') AND p.creator_id = #{unionId}))
+        </when>
+        <when test="unionId != null and unionId != ''">
+          AND p.creator_id = #{unionId}
+        </when>
+      </choose>
+      
+      AND NOT EXISTS (
+        SELECT 1 FROM iot_device_protocol dp WHERE dp.id = p.product_key
+      )
+      
+      <if test="searchKey != null and searchKey != ''">
+        AND (p.name LIKE CONCAT('%', #{searchKey}, '%')
+        OR p.product_key LIKE CONCAT('%', #{searchKey}, '%'))
+      </if>
+      
+      AND (p.is_deleted IS NULL OR p.is_deleted = 0)
+      <if test="scope.scopeDenied == true">AND 1 = 0</if>
+      <if test="scope.scopeDenied != true and ((scope.scopeDeptIds != null and scope.scopeDeptIds.size() > 0) or (scope.scopeUnionIds != null and scope.scopeUnionIds.size() > 0))">
+        AND (
+        <if test="scope.scopeDeptIds != null and scope.scopeDeptIds.size() > 0">
+          au.dept_id IN
+          <foreach item="deptId" collection="scope.scopeDeptIds" open="(" separator="," close=")">
+            #{deptId}
+          </foreach>
+        </if>
+        <if test="scope.scopeDeptIds != null and scope.scopeDeptIds.size() > 0 and scope.scopeUnionIds != null and scope.scopeUnionIds.size() > 0">OR</if>
+        <if test="scope.scopeUnionIds != null and scope.scopeUnionIds.size() > 0">
+          p.creator_id IN
+          <foreach item="scopeUnionId" collection="scope.scopeUnionIds" open="(" separator="," close=")">
+            #{scopeUnionId}
+          </foreach>
+        </if>
+        )
+      </if>
+    </where>
+    ORDER BY p.create_time DESC, p.product_key DESC
+  </select>
+  <insert id="insertDevProtocol" parameterType="cn.universal.persistence.entity.IoTDeviceProtocol" databaseId="dameng">
+    insert into iot_device_protocol
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="name != null">name,</if>
+      <if test="description != null">description,</if>
+      <if test="state != null">state,</if>
+      <if test="type != null">type,</if>
+      <if test="tenantId != null">tenant_id,</if>
+      <if test="configuration != null">configuration,</if>
+      <if test="example != null">example,</if>
+      <if test="createTime != null">create_time,</if>
+      <if test="version != null">version,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id},</if>
+      <if test="name != null">#{name},</if>
+      <if test="description != null">#{description},</if>
+      <if test="state != null">#{state},</if>
+      <if test="type != null">#{type},</if>
+      <if test="tenantId != null">#{tenantId},</if>
+      <if test="configuration != null">#{configuration},</if>
+      <if test="example != null">#{example},</if>
+      <if test="createTime != null">#{createTime},</if>
+      <if test="version != null">#{version},</if>
+    </trim>
+  </insert>
+  <insert id="insertProtocolList" parameterType="java.util.List" databaseId="dameng">
+    insert into iot_device_protocol (id, name, description, state, type, tenant_id, configuration, example,
+    create_time, version)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.id},#{item.name},#{item.description},#{item.state},#{item.type},#{item.tenantId},#{item.configuration},#{item.example},#{item.createTime},#{item.version})
+    </foreach>
+  </insert>
+  <update id="updateDevProtocol" parameterType="cn.universal.persistence.entity.IoTDeviceProtocol" databaseId="dameng">
+    update iot_device_protocol
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="name != null">name = #{name},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="state != null">state = #{state},</if>
+      <if test="type != null">type = #{type},</if>
+      <if test="tenantId != null">tenant_id = #{tenantId},</if>
+      <if test="configuration != null">configuration = #{configuration},</if>
+      <if test="example != null">example = #{example},</if>
+      <if test="createTime != null">create_time = #{createTime},</if>
+      <if test="version != null">version = #{version},</if>
+    </trim>
+    where id = #{id}
+  </update>
+  <delete id="deleteDevProtocolById" parameterType="String" databaseId="dameng">
+    delete
+    from iot_device_protocol
+    where id = #{id}
+  </delete>
+  <delete id="deleteDevProtocolByIds" parameterType="String" databaseId="dameng">
+    delete from iot_device_protocol where id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+</mapper>

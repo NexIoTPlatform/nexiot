@@ -1,0 +1,91 @@
+.job-modal-loading {
+  display: block;
+  min-height: 360px;
+}
+
+.job-steps {
+  margin-bottom: 18px;
+}
+
+.job-section {
+  padding: 18px 0;
+  border-top: 1px solid var(--color-border-2);
+}
+
+.job-section > header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.job-section > header > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: rgb(var(--primary-6));
+  background: var(--color-primary-light-1);
+  border-radius: 50%;
+}
+
+.job-section > header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.job-section header small,
+.product-context span {
+  font-size: 12px;
+  color: var(--color-text-3);
+}
+
+.product-context {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+  background: var(--color-fill-1);
+  border-radius: 6px;
+}
+
+.product-context > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.product-context code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 14px;
+}
+
+.cron-field {
+  grid-column: 1 / -1;
+}
+
+@media (width <= 720px) {
+  .product-context,
+  .schedule-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (width <= 480px) {
+  .product-context,
+  .schedule-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cron-field {
+    grid-column: auto;
+  }
+}

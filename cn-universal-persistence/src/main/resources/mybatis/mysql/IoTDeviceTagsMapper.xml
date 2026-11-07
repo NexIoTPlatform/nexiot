@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceTagsMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceTags">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="product_key" jdbcType="VARCHAR" property="productKey"/>
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId"/>
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId"/>
+    <result column="create_time" jdbcType="BIGINT" property="createTime"/>
+    <result column="tag_name" jdbcType="VARCHAR" property="name"/>
+    <result column="description" jdbcType="VARCHAR" property="description"/>
+    <result column="tag_type" jdbcType="VARCHAR" property="type"/>
+    <result column="tag_value" jdbcType="VARCHAR" property="value"/>
+    <result column="tag_key" jdbcType="VARCHAR" property="key"/>
+    <result column="tag_instance" jdbcType="VARCHAR" property="instance"/>
+  </resultMap>
+
+  <delete id="deleteByValueId">
+    DELETE
+    FROM iot_device_tags
+    WHERE tag_value = #{groupId}
+  </delete>
+
+  <select id="selectDevIds" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM iot_device_tags
+    WHERE tag_type = 'devGroup'
+      AND tag_value = #{groupId}
+      AND EXISTS(SELECT id
+                 FROM iot_device
+                 WHERE id IN (SELECT iot_id
+                              FROM iot_device_tags
+                              WHERE tag_type = 'devGroup'
+                                AND tag_value = #{groupId}))
+  </select>
+
+  <select id="getOne" resultType="cn.universal.persistence.entity.IoTDeviceTags"
+    parameterType="String">
+    SELECT *
+    FROM iot_device_tags
+    WHERE iot_Id = #{iotId}
+  </select>
+
+  <select id="selectDevGroupName" resultType="java.lang.String">
+    SELECT b.group_name
+    FROM iot_device_tags a
+           LEFT JOIN iot_device_group b on (a.tag_value = b.id)
+    WHERE a.iot_id = #{iotId}
+      AND a.tag_type = 'devGroup'
+  </select>
+</mapper>

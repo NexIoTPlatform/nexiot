@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpBindQrcodeMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.miniapp.entity.MpBindQrcode">
+    <id column="id" property="id" />
+    <result column="code" property="code" />
+    <result column="app_id" property="appId" />
+    <result column="target_user_id" property="targetUserId" />
+    <result column="expire_time" property="expireTime" />
+    <result column="status" property="status" />
+    <result column="used_open_id" property="usedOpenId" />
+    <result column="used_time" property="usedTime" />
+    <result column="create_time" property="createTime" />
+  </resultMap>
+  <select id="selectByCode" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM mp_bind_qrcode
+    WHERE code = #{code}
+  </select>
+  <update id="markAsUsed" databaseId="postgresql">
+    UPDATE mp_bind_qrcode
+    SET status       = 1,
+        used_open_id = #{usedOpenId},
+        used_time    = NOW()
+    WHERE code = #{code}
+      AND status = 0
+  </update>
+  <update id="markExpiredQrcodes" databaseId="postgresql">
+    UPDATE mp_bind_qrcode
+    SET status = 2
+    WHERE status = 0
+      AND expire_time &lt; NOW()
+  </update>
+</mapper>

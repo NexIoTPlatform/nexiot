@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceLogMetadataMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceLogMetadata">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="event" jdbcType="VARCHAR" property="event" />
+    <result column="property" jdbcType="VARCHAR" property="property" />
+    <result column="ext1" jdbcType="VARCHAR" property="ext1" />
+    <result column="ext2" jdbcType="VARCHAR" property="ext2" />
+    <result column="ext3" jdbcType="VARCHAR" property="ext3" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <select id="selectLogMetaList" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogMetadataVO" databaseId="postgresql">
+    select * from iot_device_log_metadata
+    <where>
+      <if test="iotId != null and iotId != ''">
+        AND iot_id = #{iotId}
+      </if>
+      <if test="messageType != null and messageType != ''">
+        AND message_type = #{messageType}
+      </if>
+      <if test="property != null and property != ''">
+        AND property = #{property}
+      </if>
+      <if test="event != null and event != ''">
+        AND event = #{event}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        AND device_id = #{deviceId}
+      </if>
+      <if test="beginCreateTime != null">
+        AND create_time &gt;= to_timestamp(#{beginCreateTime})
+      </if>
+      <if test="endCreateTime != null">
+        AND create_time &lt;= to_timestamp(#{endCreateTime})
+      </if>
+    </where>
+    ORDER BY id DESC
+  </select>
+  <select id="queryEventTotalByEventAndId" resultType="java.lang.String" databaseId="postgresql">
+    SELECT create_time
+    FROM iot_device_log_metadata
+    WHERE iot_id = #{iotId}
+      AND message_type = 'EVENT'
+      AND event = #{event}
+    ORDER BY id desc LIMIT 1
+  </select>
+</mapper>

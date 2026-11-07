@@ -1,0 +1,24 @@
+# --- VCS / IDE ---
+.git
+.gitignore
+.idea
+.vscode
+*.iml
+
+# --- Sources & dev artifacts ---
+src/
+node_modules/
+coverage/
+build/
+dist/
+
+# --- Other modules outputs ---
+target/*
+!target/cn-universal-web/**
+
+# --- Docs ---
+*.md
+!README.md
+
+# --- Misc ---
+.DS_Store

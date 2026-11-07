@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.admin.SysRoleMenuMapper">
+
+  <resultMap type="cn.universal.persistence.entity.admin.SysRoleMenu" id="SysRoleMenuResult">
+    <result property="uuid" column="uuid"/>
+    <result property="roleId" column="role_id"/>
+    <result property="menuId" column="menu_id"/>
+  </resultMap>
+
+  <insert id="batchInsert">
+    INSERT INTO sys_role_menu (
+      uuid,
+      role_id,
+      menu_id
+    )
+    VALUES
+    <foreach collection="roleMenus" item="item" separator=",">
+      (
+        #{item.uuid},
+        #{item.roleId},
+        #{item.menuId}
+      )
+    </foreach>
+  </insert>
+
+</mapper>

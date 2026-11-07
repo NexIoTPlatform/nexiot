@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceGeoFenceMapper">
+
+  <select id="selectByIotId" resultType="cn.universal.persistence.entity.IoTDeviceGeoFence">
+    select b.*
+    from iot_device_fence_rel a
+           left join iot_device_geo_fence b on a.fence_id = b.id
+    where a.iot_id = #{iotId}
+      and a.creator_id = #{appUnionId}
+
+  </select>
+
+  <select id="selectList" resultType="cn.universal.persistence.entity.vo.IoTDeviceGeoFenceVO">
+    SELECT a.*,ifnull(b.deviceNum,0) as deviceNum from iot_device_geo_fence a
+    LEFT JOIN (select count(1) deviceNum,fence_id from iot_device_fence_rel GROUP BY fence_id) b
+    on a.id=b.fence_id
+    <where>
+      <if test="ioTDeviceGeoFence.name!=null and ioTDeviceGeoFence.name!=''">
+        AND a.name like concat('%',#{ioTDeviceGeoFence.name},'%')
+      </if>
+      <if test="ioTDeviceGeoFence.status!=null and ioTDeviceGeoFence.status!=''">
+        AND a.status =#{ioTDeviceGeoFence.status}
+      </if>
+      <if test="ioTDeviceGeoFence.touchWay!=null and ioTDeviceGeoFence.touchWay!=''">
+        AND a.touch_way =#{ioTDeviceGeoFence.touchWay}
+      </if>
+      <if test="ioTDeviceGeoFence.fence!=null and ioTDeviceGeoFence.fence!=''">
+        AND a.fence =#{ioTDeviceGeoFence.fence}
+      </if>
+      <if test="ioTDeviceGeoFence.type!=null and ioTDeviceGeoFence.type!=''">
+        AND a.type =#{ioTDeviceGeoFence.type}
+      </if>
+      <if test="ioTDeviceGeoFence.point!=null and ioTDeviceGeoFence.point!=''">
+        AND a.point =#{ioTDeviceGeoFence.point}
+      </if>
+      <if test="ioTDeviceGeoFence.radius!=null and ioTDeviceGeoFence.radius!=''">
+        AND a.radius =#{ioTDeviceGeoFence.radius}
+      </if>
+
+      <if test="ioTDeviceGeoFence.type!=null and ioTDeviceGeoFence.type!=''">
+        AND a.type =#{ioTDeviceGeoFence.type}
+      </if>
+      <if test="ioTDeviceGeoFence.weekTime!=null and ioTDeviceGeoFence.weekTime!=''">
+        AND a.week_time =#{ioTDeviceGeoFence.weekTime}
+      </if>
+
+      <choose>
+        <when
+          test="ioTDeviceGeoFence.queryUserList !=null and ioTDeviceGeoFence.queryUserList.size() > 0">
+          <foreach collection="ioTDeviceGeoFence.queryUserList" open=" and a.creator_user in ("
+            close=")"
+            separator="," item="dev">
+            #{dev}
+          </foreach>
+        </when>
+        <otherwise>
+          and a.creator_user =#{ioTDeviceGeoFence.creatorUser}
+        </otherwise>
+      </choose>
+    </where>
+    order by create_date desc
+  </select>
+
+  <update id="updateFence" parameterType="cn.universal.persistence.entity.IoTDeviceGeoFence">
+    update iot_device_geo_fence
+    <set>
+      <if test="ioTDeviceGeoFence.name != null and ioTDeviceGeoFence.name != ''">`name` =
+        #{ioTDeviceGeoFence.name},
+      </if>
+      <if test="ioTDeviceGeoFence.status != null">status = #{ioTDeviceGeoFence.status},</if>
+      <if test="ioTDeviceGeoFence.touchWay != null and ioTDeviceGeoFence.touchWay != ''">touch_way =
+        #{ioTDeviceGeoFence.touchWay},
+      </if>
+      <if test="ioTDeviceGeoFence.fence != null and ioTDeviceGeoFence.fence != ''">fence =
+        #{ioTDeviceGeoFence.fence},
+      </if>
+      <if test="ioTDeviceGeoFence.type != null and ioTDeviceGeoFence.type != ''">type =
+        #{ioTDeviceGeoFence.type},
+      </if>
+      <if test="ioTDeviceGeoFence.point != null and ioTDeviceGeoFence.point != ''">point =
+        #{ioTDeviceGeoFence.point},
+      </if>
+      <if test="ioTDeviceGeoFence.radius != null and ioTDeviceGeoFence.radius != ''">radius =
+        #{ioTDeviceGeoFence.radius},
+      </if>
+      <if test="ioTDeviceGeoFence.updateDate != null">update_date =
+        #{ioTDeviceGeoFence.updateDate},
+      </if>
+      <if test="ioTDeviceGeoFence.weekTime != null and ioTDeviceGeoFence.weekTime != ''">week_time =
+        #{ioTDeviceGeoFence.weekTime},
+      </if>
+      <if test="ioTDeviceGeoFence.beginTime != null and ioTDeviceGeoFence.beginTime != ''">
+        begin_time =
+        #{ioTDeviceGeoFence.beginTime},
+      </if>
+      <if test="ioTDeviceGeoFence.endTime != null and ioTDeviceGeoFence.endTime != ''">end_time =
+        #{ioTDeviceGeoFence.endTime},
+      </if>
+      no_trigger_time = #{ioTDeviceGeoFence.noTriggerTime},delay_time =
+      #{ioTDeviceGeoFence.delayTime}
+    </set>
+    where id=#{ioTDeviceGeoFence.id}
+  </update>
+</mapper>

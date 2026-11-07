@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTTenantMapper">
+
+  <select
+      id="selectTenantCountByPackageIds"
+      resultType="java.util.HashMap"
+      databaseId="dameng">
+    SELECT package_id AS packageId,
+           COUNT(1) AS tenantCount
+    FROM iot_tenant
+    WHERE deleted = 0
+      AND package_id IS NOT NULL
+      AND package_id IN
+      <foreach collection="packageIds" item="packageId" open="(" separator="," close=")">
+        #{packageId}
+      </foreach>
+    GROUP BY package_id
+  </select>
+
+</mapper>

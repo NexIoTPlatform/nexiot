@@ -1,0 +1,363 @@
+{
+  "tags": [],
+  "properties": [
+    {
+      "id": "deviceId",
+      "name": "设备序列号",
+      "valueType": {
+        "type": "string"
+      },
+      "description": "设备的唯一标识序列号"
+    },
+    {
+      "id": "deviceOnlineStatus",
+      "name": "设备在线状态",
+      "valueType": {
+        "type": "enum",
+        "elements": [
+          {
+            "text": "离线",
+            "value": "0"
+          },
+          {
+            "text": "在线",
+            "value": "1"
+          }
+        ]
+      },
+      "description": "设备当前的在线状态"
+    },
+    {
+      "id": "deviceName",
+      "name": "设备名称",
+      "valueType": {
+        "type": "string",
+        "expands": {
+          "maxLength": "50"
+        }
+      },
+      "description": "设备的显示名称"
+    },
+    {
+      "id": "deviceType",
+      "name": "设备类型",
+      "valueType": {
+        "type": "string"
+      },
+      "description": "设备的类型标识"
+    },
+    {
+      "id": "firmwareVersion",
+      "name": "固件版本",
+      "valueType": {
+        "type": "string"
+      },
+      "description": "设备当前固件版本号"
+    }
+  ],
+  "events": [],
+  "functions": [
+    {
+      "id": "cameraLiveStream",
+      "name": "实时视频",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "protocol",
+          "name": "播放协议",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "官方 SDK",
+                "value": "sdk"
+              },
+              {
+                "text": "FLV",
+                "value": "flv"
+              }
+            ]
+          }
+        },
+        {
+          "id": "streamType",
+          "name": "码流",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "主码流",
+                "value": "main"
+              },
+              {
+                "text": "辅码流",
+                "value": "sub"
+              }
+            ]
+          }
+        }
+      ],
+      "output": {},
+      "description": "实时视频"
+    },
+    {
+      "id": "cameraSnapshot",
+      "name": "设备抓图",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {},
+      "description": "设备抓图"
+    },
+    {
+      "id": "cameraTurn",
+      "name": "云台控制",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "direction",
+          "name": "方向",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "上",
+                "value": "up"
+              },
+              {
+                "text": "下",
+                "value": "down"
+              },
+              {
+                "text": "左",
+                "value": "left"
+              },
+              {
+                "text": "右",
+                "value": "right"
+              },
+              {
+                "text": "左上",
+                "value": "leftUp"
+              },
+              {
+                "text": "左下",
+                "value": "leftDown"
+              },
+              {
+                "text": "右上",
+                "value": "rightUp"
+              },
+              {
+                "text": "右下",
+                "value": "rightDown"
+              },
+              {
+                "text": "放大",
+                "value": "zoomIn"
+              },
+              {
+                "text": "缩小",
+                "value": "zoomOut"
+              },
+              {
+                "text": "停止",
+                "value": "stop"
+              }
+            ]
+          }
+        },
+        {
+          "id": "duration",
+          "name": "持续时间（毫秒）",
+          "valueType": {
+            "type": "int"
+          }
+        }
+      ],
+      "output": {},
+      "description": "云台控制"
+    },
+    {
+      "id": "cameraPlayback",
+      "name": "录像回放",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "recordType",
+          "name": "录像类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "本地录像",
+                "value": "localRecord"
+              },
+              {
+                "text": "云录像",
+                "value": "cloudRecord"
+              }
+            ]
+          }
+        },
+        {
+          "id": "beginTime",
+          "name": "开始时间 yyyy-MM-dd HH:mm:ss",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间 yyyy-MM-dd HH:mm:ss",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "recordId",
+          "name": "云录像 ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {},
+      "description": "录像回放"
+    },
+    {
+      "id": "queryRecords",
+      "name": "查询本地录像",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "beginTime",
+          "name": "开始时间 yyyy-MM-dd HH:mm:ss",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间 yyyy-MM-dd HH:mm:ss",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "count",
+          "name": "条数（最大100）",
+          "valueType": {
+            "type": "int"
+          }
+        }
+      ],
+      "output": {},
+      "description": "查询本地录像"
+    },
+    {
+      "id": "queryCloudRecords",
+      "name": "查询云录像",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "beginTime",
+          "name": "开始时间 yyyy-MM-dd HH:mm:ss",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间 yyyy-MM-dd HH:mm:ss",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "count",
+          "name": "条数（最大30）",
+          "valueType": {
+            "type": "int"
+          }
+        }
+      ],
+      "output": {},
+      "description": "查询云录像"
+    },
+    {
+      "id": "stopPreview",
+      "name": "停止预览",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {},
+      "description": "停止预览"
+    },
+    {
+      "id": "stopPlayback",
+      "name": "停止回放",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道 ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {},
+      "description": "停止回放"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+/*
+ * Copyright 2019-2024 JetLinks Community
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package cn.universal.core.metadata;
+
+import java.util.Map;
+
+/**
+ * 物模型值数据
+ *
+ * @author zhouhao
+ * @since 1.1
+ */
+public interface ValueType extends Metadata, FormatSupport {
+
+  /**
+   * 验证是否合法
+   *
+   * @param value 值
+   * @return ValidateResult
+   */
+  ValidateResult validate(Object value);
+
+  /**
+   * @return 类型标识
+   */
+  default String getType() {
+    return getId();
+  }
+
+  /**
+   * @return 拓展属性
+   */
+  @Override
+  default Map<String, Object> getExpands() {
+    return null;
+  }
+}

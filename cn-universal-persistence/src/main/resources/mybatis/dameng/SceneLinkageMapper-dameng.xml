@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.SceneLinkageMapper">
+  <resultMap type="cn.universal.persistence.entity.SceneLinkage" id="SceneLinkageResult">
+    <result property="id" column="id" />
+    <result property="sceneName" column="scene_name" />
+    <result property="touch" column="touch" />
+    <result property="triggerCondition" column="trigger_condition" />
+    <result property="execAction" column="exec_action" />
+    <result property="sleepCycle" column="sleep_cycle" />
+    <result property="createBy" column="create_by" />
+    <result property="tenantId" column="tenant_id" />
+    <result property="createTime" column="create_time" />
+    <result property="updateBy" column="update_by" />
+    <result property="updateTime" column="update_time" />
+    <result property="status" column="status" />
+    <result property="devId" column="dev_id" />
+  </resultMap>
+  <sql id="selectSceneLinkageVo">
+    select id,
+           scene_name,
+           touch,
+           trigger_condition,
+           exec_action,
+           sleep_cycle,
+           create_by,
+           tenant_id,
+           create_time,
+           update_by,
+           update_time,
+           status,
+           dev_id
+    from scene_linkage
+  </sql>
+  <select id="selectSceneLinkageList" parameterType="cn.universal.persistence.entity.SceneLinkage" resultMap="SceneLinkageResult" databaseId="dameng">
+    <include refid="selectSceneLinkageVo" />
+    <where>
+      <if test="sceneName != null  and sceneName != ''">and scene_name like concat('%',
+        #{sceneName}, '%')
+      </if>
+      <if test="touch != null  and touch != ''">and touch = #{touch}</if>
+      <if test="triggerCondition != null and triggerCondition != ''">
+        <choose>
+          <when test="triggerCondition == 'device' or triggerCondition == 'timer' or triggerCondition == 'manual'">
+            and id in (select source.id from scene_linkage source, JSON_TABLE(COALESCE(NULLIF(source.trigger_condition, ''), '[]'), '$[*]' COLUMNS(value VARCHAR(255) PATH '$.trigger')) jt where jt.value = #{triggerCondition})
+          </when>
+          <otherwise>and trigger_condition = #{triggerCondition}</otherwise>
+        </choose>
+      </if>
+      <if test="execAction != null  and execAction != ''">and exec_action = #{execAction}</if>
+      <if test="sleepCycle != null ">and sleep_cycle = #{sleepCycle}</if>
+      <if test="status != null ">and status = #{status}</if>
+      <if test="devId != null  and devId != ''">and
+        id in (select source.id from scene_linkage source, JSON_TABLE(COALESCE(NULLIF(source.trigger_condition, ''), '[]'), '$[*]' COLUMNS(value VARCHAR(255) PATH '$.deviceId')) jt where jt.value = #{devId})
+      </if>
+      <choose>
+        <when test="tenantId != null and tenantId != ''">
+          and (tenant_id = #{tenantId}
+          or ((tenant_id is null or tenant_id = '') and create_by = #{createBy}))
+        </when>
+        <otherwise>
+          <if test="createBy !=null and createBy != ''">and create_by=#{createBy}</if>
+        </otherwise>
+      </choose>
+    </where>
+  </select>
+  <select id="selectSceneLinkageListByProductKeyAndDeviceId" resultMap="SceneLinkageResult" databaseId="dameng">
+    <include refid="selectSceneLinkageVo" />
+    <where>
+      status = 0 and id in (
+        select source.id from scene_linkage source, JSON_TABLE(COALESCE(NULLIF(source.trigger_condition, ''), '[]'), '$[*]'
+          COLUMNS(device_id VARCHAR(255) PATH '$.deviceId', product_key VARCHAR(255) PATH '$.productKey')) jt
+        where jt.device_id = #{deviceId} and jt.product_key = #{productKey}
+      )
+      <choose>
+        <when test="tenantId != null and tenantId != ''">
+          and (tenant_id = #{tenantId}
+          or ((tenant_id is null or tenant_id = '') and create_by = #{creatorId}))
+        </when>
+        <otherwise>
+          <if test="creatorId != null and creatorId != ''">and create_by = #{creatorId}</if>
+        </otherwise>
+      </choose>
+    </where>
+  </select>
+  <select id="selectEnabledSceneLinkageScope" timeout="10" resultMap="SceneLinkageResult" databaseId="dameng">
+    <include refid="selectSceneLinkageVo" />
+    where status = 0
+    <choose>
+      <when test="tenantId != null and tenantId != ''">
+        and tenant_id = #{tenantId}
+      </when>
+      <otherwise>
+        and (tenant_id is null or tenant_id = '') and create_by = #{creatorId}
+      </otherwise>
+    </choose>
+    order by id
+  </select>
+  <select id="selectSceneLinkageById" parameterType="Long" resultMap="SceneLinkageResult" databaseId="dameng">
+    <include refid="selectSceneLinkageVo" />
+    where id = #{id}
+  </select>
+  <select id="checkSelf" resultType="Integer" databaseId="dameng">
+    select count(*)
+    from scene_linkage
+    where id = #{id}
+    <choose>
+      <when test="tenantId != null and tenantId != ''">
+        and (tenant_id = #{tenantId}
+        or ((tenant_id is null or tenant_id = '') and create_by = #{unionId}))
+      </when>
+      <otherwise>
+        and create_by = #{unionId}
+      </otherwise>
+    </choose>
+  </select>
+  <insert id="insertSceneLinkage" parameterType="cn.universal.persistence.entity.SceneLinkage" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into scene_linkage
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sceneName != null  and sceneName != ''">scene_name,</if>
+      <if test="touch != null  and touch != ''">touch,</if>
+      <if test="triggerCondition != null  and triggerCondition != ''">trigger_condition,</if>
+      <if test="execAction != null  and execAction != ''">exec_action,</if>
+      <if test="sleepCycle != null ">sleep_cycle,</if>
+      <if test="createBy != null  and createBy != ''">create_by,</if>
+      <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+      <if test="createTime != null ">create_time,</if>
+      <if test="updateBy != null  and updateBy != ''">update_by,</if>
+      <if test="updateTime != null ">update_time,</if>
+      <if test="status != null ">status,</if>
+      <if test="devId != null  and devId != ''">dev_id,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sceneName != null  and sceneName != ''">#{sceneName},</if>
+      <if test="touch != null  and touch != ''">#{touch},</if>
+      <if test="triggerCondition != null  and triggerCondition != ''">#{triggerCondition},</if>
+      <if test="execAction != null  and execAction != ''">#{execAction},</if>
+      <if test="sleepCycle != null ">#{sleepCycle},</if>
+      <if test="createBy != null  and createBy != ''">#{createBy},</if>
+      <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+      <if test="createTime != null ">#{createTime},</if>
+      <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+      <if test="updateTime != null ">#{updateTime},</if>
+      <if test="status != null ">#{status},</if>
+      <if test="devId != null  and devId != ''">#{devId},</if>
+    </trim>
+  </insert>
+  <update id="updateSceneLinkage" parameterType="cn.universal.persistence.entity.SceneLinkage" databaseId="dameng">
+    update scene_linkage
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="sceneName != null  and sceneName != ''">scene_name = #{sceneName},</if>
+      <if test="touch != null  and touch != ''">touch = #{touch},</if>
+      <if test="triggerCondition != null  and triggerCondition != ''">trigger_condition =
+        #{triggerCondition},
+      </if>
+      <if test="execAction != null  and execAction != ''">exec_action = #{execAction},</if>
+      <if test="sleepCycle != null ">sleep_cycle = #{sleepCycle},</if>
+      <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+      <if test="tenantId != null  and tenantId != ''">tenant_id = #{tenantId},</if>
+      <if test="createTime != null ">create_time = #{createTime},</if>
+      <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+      <if test="updateTime != null ">update_time = #{updateTime},</if>
+      <if test="status != null ">status = #{status},</if>
+      <if test="devId != null  and devId != ''">dev_id = #{devId},</if>
+    </trim>
+    where id = #{id}
+  </update>
+  <delete id="deleteSceneLinkageById" parameterType="Long" databaseId="dameng">
+    delete
+    from scene_linkage
+    where id = #{id}
+  </delete>
+  <delete id="deleteSceneLinkageByIds" parameterType="Long" databaseId="dameng">
+    delete from scene_linkage where id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <select id="selectTriggerByDevId" parameterType="String" resultMap="SceneLinkageResult" databaseId="dameng">
+    select *
+    from scene_linkage
+    where status = 0
+      and id in (select source.id from scene_linkage source, JSON_TABLE(COALESCE(NULLIF(source.trigger_condition, ''), '[]'), '$[*]' COLUMNS(value VARCHAR(255) PATH '$.deviceId')) jt where jt.value = #{deviceId})
+  </select>
+  <select id="selectTriggerByType" parameterType="String" resultMap="SceneLinkageResult" databaseId="dameng">
+    select *
+    from scene_linkage
+    where status = 0
+      and id in (select source.id from scene_linkage source, JSON_TABLE(COALESCE(NULLIF(source.trigger_condition, ''), '[]'), '$[*]' COLUMNS(value VARCHAR(255) PATH '$.trigger')) jt where jt.value = 'device')
+  </select>
+</mapper>

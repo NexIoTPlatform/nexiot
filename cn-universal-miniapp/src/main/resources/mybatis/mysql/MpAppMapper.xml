@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpAppMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.miniapp.entity.MpApp">
+    <id column="id" property="id"/>
+    <result column="app_id" property="appId"/>
+    <result column="app_secret" property="appSecret"/>
+    <result column="name" property="name"/>
+    <result column="logo" property="logo"/>
+    <result column="qrcode_image" property="qrcodeImage"/>
+    <result column="access_url" property="accessUrl"/>
+    <result column="description" property="description"/>
+    <result column="data_source_type" property="dataSourceType"/>
+    <result column="linked_app_id" property="linkedAppId"/>
+    <result column="ak" property="ak"/>
+    <result column="sk" property="sk"/>
+    <result column="primary_color" property="primaryColor"/>
+    <result column="welcome_text" property="welcomeText"/>
+    <result column="contact_phone" property="contactPhone"/>
+    <result column="contact_email" property="contactEmail"/>
+    <result column="user_count" property="userCount"/>
+    <result column="device_count" property="deviceCount"/>
+    <result column="online_device_count" property="onlineDeviceCount"/>
+    <result column="status" property="status"/>
+    <result column="creator_id" property="creatorId"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+    <result column="deleted" property="deleted"/>
+    <result column="linked_app_name" property="appName"/>
+  </resultMap>
+
+  <sql id="selectMpAppColumns">
+    SELECT mp.id,
+           mp.app_id,
+           mp.app_secret,
+           mp.name,
+           mp.logo,
+           mp.qrcode_image,
+           mp.access_url,
+           mp.description,
+           mp.data_source_type,
+           mp.linked_app_id,
+           mp.ak,
+           mp.sk,
+           mp.primary_color,
+           mp.welcome_text,
+           mp.contact_phone,
+           mp.contact_email,
+           mp.user_count,
+           mp.device_count,
+           mp.online_device_count,
+           mp.status,
+           mp.creator_id,
+           mp.tenant_id,
+           mp.create_time,
+           mp.update_time,
+           mp.deleted,
+           linked.app_name AS linked_app_name
+    FROM mp_app mp
+           LEFT JOIN iot_user creator ON mp.creator_id = creator.union_id
+           LEFT JOIN iot_user_application linked ON mp.linked_app_id = linked.app_unique_id
+           LEFT JOIN iot_user linked_owner ON linked.union_id = linked_owner.union_id
+  </sql>
+
+  <sql id="mpAppScopeCondition">
+    <if test="scopeDenied == true">
+      AND 1 = 0
+    </if>
+    <if test="tenantId != null and tenantId != ''">
+      AND (
+      mp.tenant_id = #{tenantId}
+      OR (
+      (mp.tenant_id IS NULL OR mp.tenant_id = '')
+      AND (
+      (
+      (mp.linked_app_id IS NOT NULL AND mp.linked_app_id &lt;&gt; '')
+      AND (
+      linked.tenant_id = #{tenantId}
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        OR ((linked.tenant_id IS NULL OR linked.tenant_id = '') AND linked.union_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+        )
+      </if>
+      )
+      )
+      OR
+      (
+      (mp.linked_app_id IS NULL OR mp.linked_app_id = '')
+      AND (
+      creator.tenant_id = #{tenantId}
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        OR ((creator.tenant_id IS NULL OR creator.tenant_id = '') AND mp.creator_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+        )
+      </if>
+      )
+      )
+      )
+      )
+      )
+    </if>
+    <if test="scopeDenied != true and ((scopeDeptIds != null and scopeDeptIds.size() > 0) or (scopeUnionIds != null and scopeUnionIds.size() > 0))">
+      AND (
+      (
+      (mp.linked_app_id IS NOT NULL AND mp.linked_app_id &lt;&gt; '')
+      AND (
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0">
+        linked_owner.dept_id IN
+        <foreach collection="scopeDeptIds" item="scopeDeptId" open="(" separator="," close=")">
+          #{scopeDeptId}
+        </foreach>
+      </if>
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0 and scopeUnionIds != null and scopeUnionIds.size() > 0">
+        OR
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        linked.union_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+      )
+      OR
+      (
+      (mp.linked_app_id IS NULL OR mp.linked_app_id = '')
+      AND (
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0">
+        creator.dept_id IN
+        <foreach collection="scopeDeptIds" item="scopeDeptId" open="(" separator="," close=")">
+          #{scopeDeptId}
+        </foreach>
+      </if>
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0 and scopeUnionIds != null and scopeUnionIds.size() > 0">
+        OR
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        mp.creator_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+      )
+      )
+    </if>
+  </sql>
+
+  <select id="selectByAppId" resultMap="BaseResultMap">
+    SELECT *
+    FROM mp_app
+    WHERE app_id = #{appId}
+      AND deleted = 0
+  </select>
+
+  <select id="selectByLinkedAppId" resultMap="BaseResultMap">
+    SELECT *
+    FROM mp_app
+    WHERE linked_app_id = #{linkedAppId}
+      AND deleted = 0
+  </select>
+
+  <select id="selectAppList" resultMap="BaseResultMap">
+    <include refid="selectMpAppColumns"/>
+    <where>
+      mp.deleted = 0
+      <if test="name != null and name != ''">
+        AND mp.name LIKE CONCAT('%', #{name}, '%')
+      </if>
+      <if test="status != null">
+        AND mp.status = #{status}
+      </if>
+      <if test="creatorId != null and creatorId != ''">
+        AND mp.creator_id = #{creatorId}
+      </if>
+      <include refid="mpAppScopeCondition"/>
+    </where>
+    ORDER BY mp.create_time DESC
+  </select>
+
+  <update id="updateAppStatistics">
+    UPDATE mp_app
+    SET user_count          = #{userCount},
+        device_count        = #{deviceCount},
+        online_device_count = #{onlineDeviceCount},
+        update_time         = NOW()
+    WHERE app_id = #{appId}
+  </update>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTTaskLogMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTTaskLog">
+    <id column="id" property="id"/>
+    <result column="task_id" property="taskId"/>
+    <result column="log_level" property="logLevel"/>
+    <result column="log_type" property="logType"/>
+    <result column="content" property="content"/>
+    <result column="ext_json" property="extJson"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+
+  <select id="selectTaskLogList" resultMap="BaseResultMap" databaseId="dameng">
+    select *
+    from iot_task_log
+    where task_id = #{taskId}
+    order by create_time desc, id desc
+  </select>
+</mapper>

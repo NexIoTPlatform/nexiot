@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.OauthClientDetailsMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.OAuth2ClientDetails">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="client_id" jdbcType="VARCHAR" property="clientId"/>
+    <result column="resource_ids" jdbcType="VARCHAR" property="resourceIds"/>
+    <result column="client_secret" jdbcType="VARCHAR" property="clientSecret"/>
+    <result column="scope" jdbcType="VARCHAR" property="scope"/>
+    <result column="Authorized_grant_types" jdbcType="VARCHAR" property="AuthorizedGrantTypes"/>
+    <result column="web_server_redirect_uri" jdbcType="VARCHAR" property="webServerRedirectUri"/>
+    <result column="Authorities" jdbcType="VARCHAR" property="Authorities"/>
+    <result column="access_token_validity" jdbcType="INTEGER" property="accessTokenValidity"/>
+    <result column="refresh_token_validity" jdbcType="INTEGER" property="refreshTokenValidity"/>
+    <result column="additional_information" jdbcType="VARCHAR" property="additionalInformation"/>
+    <result column="autoapprove" jdbcType="VARCHAR" property="autoapprove"/>
+    <result column="username" jdbcType="VARCHAR" property="username"/>
+    <result column="password" jdbcType="VARCHAR" property="password"/>
+    <result column="iot_union_id" jdbcType="VARCHAR" property="iotUnionId"/>
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId"/>
+  </resultMap>
+
+  <delete id="deleteByClientIds" parameterType="String">
+    delete from oauth_client_details where client_id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+</mapper>

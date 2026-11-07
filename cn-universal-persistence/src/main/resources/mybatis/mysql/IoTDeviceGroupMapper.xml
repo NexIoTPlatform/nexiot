@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceGroupMapper">
+
+  <resultMap type="cn.universal.persistence.entity.IoTDeviceGroup" id="DevGroupResult">
+    <result property="id" column="id"/>
+    <result property="groupName" column="group_name"/>
+    <result property="groupCode" column="group_code"/>
+    <result property="groupDescribe" column="group_describe"/>
+    <result property="parentId" column="parent_id"/>
+    <result property="hasChild" column="has_child"/>
+    <result property="groupLevel" column="group_level"/>
+    <result property="relatDevCount" column="relat_dev_count"/>
+    <result property="activeDevCount" column="active_dev_count"/>
+    <result property="creatorId" column="creator_id"/>
+    <result property="instance" column="instance"/>
+    <result property="tag" column="tag"/>
+  </resultMap>
+
+  <resultMap type="cn.universal.persistence.entity.vo.IoTDeviceGroupVO" id="DevGroupVoResult">
+    <result property="id" column="id"/>
+    <result property="groupName" column="group_name"/>
+    <result property="groupCode" column="group_code"/>
+    <result property="groupDescribe" column="group_describe"/>
+    <result property="parentId" column="parent_id"/>
+    <result property="hasChild" column="has_child"/>
+    <result property="groupLevel" column="group_level"/>
+  </resultMap>
+
+  <sql id="selectDevGroupVo">
+    select id,
+           group_name,
+           group_code,
+           group_describe,
+           has_child,
+           group_level,
+           parent_id,
+           relat_dev_count,
+           active_dev_count,
+           creator_id,
+           instance,
+           tag
+    from iot_device_group
+  </sql>
+
+  <select id="selectDevGroupById" parameterType="Long" resultMap="DevGroupResult">
+    <include refid="selectDevGroupVo"/>
+    where id = #{id}
+  </select>
+
+  <select id="selectDevGroupList"
+    parameterType="cn.universal.persistence.entity.vo.IoTDeviceGroupVO"
+    resultMap="DevGroupVoResult">
+    select id, group_name, has_child, group_level, parent_id
+    from iot_device_group
+    where creator_id = #{admin}
+  </select>
+
+  <select id="queryChildrenCountById" resultType="java.lang.Integer">
+    select count(1)
+    from iot_device_group
+    where parent_id = #{id}
+  </select>
+
+  <select id="queryDevCountBindGroup" resultType="java.lang.Integer">
+    select count(1)
+    from iot_device_tags a
+           LEFT JOIN iot_device_group b ON a.tag_value = b.id
+    WHERE a.tag_type = 'devGroup'
+      AND b.creator_id = #{admin}
+      AND iot_id = #{iotId}
+  </select>
+
+  <insert id="insertDevGroup" parameterType="cn.universal.persistence.entity.IoTDeviceGroup">
+    insert into iot_device_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null ">id,</if>
+      <if test="groupName != null  and groupName != ''">group_name,</if>
+      <if test="groupCode != null  and groupCode != ''">group_code,</if>
+      <if test="groupDescribe != null  and groupDescribe != ''">group_describe,</if>
+      <if test="parentId != null ">parent_id,</if>
+      <if test="hasChild != null ">has_child,</if>
+      <if test="groupLevel != null ">group_level,</if>
+      <if test="relatDevCount != null ">relat_dev_count,</if>
+      <if test="activeDevCount != null ">active_dev_count,</if>
+      <if test="creatorId != null  and creatorId != ''">creator_id,</if>
+      <if test="instance != null  and instance != ''">instance,</if>
+      <if test="tag != null  and tag != ''">tag,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null ">#{id},</if>
+      <if test="groupName != null  and groupName != ''">#{groupName},</if>
+      <if test="groupCode != null  and groupCode != ''">#{groupCode},</if>
+      <if test="groupDescribe != null  and groupDescribe != ''">#{groupDescribe},</if>
+      <if test="parentId != null ">#{parentId},</if>
+      <if test="hasChild != null ">#{hasChild},</if>
+      <if test="groupLevel != null ">#{groupLevel},</if>
+      <if test="relatDevCount != null ">#{relatDevCount},</if>
+      <if test="activeDevCount != null ">#{activeDevCount},</if>
+      <if test="creatorId != null  and creatorId != ''">#{creatorId},</if>
+      <if test="instance != null  and instance != ''">#{instance},</if>
+      <if test="tag != null  and tag != ''">#{tag},</if>
+    </trim>
+  </insert>
+
+  <update id="updateDevGroup" parameterType="cn.universal.persistence.entity.IoTDeviceGroup">
+    update iot_device_group
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="groupName != null  and groupName != ''">group_name = #{groupName},</if>
+      <if test="groupCode != null  and groupCode != ''">group_code = #{groupCode},</if>
+      <if test="groupDescribe != null  and groupDescribe != ''">group_describe = #{groupDescribe},
+      </if>
+      <if test="parentId != null ">parent_id = #{parentId},</if>
+      <if test="hasChild != null ">has_child = #{hasChild},</if>
+      <if test="groupLevel != null ">group_level = #{groupLevel},</if>
+      <if test="relatDevCount != null ">relat_dev_count = #{relatDevCount},</if>
+      <if test="activeDevCount != null ">active_dev_count = #{activeDevCount},</if>
+      <if test="creatorId != null  and creatorId != ''">creator_id = #{creatorId},</if>
+      <if test="instance != null  and instance != ''">instance = #{instance},</if>
+      <if test="tag != null  and tag != ''">tag = #{tag},</if>
+    </trim>
+    where id = #{id}
+  </update>
+
+  <delete id="deleteDevGroupById" parameterType="Long">
+    delete
+    from iot_device_group
+    where id = #{id}
+  </delete>
+
+</mapper>

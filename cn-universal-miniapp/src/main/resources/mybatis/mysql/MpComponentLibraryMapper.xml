@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpComponentLibraryMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.miniapp.entity.MpComponentLibrary">
+    <id column="id" property="id"/>
+    <result column="component_type" property="componentType"/>
+    <result column="component_name" property="componentName"/>
+    <result column="component_icon" property="componentIcon"/>
+    <result column="config_schema" property="configSchema"/>
+    <result column="preview_image" property="previewImage"/>
+    <result column="description" property="description"/>
+    <result column="sort_order" property="sortOrder"/>
+    <result column="status" property="status"/>
+    <result column="create_time" property="createTime"/>
+  </resultMap>
+
+  <select id="selectAllEnabled" resultMap="BaseResultMap">
+    SELECT *
+    FROM mp_component_library
+    WHERE status = 1
+    ORDER BY sort_order ASC
+  </select>
+
+</mapper>

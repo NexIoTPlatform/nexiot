@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>cn-universal-data-bridge</artifactId>
+    <groupId>cn.universal.iot</groupId>
+    <version>1.6-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>cn-universal-data-bridge-plugins</artifactId>
+  <packaging>pom</packaging>
+
+  <name>cn-universal-data-bridge-plugins</name>
+  <description>数据桥接插件模块</description>
+
+  <modules>
+    <module>cn-universal-data-bridge-plugin-jdbc</module>
+    <module>cn-universal-data-bridge-plugin-kafka</module>
+    <module>cn-universal-data-bridge-plugin-mqtt</module>
+    <module>cn-universal-data-bridge-plugin-http</module>
+    <module>cn-universal-data-bridge-plugin-iotdb</module>
+    <module>cn-universal-data-bridge-plugin-influxdb</module>
+  </modules>
+
+</project>

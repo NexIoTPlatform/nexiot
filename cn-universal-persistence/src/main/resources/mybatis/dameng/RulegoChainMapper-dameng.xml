@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.RulegoChainMapper">
+  <select id="selectRulegoChainListByBo" resultType="cn.universal.persistence.entity.vo.RulegoChainVO" databaseId="dameng">
+    SELECT
+    id,
+    rulego_id,
+    chain_name,
+    description,
+    creator_id,
+    creator_name,
+    status,
+    CASE status
+    WHEN 'draft' THEN '草稿'
+    WHEN 'deployed' THEN '已部署'
+    WHEN 'stopped' THEN '已停止'
+    ELSE status
+    END as status_desc,
+    dsl_content,
+    last_sync_time,
+    create_time,
+    update_time
+    FROM rulego_chain
+    <where>
+      deleted = 0
+      <choose>
+        <when test="bo.tenantId != null and bo.tenantId != ''">
+          AND (tenant_id = #{bo.tenantId} OR ((tenant_id IS NULL OR tenant_id = '') AND creator_id = #{bo.creatorId}))
+        </when>
+        <when test="bo.creatorId != null and bo.creatorId != ''">
+          AND creator_id = #{bo.creatorId}
+        </when>
+      </choose>
+      <if test="bo.chainName != null and bo.chainName != ''">
+        AND chain_name LIKE CONCAT('%', #{bo.chainName}, '%')
+      </if>
+      <if test="bo.status != null and bo.status != ''">
+        AND status = #{bo.status}
+      </if>
+      <if test="bo.rulegoId != null and bo.rulegoId != ''">
+        AND rulego_id = #{bo.rulegoId}
+      </if>
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <select id="selectByRulegoId" resultType="cn.universal.persistence.entity.RulegoChain" databaseId="dameng">
+    SELECT *
+    FROM rulego_chain
+    WHERE rulego_id = #{rulegoId}
+      AND deleted = 0
+  </select>
+  <update id="updateDslContent" databaseId="dameng">
+    UPDATE rulego_chain
+    SET dsl_content    = #{dslContent},
+        last_sync_time = NOW(),
+        update_time    = NOW()
+    WHERE rulego_id = #{rulegoId}
+      AND deleted = 0
+  </update>
+</mapper>

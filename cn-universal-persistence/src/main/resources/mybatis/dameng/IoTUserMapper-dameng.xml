@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTUserMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTUser">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="org_id" jdbcType="BIGINT" property="orgId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="tenant_role" jdbcType="VARCHAR" property="tenantRole" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="alias" jdbcType="VARCHAR" property="alias" />
+    <result column="union_id" jdbcType="VARCHAR" property="unionId" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="mobile" jdbcType="VARCHAR" property="mobile" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="parent_union_id" jdbcType="VARCHAR" property="parentUnionId" />
+    <result column="identity" jdbcType="SMALLINT" property="identity" />
+    <result column="login_ip" jdbcType="VARCHAR" property="loginIp" />
+    <result column="login_date" jdbcType="TIMESTAMP" property="loginDate" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="cfg" jdbcType="VARCHAR" property="cfg" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="deleted" jdbcType="SMALLINT" property="deleted" />
+  </resultMap>
+  <update id="updateLoginDate" databaseId="dameng">
+    update iot_user
+    set login_date=now()
+    where id = #{id}
+  </update>
+  <sql id="userScopeCondition">
+    <if test="params != null and params.scopeDenied != null and params.scopeDenied">
+      and 1 = 0
+    </if>
+    <if test="params != null and ((params.scopeDeptIds != null and params.scopeDeptIds.size > 0) or (params.scopeUnionIds != null and params.scopeUnionIds.size > 0))">
+      and (
+      <if test="params.scopeDeptIds != null and params.scopeDeptIds.size > 0">
+        u.dept_id in
+        <foreach collection="params.scopeDeptIds" item="scopeDeptId" open="(" separator="," close=")">
+          #{scopeDeptId}
+        </foreach>
+      </if>
+      <if test="params.scopeDeptIds != null and params.scopeDeptIds.size > 0 and params.scopeUnionIds != null and params.scopeUnionIds.size > 0">
+        or
+      </if>
+      <if test="params.scopeUnionIds != null and params.scopeUnionIds.size > 0">
+        u.union_id in
+        <foreach collection="params.scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+    </if>
+  </sql>
+  <sql id="userBoScopeCondition">
+    <if test="scopeDenied">
+      and 1 = 0
+    </if>
+    <if test="((scopeDeptIds != null and scopeDeptIds.size > 0) or (scopeUnionIds != null and scopeUnionIds.size > 0))">
+      and (
+      <if test="scopeDeptIds != null and scopeDeptIds.size > 0">
+        u.dept_id in
+        <foreach collection="scopeDeptIds" item="scopeDeptId" open="(" separator="," close=")">
+          #{scopeDeptId}
+        </foreach>
+      </if>
+      <if test="scopeDeptIds != null and scopeDeptIds.size > 0 and scopeUnionIds != null and scopeUnionIds.size > 0">
+        or
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size > 0">
+        u.union_id in
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+    </if>
+  </sql>
+  <select id="selectList" parameterType="cn.universal.persistence.entity.IoTUser" resultMap="BaseResultMap" databaseId="dameng">
+    select u.*, d.dept_name
+    from iot_user u
+    left join sys_dept d on d.dept_id = u.dept_id
+    <where>
+      and u.deleted = 0
+      <if test="orgId != null and orgId != ''">
+        and u.org_id = #{orgId}
+      </if>
+      <if test="username != null and username != ''">
+        and u.username like concat('%', #{username}, '%')
+      </if>
+      <if test="unionId != null and unionId != ''">
+        and u.union_id = #{unionId}
+      </if>
+      <if test="mobile != null and mobile != ''">
+        and u.mobile = #{mobile}
+      </if>
+      <if test="id != null and id != ''">
+        and u.id = #{id}
+      </if>
+      <if test="alias != null and alias != ''">
+        and u.alias like concat('%', #{alias}, '%')
+      </if>
+      <if test="status != null">
+        and u.status = #{status}
+      </if>
+      <if test="createBy != null and createBy != ''">
+        and u.create_by = #{createBy}
+      </if>
+      <if test="tenantId != null and tenantId != ''">
+        and (
+        u.tenant_id = #{tenantId}
+        <if test="params != null and params.scopeUnionIds != null and params.scopeUnionIds.size > 0">
+          or ((u.tenant_id is null or u.tenant_id = '') and u.union_id in
+          <foreach collection="params.scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+            #{scopeUnionId}
+          </foreach>
+          )
+        </if>
+        )
+      </if>
+      <if test="tenantRole != null and tenantRole != ''">
+        and u.tenant_role = #{tenantRole}
+      </if>
+      <if test="deptId != null">
+        and u.dept_id = #{deptId}
+      </if>
+      <if test="params != null and params.beginTime != null and params.beginTime != ''">
+        and cast(u.create_date as date) &gt;= cast(#{params.beginTime} as date)
+      </if>
+      <if test="params != null and params.endTime != null and params.endTime != ''">
+        and cast(u.create_date as date) &lt;= cast(#{params.endTime} as date)
+      </if>
+      <include refid="userScopeCondition" />
+    </where>
+  </select>
+  <select id="selectAllocatedList" parameterType="cn.universal.persistence.entity.bo.IoTUserBO" resultMap="BaseResultMap" databaseId="dameng">
+    select distinct u.id, u.org_id, u.tenant_id, u.tenant_role, u.dept_id, d.dept_name,
+    u.username, u.union_id, u.alias, u.email, u.mobile, u.status, u.create_date
+    from iot_user u
+    left join sys_user_role ur on u.union_id = ur.union_id
+    left join sys_dept d on d.dept_id = u.dept_id
+    where u.deleted = 0 and ur.role_id = #{roleId}
+    <if test="tenantId != null and tenantId != ''">
+      AND (
+      u.tenant_id = #{tenantId}
+      <if test="scopeUnionIds != null and scopeUnionIds.size > 0">
+        OR ((u.tenant_id IS NULL OR u.tenant_id = '') AND u.union_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+        )
+      </if>
+      )
+    </if>
+    <if test="username != null and username != ''">
+      AND u.username like concat('%', #{username}, '%')
+    </if>
+    <if test="mobile != null and mobile != ''">
+      AND u.mobile like concat('%', #{mobile}, '%')
+    </if>
+    <include refid="userBoScopeCondition" />
+  </select>
+  <select id="selectUserByMobile" parameterType="string" resultType="cn.universal.persistence.entity.IoTUser" databaseId="dameng">
+    select *
+    from iot_user
+    where mobile = #{mobile}
+  </select>
+  <select id="selectUnallocatedList" parameterType="cn.universal.persistence.entity.bo.IoTUserBO" resultMap="BaseResultMap" databaseId="dameng">
+    select distinct u.id, u.org_id, u.tenant_id, u.tenant_role, u.dept_id, d.dept_name,
+    u.username, u.union_id, u.alias, u.email, u.mobile, u.status, u.create_date
+    from iot_user u
+    left join sys_user_role ur on u.union_id = ur.union_id
+    left join sys_dept d on d.dept_id = u.dept_id
+    where u.deleted = 0
+    and (ur.role_id &lt;&gt; #{roleId} or ur.role_id IS NULL)
+    and u.union_id not in (select ur.union_id from sys_user_role where ur.role_id = #{roleId})
+    <if test="tenantId != null and tenantId != ''">
+      and (
+      u.tenant_id = #{tenantId}
+      <if test="scopeUnionIds != null and scopeUnionIds.size > 0">
+        OR ((u.tenant_id IS NULL OR u.tenant_id = '') AND u.union_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+        )
+      </if>
+      )
+    </if>
+    <if test="username != null and username != ''">
+      AND u.username like concat('%', #{username}, '%')
+    </if>
+    <if test="mobile != null and mobile != ''">
+      AND u.mobile like concat('%', #{mobile}, '%')
+    </if>
+    <include refid="userBoScopeCondition" />
+  </select>
+  <update id="doAccountDisable" databaseId="dameng">
+    update iot_user
+    set status = 1
+    where status = 0
+      and deleted = 0
+      and (current_date - coalesce(cast(login_date as date), cast(create_date as date))) &gt;= 90
+  </update>
+</mapper>

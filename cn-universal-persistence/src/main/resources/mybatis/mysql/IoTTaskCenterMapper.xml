@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTTaskCenterMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTTaskCenter">
+    <id column="id" property="id"/>
+    <result column="task_no" property="taskNo"/>
+    <result column="task_type" property="taskType"/>
+    <result column="task_name" property="taskName"/>
+    <result column="biz_module" property="bizModule"/>
+    <result column="biz_key" property="bizKey"/>
+    <result column="product_key" property="productKey"/>
+    <result column="product_name" property="productName"/>
+    <result column="definition_id" property="definitionId"/>
+    <result column="trigger_type" property="triggerType"/>
+    <result column="status" property="status"/>
+    <result column="total_count" property="totalCount"/>
+    <result column="success_count" property="successCount"/>
+    <result column="fail_count" property="failCount"/>
+    <result column="creator_id" property="creatorId"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="creator_name" property="creatorName"/>
+    <result column="request_snapshot" property="requestSnapshot"/>
+    <result column="result_snapshot" property="resultSnapshot"/>
+    <result column="ext_json" property="extJson"/>
+    <result column="error_message" property="errorMessage"/>
+    <result column="start_time" property="startTime"/>
+    <result column="end_time" property="endTime"/>
+    <result column="create_time" property="createTime"/>
+    <result column="update_time" property="updateTime"/>
+  </resultMap>
+
+  <select id="selectTaskCenterList" resultMap="BaseResultMap">
+    select *
+    from iot_task_center t
+    <where>
+      <if test="query.taskType != null and query.taskType != ''">
+        and t.task_type = #{query.taskType}
+      </if>
+      <if test="query.taskName != null and query.taskName != ''">
+        and t.task_name like concat('%', #{query.taskName}, '%')
+      </if>
+      <if test="query.productKey != null and query.productKey != ''">
+        and t.product_key = #{query.productKey}
+      </if>
+      <if test="query.status != null and query.status != ''">
+        and t.status = #{query.status}
+      </if>
+      <if test="query.queryBeginTime != null">
+        and t.create_time &gt;= #{query.queryBeginTime}
+      </if>
+      <if test="query.queryEndTime != null">
+        and t.create_time &lt;= #{query.queryEndTime}
+      </if>
+      <choose>
+        <when test="!admin and query.tenantId != null and query.tenantId != ''">
+          and (t.tenant_id = #{query.tenantId} or ((t.tenant_id is null or t.tenant_id = '') and t.creator_id = #{query.creatorId}))
+        </when>
+        <when test="!admin and unionId != null and unionId != ''">
+          and t.creator_id = #{unionId}
+        </when>
+      </choose>
+    </where>
+    order by t.create_time desc, t.id desc
+  </select>
+
+  <select id="selectTaskCenterById" resultMap="BaseResultMap">
+    select *
+    from iot_task_center
+    where id = #{id}
+  </select>
+
+  <update id="markTaskRunningIfPending">
+    update iot_task_center
+    set status = 'RUNNING',
+        start_time = now(),
+        update_time = now()
+    where id = #{id}
+      and status = 'PENDING'
+  </update>
+
+  <select id="countActiveTasksByDefinitionId" resultType="int">
+    select count(1)
+    from iot_task_center
+    where definition_id = #{definitionId}
+      and status in ('PENDING', 'RUNNING')
+  </select>
+
+  <select id="selectLatestActiveTaskByDefinitionId" resultMap="BaseResultMap">
+    select *
+    from iot_task_center
+    where definition_id = #{definitionId}
+      and status in ('PENDING', 'RUNNING')
+    order by create_time desc, id desc
+    limit 1
+  </select>
+</mapper>

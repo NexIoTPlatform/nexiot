@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTStandardMetadataFieldMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTStandardMetadataField">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="field_type" jdbcType="VARCHAR" property="fieldType" />
+    <result column="field_id" jdbcType="VARCHAR" property="fieldId" />
+    <result column="field_name" jdbcType="VARCHAR" property="fieldName" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="data_type" jdbcType="VARCHAR" property="dataType" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="mode" jdbcType="VARCHAR" property="mode" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="value_type_config" jdbcType="LONGVARCHAR" property="valueTypeConfig" />
+    <result column="metadata_config" jdbcType="LONGVARCHAR" property="metadataConfig" />
+    <result column="search_keywords" jdbcType="VARCHAR" property="searchKeywords" />
+    <result column="use_count" jdbcType="INTEGER" property="useCount" />
+    <result column="recommend_priority" jdbcType="INTEGER" property="recommendPriority" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap id="FieldWithCategoryMap" type="cn.universal.persistence.entity.IoTStandardMetadataField" extends="BaseResultMap">
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+  </resultMap>
+  <sql id="selectFieldVo">
+    select id, field_type, field_id, field_name, category_id, data_type, unit, mode,
+           description, cast(value_type_config as varchar) as value_type_config, metadata_config, search_keywords, use_count, recommend_priority, status, tenant_id,
+           create_by, create_time, update_by, update_time
+    from iot_standard_metadata_field
+  </sql>
+  <select id="selectFieldList" parameterType="cn.universal.persistence.entity.IoTStandardMetadataField" resultMap="FieldWithCategoryMap" databaseId="dameng">
+    select f.id, f.field_type, f.field_id, f.field_name, f.category_id, f.data_type, f.unit, f.mode,
+           f.description, cast(f.value_type_config as varchar) as value_type_config, f.metadata_config, f.search_keywords, f.use_count, f.status, f.tenant_id,
+           f.create_by, f.create_time, f.update_by, f.update_time,
+           c.category_name
+    from iot_standard_metadata_field f
+    left join iot_standard_category c on f.category_id = c.id
+    <where>
+      <if test="fieldType != null and fieldType != ''">and f.field_type = #{fieldType}</if>
+      <if test="fieldId != null and fieldId != ''">and f.field_id like concat('%', #{fieldId}, '%')</if>
+      <if test="fieldName != null and fieldName != ''">and f.field_name like concat('%', #{fieldName}, '%')</if>
+      <if test="categoryId != null">and f.category_id = #{categoryId}</if>
+      <if test="dataType != null and dataType != ''">and f.data_type = #{dataType}</if>
+      <if test="status != null">and f.status = #{status}</if>
+      <if test="tenantId != null and tenantId != ''">and f.tenant_id = #{tenantId}</if>
+    </where>
+    order by f.use_count desc, f.id desc
+  </select>
+  <select id="selectFieldByType" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectFieldVo" />
+    where field_type = #{fieldType} and status = 1
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    order by use_count desc, id desc
+  </select>
+  <select id="selectFieldById" resultMap="FieldWithCategoryMap" databaseId="dameng">
+    select f.id, f.field_type, f.field_id, f.field_name, f.category_id, f.data_type, f.unit, f.mode,
+           f.description, cast(f.value_type_config as varchar) as value_type_config, f.metadata_config, f.search_keywords, f.use_count, f.status, f.tenant_id,
+           f.create_by, f.create_time, f.update_by, f.update_time,
+           c.category_name
+    from iot_standard_metadata_field f
+    left join iot_standard_category c on f.category_id = c.id
+    where f.id = #{id}
+    <if test="tenantId != null and tenantId != ''">and f.tenant_id = #{tenantId}</if>
+  </select>
+  <select id="selectFieldByFieldId" resultMap="FieldWithCategoryMap" databaseId="dameng">
+    select f.id, f.field_type, f.field_id, f.field_name, f.category_id, f.data_type, f.unit, f.mode,
+           f.description, cast(f.value_type_config as varchar) as value_type_config, f.metadata_config, f.search_keywords, f.use_count, f.status, f.tenant_id,
+           f.create_by, f.create_time, f.update_by, f.update_time,
+           c.category_name
+    from iot_standard_metadata_field f
+    left join iot_standard_category c on f.category_id = c.id
+    where f.field_id = #{fieldId}
+    <if test="tenantId != null and tenantId != ''">and f.tenant_id = #{tenantId}</if>
+  </select>
+  <select id="selectFieldByTypeAndId" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectFieldVo" />
+    where field_type = #{fieldType} and field_id = #{fieldId}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+  <select id="searchFieldByKeyword" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectFieldVo" />
+    where status = 1
+    <if test="fieldType != null and fieldType != ''">and field_type = #{fieldType}</if>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    and (field_id like concat('%', #{keyword}, '%')
+         or field_name like concat('%', #{keyword}, '%')
+         or search_keywords like concat('%', #{keyword}, '%')
+         or description like concat('%', #{keyword}, '%'))
+    order by use_count desc, id desc
+    <if test="limit != null">limit #{limit}</if>
+  </select>
+  <select id="fullTextSearchField" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectFieldVo" />
+    where status = 1
+    <if test="fieldType != null and fieldType != ''">and field_type = #{fieldType}</if>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    and (field_id like concat('%', #{keyword}, '%')
+         or field_name like concat('%', #{keyword}, '%')
+         or search_keywords like concat('%', #{keyword}, '%')
+         or description like concat('%', #{keyword}, '%'))
+    order by use_count desc, id desc
+  </select>
+  <insert id="insertField" parameterType="cn.universal.persistence.entity.IoTStandardMetadataField" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into iot_standard_metadata_field
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fieldType != null and fieldType != ''">field_type,</if>
+      <if test="fieldId != null and fieldId != ''">field_id,</if>
+      <if test="fieldName != null and fieldName != ''">field_name,</if>
+      <if test="categoryId != null">category_id,</if>
+      <if test="dataType != null">data_type,</if>
+      <if test="unit != null">unit,</if>
+      <if test="mode != null">mode,</if>
+      <if test="description != null">description,</if>
+      <if test="valueTypeConfig != null">value_type_config,</if>
+      <if test="metadataConfig != null">metadata_config,</if>
+      <if test="searchKeywords != null">search_keywords,</if>
+      <if test="useCount != null">use_count,</if>
+      <if test="status != null">status,</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+      <if test="createBy != null and createBy != ''">create_by,</if>
+      create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fieldType != null and fieldType != ''">#{fieldType},</if>
+      <if test="fieldId != null and fieldId != ''">#{fieldId},</if>
+      <if test="fieldName != null and fieldName != ''">#{fieldName},</if>
+      <if test="categoryId != null">#{categoryId},</if>
+      <if test="dataType != null">#{dataType},</if>
+      <if test="unit != null">#{unit},</if>
+      <if test="mode != null">#{mode},</if>
+      <if test="description != null">#{description},</if>
+      <if test="valueTypeConfig != null">CAST(#{valueTypeConfig} AS JSON),</if>
+      <if test="metadataConfig != null">#{metadataConfig},</if>
+      <if test="searchKeywords != null">#{searchKeywords},</if>
+      <if test="useCount != null">#{useCount},</if>
+      <if test="status != null">#{status},</if>
+      <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+      <if test="createBy != null and createBy != ''">#{createBy},</if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateField" parameterType="cn.universal.persistence.entity.IoTStandardMetadataField" databaseId="dameng">
+    update iot_standard_metadata_field
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="fieldType != null and fieldType != ''">field_type = #{fieldType},</if>
+      <if test="fieldId != null and fieldId != ''">field_id = #{fieldId},</if>
+      <if test="fieldName != null and fieldName != ''">field_name = #{fieldName},</if>
+      <if test="categoryId != null">category_id = #{categoryId},</if>
+      <if test="dataType != null">data_type = #{dataType},</if>
+      <if test="unit != null">unit = #{unit},</if>
+      <if test="mode != null">mode = #{mode},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="valueTypeConfig != null">value_type_config = CAST(#{valueTypeConfig} AS JSON),</if>
+      <if test="metadataConfig != null">metadata_config = #{metadataConfig},</if>
+      <if test="searchKeywords != null">search_keywords = #{searchKeywords},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+      <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+      update_time = now()
+    </trim>
+    where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </update>
+  <update id="incrementUseCount" databaseId="dameng">
+    update iot_standard_metadata_field
+    set use_count = use_count + 1
+    where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </update>
+  <delete id="deleteFieldById" databaseId="dameng">
+    delete from iot_standard_metadata_field where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </delete>
+  <delete id="deleteFieldByIds" databaseId="dameng">
+    delete from iot_standard_metadata_field where id in
+    <foreach item="id" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </delete>
+  <select id="checkFieldUnique" resultType="int" databaseId="dameng">
+    select count(*) from iot_standard_metadata_field
+    where field_type = #{fieldType} and field_id = #{fieldId}
+    <if test="excludeId != null">and id != #{excludeId}</if>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+  <select id="selectPopularFields" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectFieldVo" />
+    where status = 1
+    <if test="fieldType != null and fieldType != ''">and field_type = #{fieldType}</if>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    order by use_count desc
+    <if test="limit != null">limit #{limit}</if>
+  </select>
+  <select id="selectRecommendFieldsByCategory" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT f.*
+    FROM iot_standard_metadata_field f
+    INNER JOIN iot_standard_field_category_rel r ON f.id = r.field_id
+    WHERE r.category_id = #{categoryId}
+      AND f.field_type = #{fieldType}
+      AND f.status = 1
+      <if test="tenantId != null and tenantId != ''">AND f.tenant_id = #{tenantId}</if>
+    ORDER BY f.recommend_priority DESC, f.use_count DESC, f.update_time DESC
+    <if test="limit != null">
+      LIMIT #{limit}
+    </if>
+  </select>
+</mapper>

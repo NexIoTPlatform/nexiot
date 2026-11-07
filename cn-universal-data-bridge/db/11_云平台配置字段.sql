@@ -1,0 +1,63 @@
+-- 阿里云IoT配置字段
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`,
+                             `css_class`,
+                             `list_class`, `is_default`, `status`, `create_by`, `create_time`,
+                             `update_by`,
+                             `update_time`, `remark`)
+VALUES (630, 1, 'Region ID', 'regionId', 'databridge_aliyun_iot_fields', '', '', 'Y', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"select","required":true,"options":["cn-shanghai","cn-beijing","cn-shenzhen","ap-southeast-1"],"default":"cn-shanghai"}'),
+       (631, 2, 'Access Key ID', 'accessKeyId', 'databridge_aliyun_iot_fields', '', '', 'Y', '0',
+        'admin', NOW(), '',
+        NULL, '{"type":"input","required":true,"placeholder":"请输入AccessKey ID"}'),
+       (632, 3, 'Access Key Secret', 'accessKeySecret', 'databridge_aliyun_iot_fields', '', '', 'Y',
+        '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"password","required":true,"placeholder":"请输入AccessKey Secret"}'),
+       (633, 4, '实例ID', 'instanceId', 'databridge_aliyun_iot_fields', '', '', 'Y', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"input","required":true,"placeholder":"请输入IoT实例ID"}');
+
+-- 腾讯云IoT配置字段
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`,
+                             `css_class`,
+                             `list_class`, `is_default`, `status`, `create_by`, `create_time`,
+                             `update_by`,
+                             `update_time`, `remark`)
+VALUES (640, 1, 'Region', 'region', 'databridge_tencent_iot_fields', '', '', 'Y', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"select","required":true,"options":["ap-guangzhou","ap-shanghai","ap-beijing","ap-singapore"],"default":"ap-guangzhou","placeholder":"请选择地域"}'),
+       (641, 2, 'Secret ID', 'secretId', 'databridge_tencent_iot_fields', '', '', 'Y', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"input","required":true,"placeholder":"请输入腾讯云Secret ID"}'),
+       (642, 3, 'Secret Key', 'secretKey', 'databridge_tencent_iot_fields', '', '', 'Y', '0',
+        'admin', NOW(), '', NULL,
+        '{"type":"password","required":true,"placeholder":"请输入腾讯云Secret Key"}'),
+       (643, 4, '产品ID', 'productId', 'databridge_tencent_iot_fields', '', '', 'N', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"input","required":false,"placeholder":"请输入产品ID（可选）"}'),
+       (644, 5, '设备名称', 'deviceName', 'databridge_tencent_iot_fields', '', '', 'N', '0',
+        'admin', NOW(), '', NULL,
+        '{"type":"input","required":false,"placeholder":"请输入设备名称（可选）"}');
+
+-- 华为云IoT配置字段
+INSERT INTO `sys_dict_data` (`dict_code`, `dict_sort`, `dict_label`, `dict_value`, `dict_type`,
+                             `css_class`,
+                             `list_class`, `is_default`, `status`, `create_by`, `create_time`,
+                             `update_by`,
+                             `update_time`, `remark`)
+VALUES (650, 1, 'Region', 'region', 'databridge_huawei_iot_fields', '', '', 'Y', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"select","required":true,"options":["cn-north-4","cn-south-1","cn-east-2","ap-southeast-1"],"default":"cn-north-4","placeholder":"请选择地域"}'),
+       (651, 2, '项目ID', 'projectId', 'databridge_huawei_iot_fields', '', '', 'Y', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"input","required":true,"placeholder":"请输入华为云项目ID"}'),
+       (652, 3, 'App ID', 'appId', 'databridge_huawei_iot_fields', '', '', 'Y', '0', 'admin', NOW(),
+        '', NULL,
+        '{"type":"input","required":true,"placeholder":"请输入应用ID"}'),
+       (653, 4, 'App Secret', 'appSecret', 'databridge_huawei_iot_fields', '', '', 'Y', '0',
+        'admin', NOW(), '', NULL,
+        '{"type":"password","required":true,"placeholder":"请输入应用密钥"}'),
+       (654, 5, '应用名称', 'appName', 'databridge_huawei_iot_fields', '', '', 'N', '0', 'admin',
+        NOW(), '', NULL,
+        '{"type":"input","required":false,"placeholder":"请输入应用名称（可选）"}');

@@ -1,0 +1,163 @@
+.device-compare {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+
+  &__selection,
+  &__analysis {
+    padding: 12px 14px;
+    background: var(--color-bg-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: 8px;
+  }
+
+  &__intro,
+  &__chart-heading {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-1);
+  }
+
+  &__intro p,
+  &__chart-heading p {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  &__intro p span {
+    margin-left: 16px;
+  }
+
+  &__code,
+  h3 span {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-text-3);
+  }
+
+  &__picker {
+    width: 360px;
+    max-width: 100%;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  &__chip {
+    max-width: 100%;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-2);
+  }
+
+  &__chip-name {
+    display: inline-block;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  &__current,
+  &__code {
+    margin-left: 8px;
+  }
+
+  &__current {
+    font-size: 11px;
+    color: rgb(var(--primary-6));
+  }
+
+  &__chart-heading {
+    margin: 0 0 8px;
+  }
+
+  &__query-controls {
+    margin: 12px 0;
+    font-size: 12px;
+    color: var(--color-text-2);
+  }
+
+  &__sample-note {
+    margin-bottom: 12px;
+  }
+
+  &__chart {
+    display: block;
+    width: 100%;
+    min-height: 330px;
+
+    > .arco-empty {
+      padding: 100px 12px;
+    }
+  }
+
+  &__hint {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    margin: 8px 0 18px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--color-text-3);
+  }
+
+  &__table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__device {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    i {
+      flex-shrink: 0;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      overflow-wrap: anywhere;
+    }
+
+    small {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--color-text-3);
+    }
+  }
+}
+
+@media (width <= 768px) {
+  .device-compare {
+    &__selection,
+    &__analysis {
+      padding: 14px;
+    }
+
+    &__picker {
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTTenantPackageMenuMapper">
+
+  <insert id="batchInsert">
+    INSERT INTO iot_tenant_package_menu (
+      id,
+      package_id,
+      menu_id,
+      create_time
+    )
+    VALUES
+    <foreach collection="menus" item="item" separator=",">
+      (
+        #{item.id},
+        #{item.packageId},
+        #{item.menuId},
+        #{item.createTime}
+      )
+    </foreach>
+  </insert>
+
+</mapper>

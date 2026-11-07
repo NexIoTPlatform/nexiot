@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceShadowMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceShadow">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="ext_device_id" jdbcType="VARCHAR" property="extDeviceId" />
+    <result column="active_time" jdbcType="TIMESTAMP" property="activeTime" />
+    <result column="online_time" jdbcType="TIMESTAMP" property="onlineTime" />
+    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="metadata" jdbcType="LONGVARCHAR" property="metadata" />
+    <result column="shadow_instance" jdbcType="VARCHAR" property="instance" />
+    <result column="version" jdbcType="BIGINT" property="version" />
+  </resultMap>
+  <select id="getDeviceShadow" resultMap="BaseResultMap" parameterType="String" databaseId="dameng">
+    select *
+    from iot_device_shadow
+    where iot_id = #{id}
+  </select>
+  <select id="getShadowMetadata" resultType="String" databaseId="dameng">
+    select metadata
+    from iot_device_shadow
+    where product_key = #{productKey}
+      and device_id = #{deviceId}
+    limit 1
+  </select>
+  <select id="selectByIotIds" resultMap="BaseResultMap" databaseId="dameng">
+    select *
+    from iot_device_shadow
+    where iot_id in
+    <foreach collection="iotIds" item="iotId" open="(" separator="," close=")">
+      #{iotId}
+    </foreach>
+  </select>
+  <insert id="batchInsert" parameterType="java.util.List" databaseId="dameng">
+    insert into iot_device_shadow (
+      iot_id, product_key, device_id, ext_device_id,
+      active_time, online_time, last_time, update_date,
+      metadata, shadow_instance, version
+    ) values
+    <foreach collection="shadows" item="shadow" separator=",">
+      (
+        #{shadow.iotId}, #{shadow.productKey}, #{shadow.deviceId}, #{shadow.extDeviceId},
+        #{shadow.activeTime}, #{shadow.onlineTime}, #{shadow.lastTime}, #{shadow.updateDate},
+        #{shadow.metadata}, #{shadow.instance}, #{shadow.version}
+      )
+    </foreach>
+  </insert>
+  <update id="batchUpdate" parameterType="java.util.List" databaseId="dameng">
+    update iot_device_shadow
+    <set>
+      product_key = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.productKey}
+      </foreach>
+      else product_key
+      end,
+      device_id = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.deviceId}
+      </foreach>
+      else device_id
+      end,
+      ext_device_id = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.extDeviceId}
+      </foreach>
+      else ext_device_id
+      end,
+      shadow_instance = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.instance}
+      </foreach>
+      else shadow_instance
+      end,
+      version = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.version}
+      </foreach>
+      else version
+      end,
+      metadata = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.metadata}
+      </foreach>
+      else metadata
+      end,
+      active_time = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.activeTime}
+      </foreach>
+      else active_time
+      end,
+      online_time = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.onlineTime}
+      </foreach>
+      else online_time
+      end,
+      last_time = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.lastTime}
+      </foreach>
+      else last_time
+      end,
+      update_date = case iot_id
+      <foreach collection="shadows" item="shadow">
+        when #{shadow.iotId} then #{shadow.updateDate}
+      </foreach>
+      else update_date
+      end
+    </set>
+    where iot_id in
+    <foreach collection="shadows" item="shadow" open="(" close=")" separator=",">
+      #{shadow.iotId}
+    </foreach>
+  </update>
+</mapper>

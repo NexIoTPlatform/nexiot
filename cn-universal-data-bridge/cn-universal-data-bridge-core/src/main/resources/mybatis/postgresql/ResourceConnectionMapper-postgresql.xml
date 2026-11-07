@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.databridge.mapper.ResourceConnectionMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.databridge.entity.ResourceConnection">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="database_name" jdbcType="VARCHAR" property="databaseName" />
+    <result column="extra_config" jdbcType="LONGVARCHAR" property="extraConfig" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id
+    , name, type, host, port, username, password, database_name, extra_config,
+        status, description, create_by, create_time, update_by, update_time
+  </sql>
+  <select id="selectActiveConnectionsByType" parameterType="string" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM iot_resource_connection
+    WHERE type = #{type}
+    AND status = 1
+    ORDER BY create_time DESC
+  </select>
+  <select id="selectByHostAndPort" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM iot_resource_connection
+    WHERE host = #{host}
+    AND port = #{port}
+    <if test="excludeId != null">
+      AND id != #{excludeId}
+    </if>
+    LIMIT 1
+  </select>
+  <select id="selectByName" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM iot_resource_connection
+    WHERE name = #{name}
+    <if test="excludeId != null">
+      AND id != #{excludeId}
+    </if>
+    LIMIT 1
+  </select>
+  <update id="batchUpdateStatus" databaseId="postgresql">
+    UPDATE iot_resource_connection
+    SET status = #{status},
+    update_by = #{updateBy},
+    update_time = NOW()
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+  <select id="testConnection" parameterType="long" resultType="int" databaseId="postgresql">
+    SELECT COUNT(1)
+    FROM iot_resource_connection
+    WHERE id = #{id}
+      AND status = 1
+  </select>
+</mapper>

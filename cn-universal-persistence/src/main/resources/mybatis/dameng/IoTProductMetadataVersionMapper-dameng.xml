@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTProductMetadataVersionMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTProductMetadataVersion">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="BIGINT" property="productId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="metadata_snapshot" jdbcType="LONGVARCHAR" property="metadataSnapshot" />
+    <result column="change_type" jdbcType="VARCHAR" property="changeType" />
+    <result column="change_description" jdbcType="VARCHAR" property="changeDescription" />
+    <result column="operator" jdbcType="VARCHAR" property="operator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <resultMap id="VersionWithProductMap" type="cn.universal.persistence.entity.IoTProductMetadataVersion" extends="BaseResultMap">
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+  </resultMap>
+  <sql id="selectVersionVo">
+    select id, product_id, product_key, version, metadata_snapshot, 
+           change_type, change_description, operator, create_time
+    from iot_product_metadata_version
+  </sql>
+  <select id="selectVersionList" parameterType="cn.universal.persistence.entity.IoTProductMetadataVersion" resultMap="VersionWithProductMap" databaseId="dameng">
+    select v.id,
+           v.product_id,
+           v.product_key,
+           v.version,
+           cast(v.metadata_snapshot as varchar) as metadata_snapshot,
+           v.change_type,
+           v.change_description,
+           v.operator,
+           v.create_time,
+           p.name as product_name
+    from iot_product_metadata_version v
+      left join iot_product p on v.product_id = p.id
+    <where>
+      <if test="productId != null">and v.product_id = #{productId}</if>
+      <if test="productKey != null and productKey != ''">and v.product_key = #{productKey}</if>
+      <if test="changeType != null and changeType != ''">and v.change_type = #{changeType}</if>
+      <if test="operator != null and operator != ''">and v.operator = #{operator}</if>
+    </where>
+    order by v.version desc
+  </select>
+  <select id="selectVersionByProductId" parameterType="Long" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectVersionVoPg" />
+    where product_id = #{productId}
+    order by version desc
+  </select>
+  <select id="selectVersionListByProductKey" parameterType="String" resultMap="VersionWithProductMap" databaseId="dameng">
+    select v.id,
+           v.product_id,
+           v.product_key,
+           v.version,
+           cast(v.metadata_snapshot as varchar) as metadata_snapshot,
+           v.change_type,
+           v.change_description,
+           v.operator,
+           v.create_time,
+           p.name as product_name
+    from iot_product_metadata_version v
+      left join iot_product p on v.product_id = p.id
+    where v.product_key = #{productKey}
+    order by v.version desc
+  </select>
+  <select id="selectVersionById" parameterType="Long" resultMap="VersionWithProductMap" databaseId="dameng">
+    select v.id,
+           v.product_id,
+           v.product_key,
+           v.version,
+           cast(v.metadata_snapshot as varchar) as metadata_snapshot,
+           v.change_type,
+           v.change_description,
+           v.operator,
+           v.create_time,
+           p.name as product_name
+    from iot_product_metadata_version v
+      left join iot_product p on v.product_id = p.id
+    where v.id = #{id}
+  </select>
+  <select id="selectLatestVersion" parameterType="Long" resultMap="VersionWithProductMap" databaseId="dameng">
+    select v.id,
+           v.product_id,
+           v.product_key,
+           v.version,
+           cast(v.metadata_snapshot as varchar) as metadata_snapshot,
+           v.change_type,
+           v.change_description,
+           v.operator,
+           v.create_time,
+           p.name as product_name
+    from iot_product_metadata_version v
+      left join iot_product p on v.product_id = p.id
+    where v.product_id = #{productId}
+    order by v.version desc
+    limit 1
+  </select>
+  <select id="selectVersionByProductIdAndVersion" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectVersionVoPg" />
+    where product_id = #{productId}
+      and version = #{version}
+  </select>
+  <select id="selectMaxVersionByProductId" parameterType="Long" resultType="Integer" databaseId="dameng">
+    select coalesce(max(version), 0)
+    from iot_product_metadata_version
+    where product_id = #{productId}
+  </select>
+  <insert id="insertVersion" parameterType="cn.universal.persistence.entity.IoTProductMetadataVersion" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into iot_product_metadata_version
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="productId != null">product_id,</if>
+      <if test="productKey != null and productKey != ''">product_key,</if>
+      <if test="version != null">version,</if>
+      <if test="metadataSnapshot != null">metadata_snapshot,</if>
+      <if test="changeType != null">change_type,</if>
+      <if test="changeDescription != null">change_description,</if>
+      <if test="operator != null">operator,</if>
+      create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="productId != null">#{productId},</if>
+      <if test="productKey != null and productKey != ''">#{productKey},</if>
+      <if test="version != null">#{version},</if>
+      <if test="metadataSnapshot != null">CAST(#{metadataSnapshot} AS JSON),</if>
+      <if test="changeType != null">#{changeType},</if>
+      <if test="changeDescription != null">#{changeDescription},</if>
+      <if test="operator != null">#{operator},</if>
+      <choose>
+        <when test="createTime != null">#{createTime},</when>
+        <otherwise>now(),</otherwise>
+      </choose>
+    </trim>
+  </insert>
+  <delete id="deleteVersionById" parameterType="Long" databaseId="dameng">
+    delete from iot_product_metadata_version where id = #{id}
+  </delete>
+  <delete id="deleteVersionByIds" databaseId="dameng">
+    delete from iot_product_metadata_version where id in
+    <foreach item="id" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <delete id="deleteVersionByProductId" parameterType="Long" databaseId="dameng">
+    delete from iot_product_metadata_version where product_id = #{productId}
+  </delete>
+  <select id="selectLatestTwoVersions" parameterType="Long" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectVersionVoPg" />
+    where product_id = #{productId}
+    order by version desc
+    limit 2
+  </select>
+  <select id="countVersionByProductId" parameterType="Long" resultType="int" databaseId="dameng">
+    select count(*)
+    from iot_product_metadata_version
+    where product_id = #{productId}
+  </select>
+  <sql id="selectVersionVoPg">
+    select id,
+           product_id,
+           product_key,
+           version,
+           cast(metadata_snapshot as varchar) as metadata_snapshot,
+           change_type,
+           change_description,
+           operator,
+           create_time
+    from iot_product_metadata_version
+  </sql>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceLogMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="message_type" jdbcType="VARCHAR" property="messageType" />
+    <result column="command_id" jdbcType="VARCHAR" property="commandId" />
+    <result column="command_status" jdbcType="SMALLINT" property="commandStatus" />
+    <result column="point" jdbcType="VARCHAR" property="point" />
+    <result column="event" jdbcType="VARCHAR" property="event" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <select id="queryLogPageV2List" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="iotId != null and iotId != ''">
+        and iot_id = #{iotId}
+      </if>
+      <if test="messageType != null and messageType != ''">
+        and message_type = #{messageType}
+      </if>
+      <if test="params != null and params.beginCreateTime != null">
+        and create_time &gt;= to_timestamp(#{params.beginCreateTime})
+      </if>
+      <if test="params != null and params.endCreateTime != null">
+        and create_time &lt;= to_timestamp(#{params.endCreateTime})
+      </if>
+      <if test="productKey != null and productKey != ''">
+        and product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        and device_id = #{deviceId}
+      </if>
+      <if test="deviceName != null and deviceName != ''">
+        and device_name like concat('%', #{deviceName}, '%')
+      </if>
+      <if test="params != null and params.event != null and params.event != ''">
+        and JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(content, ''), '{}'), '$.event')) = #{params.event}
+      </if>
+      <if test="params != null and params.properties != null and params.properties != ''">
+        and JSON_CONTAINS_PATH(COALESCE(NULLIF(content, ''), '{}'), 'ONE', concat('$.properties.', #{params.properties})) = 1
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <select id="queryLogById" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="id != null and id != ''">
+        and id = CAST(#{id} AS bigint)
+      </if>
+      <if test="iotId != null and iotId != ''">
+        and iot_id = #{iotId}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        and product_key = #{productKey}
+      </if>
+    </where>
+  </select>
+  <select id="queryLogPageList" resultType="cn.universal.persistence.entity.vo.IoTDeviceLogVO" databaseId="dameng">
+    select *
+    from iot_device_log
+    <where>
+      <if test="iotId != null and iotId != ''">
+        and iot_id = #{iotId}
+      </if>
+      <if test="messageType != null and messageType != ''">
+        and message_type = #{messageType}
+      </if>
+      <if test="params != null and params.beginCreateTime != null">
+        and create_time &gt;= to_timestamp(#{params.beginCreateTime})
+      </if>
+      <if test="params != null and params.endCreateTime != null">
+        and create_time &lt;= to_timestamp(#{params.endCreateTime})
+      </if>
+      <if test="productKey != null and productKey != ''">
+        and product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        and device_id = #{deviceId}
+      </if>
+      <if test="deviceName != null and deviceName != ''">
+        and device_name like concat('%', #{deviceName}, '%')
+      </if>
+      <if test="params != null and params.event != null and params.event != ''">
+        and JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(content, ''), '{}'), '$.event')) = #{params.event}
+      </if>
+      <if test="params != null and params.properties != null and params.properties != ''">
+        and JSON_CONTAINS_PATH(COALESCE(NULLIF(content, ''), '{}'), 'ONE', concat('$.properties.', #{params.properties})) = 1
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <select id="queryEventCountAndTime" resultType="cn.universal.persistence.entity.vo.EventCountAndTimeVO" databaseId="dameng">
+    SELECT COUNT(*) AS totalCount,
+           MAX(create_time) AS latestCreateTime
+    FROM iot_device_log
+    WHERE iot_id = #{iotId}
+      AND message_type = 'EVENT'
+      AND event = #{event}
+  </select>
+  <select id="queryCoordinatesLogByIotId" resultType="cn.universal.persistence.entity.IoTDeviceLog" databaseId="dameng">
+    select *
+    from iot_device_log
+    where iot_id = #{iotId}
+      and message_type = 'PROPERTIES'
+      and content like '%coordinate%'
+    order by id desc
+    limit 1 offset 1
+  </select>
+</mapper>

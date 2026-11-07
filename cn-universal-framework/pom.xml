@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>cn-universal-framework</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>pom</packaging>
+  <parent>
+    <artifactId>cn-universal</artifactId>
+    <groupId>cn.universal.iot</groupId>
+    <version>1.6-SNAPSHOT</version>
+  </parent>
+
+  <modules>
+    <module>cn-universal-common</module>
+    <module>cn-universal-core</module>
+    <module>cn-universal-exception</module>
+    <module>cn-universal-config</module>
+    <module>cn-universal-notice</module>
+    <module>cn-universal-oss</module>
+    <module>cn-universal-dm</module>
+    <!--    <module>cn-universal-rocketmq</module>-->
+  </modules>
+</project> 

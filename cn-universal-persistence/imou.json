@@ -1,0 +1,1377 @@
+{
+  "tags": [],
+  "events": [
+    {
+      "id": "deviceOnline",
+      "name": "设备上线",
+      "config": false,
+      "expands": {
+        "level": "ordinary"
+      },
+      "valueType": {
+        "type": "string",
+        "expands": {
+          "maxLength": "50"
+        }
+      }
+    },
+    {
+      "id": "deviceOffline",
+      "name": "设备下线",
+      "config": false,
+      "expands": {
+        "level": "warn"
+      },
+      "valueType": {
+        "type": "string",
+        "expands": {
+          "maxLength": "50"
+        }
+      }
+    },
+    {
+      "id": "motionDetection",
+      "name": "移动侦测",
+      "expands": {
+        "level": "warn"
+      },
+      "valueType": {
+        "type": "string",
+        "expands": {
+          "maxLength": "100"
+        }
+      }
+    },
+    {
+      "id": "soundDetection",
+      "name": "声音侦测",
+      "expands": {
+        "level": "warn"
+      },
+      "valueType": {
+        "type": "string",
+        "expands": {
+          "maxLength": "100"
+        }
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "flvLive",
+      "name": "直播(小程序)",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "int",
+            "expands": {}
+          },
+          "description": "通道ID，默认为0"
+        },
+        {
+          "id": "streamType",
+          "name": "视频流类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "高清主码流",
+                "value": "main"
+              },
+              {
+                "text": "标清辅码流",
+                "value": "sub"
+              }
+            ]
+          },
+          "description": "选择视频流的类型"
+        },
+        {
+          "id": "protocol",
+          "name": "协议类型",
+          "valueType": {
+            "type": "enum",
+            "expands": {},
+            "elements": [
+              {
+                "text": "FLV（推荐）",
+                "value": "flv"
+              },
+              {
+                "text": "HLS",
+                "value": "hls"
+              },
+              {
+                "text": "RTMP",
+                "value": "rtmp"
+              }
+            ]
+          },
+          "description": "视频流协议类型，推荐使用FLV"
+        },
+        {
+          "id": "type",
+          "name": "直播类型",
+          "valueType": {
+            "type": "string",
+            "expands": {}
+          },
+          "description": "直播类型，固定为realTime实时直播"
+        }
+      ],
+      "output": {},
+      "description": "获取摄像头的实时视频流链接，支持FLV、HLS、RTMP协议"
+    },
+    {
+      "id": "flvLivePlayback",
+      "name": "回放(小程序)",
+      "config": false,
+      "inputs": [
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "int",
+            "expands": {}
+          },
+          "description": "通道ID，默认为0"
+        },
+        {
+          "id": "type",
+          "name": "回放类型",
+          "valueType": {
+            "type": "string",
+            "expands": {}
+          },
+          "description": "回放类型，固定为playback"
+        },
+        {
+          "id": "recordType",
+          "name": "录像类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "本地录像",
+                "value": "localRecord"
+              },
+              {
+                "text": "云端录像",
+                "value": "cloudRecord"
+              }
+            ]
+          },
+          "description": "录像类型：localRecord本地录像，cloudRecord云端录像"
+        },
+        {
+          "id": "beginTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "回放开始时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "回放结束时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "speed",
+          "name": "倍速播放",
+          "valueType": {
+            "type": "enum",
+            "expands": {},
+            "elements": [
+              {
+                "text": "1倍速",
+                "value": "1"
+              },
+              {
+                "text": "2倍速",
+                "value": "2"
+              },
+              {
+                "text": "4倍速",
+                "value": "4"
+              },
+              {
+                "text": "8倍速",
+                "value": "8"
+              },
+              {
+                "text": "16倍速（仅云录像）",
+                "value": "16"
+              }
+            ]
+          },
+          "description": "倍速播放：云录像可选2/4/8/16倍速，本地录像可选2/4/8倍速"
+        }
+      ],
+      "output": {},
+      "description": "获取指定时间段的录像回放链接，支持本地录像和云端录像回放"
+    },
+    {
+      "id": "cameraTurn",
+      "name": "摄像头转动",
+      "inputs": [
+        {
+          "id": "direction",
+          "name": "转动方向",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "向上",
+                "value": "up"
+              },
+              {
+                "text": "向下",
+                "value": "down"
+              },
+              {
+                "text": "向左",
+                "value": "left"
+              },
+              {
+                "text": "向右",
+                "value": "right"
+              },
+              {
+                "text": "左上",
+                "value": "leftUp"
+              },
+              {
+                "text": "左下",
+                "value": "leftDown"
+              },
+              {
+                "text": "右上",
+                "value": "rightUp"
+              },
+              {
+                "text": "右下",
+                "value": "rightDown"
+              },
+              {
+                "text": "停止",
+                "value": "stop"
+              }
+            ]
+          },
+          "description": "摄像头转动的方向"
+        },
+        {
+          "id": "speed",
+          "name": "转动速度",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "慢速",
+                "value": "1"
+              },
+              {
+                "text": "中速",
+                "value": "2"
+              },
+              {
+                "text": "快速",
+                "value": "3"
+              }
+            ]
+          },
+          "description": "摄像头转动的速度等级"
+        }
+      ],
+      "output": {},
+      "description": "控制摄像头云台转动方向"
+    },
+    {
+      "id": "cameraLiveStream",
+      "name": "获取摄像头直播链接",
+      "inputs": [
+        {
+          "id": "streamType",
+          "name": "视频流类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "高清主码流",
+                "value": "main"
+              },
+              {
+                "text": "标清辅码流",
+                "value": "sub"
+              }
+            ]
+          },
+          "description": "选择视频流的类型"
+        },
+        {
+          "id": "protocol",
+          "name": "协议类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "RTMP",
+                "value": "rtmp"
+              },
+              {
+                "text": "FLV",
+                "value": "flv"
+              },
+              {
+                "text": "HLS",
+                "value": "hls"
+              }
+            ]
+          },
+          "description": "视频流协议类型"
+        }
+      ],
+      "output": {},
+      "description": "获取摄像头的实时视频流链接"
+    },
+    {
+      "id": "cameraPlayback",
+      "name": "获取摄像头回放链接",
+      "inputs": [
+        {
+          "id": "playbackType",
+          "name": "回放类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "本地录像",
+                "value": "local"
+              },
+              {
+                "text": "云存储录像",
+                "value": "cloud"
+              }
+            ]
+          },
+          "description": "选择回放的类型"
+        },
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "回放开始时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "回放结束时间，格式：yyyy-MM-dd HH:mm:ss"
+        }
+      ],
+      "output": {},
+      "description": "获取指定时间段的录像回放链接"
+    },
+    {
+      "id": "cameraSnapshot",
+      "name": "摄像头截图",
+      "inputs": [],
+      "output": {},
+      "description": "获取摄像头当前画面的截图"
+    },
+    {
+      "id": "cameraFlipSet",
+      "name": "画面翻转设置",
+      "inputs": [
+        {
+          "id": "flipStatus",
+          "name": "翻转状态",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "正常",
+                "value": "normal"
+              },
+              {
+                "text": "翻转",
+                "value": "reverse"
+              }
+            ]
+          },
+          "description": "normal：正常，reverse：翻转"
+        }
+      ],
+      "output": {},
+      "description": "设置摄像头画面的翻转状态"
+    },
+    {
+      "id": "storageLocalStreamSet",
+      "name": "设置本地录像视频流",
+      "inputs": [
+        {
+          "id": "streamType",
+          "name": "视频流类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "高清主码流",
+                "value": "main"
+              },
+              {
+                "text": "标清辅码流",
+                "value": "sub"
+              }
+            ]
+          },
+          "description": "本地录像使用的视频流类型"
+        }
+      ],
+      "output": {},
+      "description": "设置设备本地录像视频流类型"
+    },
+    {
+      "id": "storageLocalStreamQuery",
+      "name": "查询本地录像视频流",
+      "inputs": [],
+      "output": {},
+      "description": "查询设备当前配置的本地录像视频流类型"
+    },
+    {
+      "id": "storageLocalPlanSet",
+      "name": "设置本地录像计划",
+      "inputs": [
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "8"
+            }
+          },
+          "description": "录像开始时间，格式：HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "8"
+            }
+          },
+          "description": "录像结束时间，格式：HH:mm:ss"
+        },
+        {
+          "id": "weekdays",
+          "name": "重复周期",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "100"
+            }
+          },
+          "description": "录像重复的星期，可以为\"Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday\"，利用逗号分隔同时设置多个周期"
+        }
+      ],
+      "output": {},
+      "description": "设置设备本地录像计划，在录像计划时间段内，设备会全量采集视频数据到设备本地存储中"
+    },
+    {
+      "id": "storageLocalPlanQuery",
+      "name": "查询本地录像计划",
+      "inputs": [],
+      "output": {},
+      "description": "查询设备当前配置的录像计划"
+    },
+    {
+      "id": "storageCloudRecordsQuery",
+      "name": "查询云录像片段",
+      "inputs": [
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询开始时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询结束时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "count",
+          "name": "查询数量",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "2"
+            }
+          },
+          "description": "分页查询的数量，每次最大30条"
+        }
+      ],
+      "output": {},
+      "description": "按条件查询所有云录像记录(倒序展示)"
+    },
+    {
+      "id": "storageCloudUnusedList",
+      "name": "获取未启用的云存储服务",
+      "inputs": [
+        {
+          "id": "nextDeviceCloudId",
+          "name": "查询标识",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "上次查询最后一个deviceCloudId，首次查询时传-1"
+        },
+        {
+          "id": "limit",
+          "name": "查询条数",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "2"
+            }
+          },
+          "description": "条数，最大每次查询15条"
+        }
+      ],
+      "output": {},
+      "description": "获取开发者账号下未启用的云存储服务信息"
+    },
+    {
+      "id": "storageCloudCallCountQuery",
+      "name": "查询云存储开通接口剩余调用次数",
+      "inputs": [
+        {
+          "id": "strategyId",
+          "name": "云存储套餐ID",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "详情请见乐橙文档：云存储套餐介绍"
+        }
+      ],
+      "output": {},
+      "description": "查询开发者请求openCloudRecord：开通设备云存储接口的的剩余调用次数"
+    },
+    {
+      "id": "storageCloudServiceSet",
+      "name": "设置云存储服务开关",
+      "inputs": [
+        {
+          "id": "status",
+          "name": "服务状态",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "开启",
+                "value": "on"
+              },
+              {
+                "text": "关闭",
+                "value": "off"
+              }
+            ]
+          },
+          "description": "云存储服务的开关状态"
+        }
+      ],
+      "output": {},
+      "description": "设置设备当前云存储服务开/关"
+    },
+    {
+      "id": "storageCloudListQuery",
+      "name": "查询设备云存储服务",
+      "inputs": [],
+      "output": {},
+      "description": "获取开发者某个设备通道下开通的所有云存储服务"
+    },
+    {
+      "id": "storageCloudUnbind",
+      "name": "解绑设备云存储",
+      "inputs": [
+        {
+          "id": "deviceCloudId",
+          "name": "云存储唯一ID",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "云存储唯一ID，若开通的云存储在开发者账号下，则通过调用deviceCloudList：查询设备通道下所有云存储服务 获取值"
+        }
+      ],
+      "output": {},
+      "description": "解绑设备的云存储服务"
+    },
+    {
+      "id": "storageCloudOpen",
+      "name": "开通设备云存储",
+      "inputs": [
+        {
+          "id": "strategyId",
+          "name": "云存储套餐ID",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "详情请见：云存储套餐介绍"
+        },
+        {
+          "id": "deviceCloudId",
+          "name": "云存储唯一ID",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "若开通的云存储在开发者账号下，则通过调用unUsedCloudList获取deviceCloudId"
+        }
+      ],
+      "output": {},
+      "description": "为设备开通云存储服务"
+    },
+    {
+      "id": "storageFreeCloudSet",
+      "name": "设置免费云存储服务",
+      "inputs": [
+        {
+          "id": "status",
+          "name": "服务状态",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "开启",
+                "value": "on"
+              },
+              {
+                "text": "关闭",
+                "value": "off"
+              }
+            ]
+          },
+          "description": "免费云存储服务的开关状态"
+        }
+      ],
+      "output": {},
+      "description": "设置设备免费云存储服务开/关，部分乐橙设备可以免费使用云存储功能，开发者可以通过该接口开通试用云存储功能"
+    },
+    {
+      "id": "deviceSoundVolumeGet",
+      "name": "获取设备音量",
+      "inputs": [
+        {
+          "id": "volumeType",
+          "name": "音量类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "提示音",
+                "value": "playsound"
+              },
+              {
+                "text": "异常检测音",
+                "value": "decible"
+              }
+            ]
+          },
+          "description": "要查询的音量类型"
+        }
+      ],
+      "output": {},
+      "description": "获取设备提示音和异常检测音分贝大小"
+    },
+    {
+      "id": "deviceCameraStatusGet",
+      "name": "获取摄像头状态",
+      "inputs": [
+        {
+          "id": "enableType",
+          "name": "使能类型",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "请详细参考\"设备能力开关说明\"，首字母小写"
+        }
+      ],
+      "output": {},
+      "description": "获取设备使能开关状态"
+    },
+    {
+      "id": "deviceWifiSet",
+      "name": "设置设备WiFi",
+      "inputs": [
+        {
+          "id": "ssid",
+          "name": "WiFi名称",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "需要连接的WiFi名称(SSID)"
+        },
+        {
+          "id": "bssid",
+          "name": "WiFi地址",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "需要连接的WiFi地址(BSSID)"
+        },
+        {
+          "id": "password",
+          "name": "WiFi密码",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "WiFi连接密码"
+        },
+        {
+          "id": "connectStatus",
+          "name": "连接状态",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "连接",
+                "value": "true"
+              },
+              {
+                "text": "断开",
+                "value": "false"
+              }
+            ]
+          },
+          "description": "连接或断开WiFi"
+        }
+      ],
+      "output": {},
+      "description": "控制设备连接或断开WiFi热点"
+    },
+    {
+      "id": "deviceWifiScan",
+      "name": "扫描周边WiFi",
+      "inputs": [],
+      "output": {},
+      "description": "查询设备周边的WiFi热点信息"
+    },
+    {
+      "id": "deviceUpgrade",
+      "name": "设备升级",
+      "inputs": [],
+      "output": {},
+      "description": "升级设备固件"
+    },
+    {
+      "id": "deviceVersionQuery",
+      "name": "查询设备版本信息",
+      "inputs": [],
+      "output": {},
+      "description": "获取设备版本和可升级信息"
+    },
+    {
+      "id": "deviceCloudInfoGet",
+      "name": "获取设备云存储信息",
+      "inputs": [],
+      "output": {},
+      "description": "获取当前设备的云存储服务信息"
+    },
+    {
+      "id": "deviceEnableSet",
+      "name": "设置设备使能开关",
+      "inputs": [
+        {
+          "id": "enableType",
+          "name": "使能类型",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "50"
+            }
+          },
+          "description": "请详细参考\"设备能力开关说明\"，首字母小写"
+        },
+        {
+          "id": "enableStatus",
+          "name": "使能状态",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "开启使能",
+                "value": "true"
+              },
+              {
+                "text": "关闭使能",
+                "value": "false"
+              }
+            ]
+          },
+          "description": "是否生效（开或关）"
+        }
+      ],
+      "output": {},
+      "description": "设置设备各种功能的使能开关"
+    },
+    {
+      "id": "deviceRestart",
+      "name": "重启设备",
+      "inputs": [],
+      "output": {},
+      "description": "重启乐橙摄像头设备"
+    },
+    {
+      "id": "deviceSoundVolumeSet",
+      "name": "设置设备音量",
+      "inputs": [
+        {
+          "id": "volumeType",
+          "name": "音量类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "提示音",
+                "value": "playsound"
+              },
+              {
+                "text": "异常检测音",
+                "value": "decible"
+              }
+            ]
+          },
+          "description": "要设置的音量类型"
+        },
+        {
+          "id": "volumeValue",
+          "name": "音量大小",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "50分贝",
+                "value": "50"
+              },
+              {
+                "text": "60分贝",
+                "value": "60"
+              },
+              {
+                "text": "70分贝",
+                "value": "70"
+              },
+              {
+                "text": "80分贝",
+                "value": "80"
+              },
+              {
+                "text": "90分贝",
+                "value": "90"
+              }
+            ]
+          },
+          "description": "音量大小，单位跟取值范围跟具体设备有关"
+        }
+      ],
+      "output": {},
+      "description": "设置设备提示音和异常检测音分贝大小"
+    },
+    {
+      "id": "alarmMessageQuery",
+      "name": "查询报警消息",
+      "inputs": [
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询开始时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询结束时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "count",
+          "name": "报警数量",
+          "valueType": {
+            "max": "30",
+            "min": "1",
+            "type": "int"
+          },
+          "description": "抽取的报警总数，范围[1,30]"
+        }
+      ],
+      "output": {},
+      "description": "获取设备通道在指定时间段内的设备消息列表"
+    },
+    {
+      "id": "storageSdcardFormat",
+      "name": "格式化SD卡",
+      "inputs": [],
+      "output": {},
+      "description": "格式化摄像头SD卡存储"
+    },
+    {
+      "id": "storageSdcardInfoGet",
+      "name": "获取SD卡信息",
+      "inputs": [],
+      "output": {},
+      "description": "获取摄像头存储介质容量信息"
+    },
+    {
+      "id": "storageSdcardStatusGet",
+      "name": "获取SD卡状态",
+      "inputs": [],
+      "output": {},
+      "description": "获取摄像头SD卡状态信息"
+    },
+    {
+      "id": "storageCloudVideoCountQuery",
+      "name": "查询云录像数量",
+      "inputs": [
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询开始时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询结束时间，格式：yyyy-MM-dd HH:mm:ss"
+        }
+      ],
+      "output": {},
+      "description": "查询指定时间段的云录像数量"
+    },
+    {
+      "id": "storageLocalVideoCountQuery",
+      "name": "查询本地录像数量",
+      "inputs": [
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询开始时间，格式：yyyy-MM-dd HH:mm:ss"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "查询结束时间，格式：yyyy-MM-dd HH:mm:ss"
+        }
+      ],
+      "output": {},
+      "description": "查询指定时间段的本地录像数量"
+    },
+    {
+      "id": "videoDownload",
+      "name": "下载录像",
+      "inputs": [
+        {
+          "id": "recordId",
+          "name": "录像编号",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "100"
+            }
+          },
+          "description": "要下载的录像唯一编号"
+        },
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "录像开始时间"
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "19"
+            }
+          },
+          "description": "录像结束时间"
+        },
+        {
+          "id": "channelId",
+          "name": "通道号",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "10"
+            }
+          },
+          "description": "录像通道编号"
+        },
+        {
+          "id": "recordType",
+          "name": "录像类型",
+          "valueType": {
+            "type": "string",
+            "expands": {
+              "maxLength": "10"
+            }
+          },
+          "description": "录像类型（local/cloud）"
+        }
+      ],
+      "output": {},
+      "description": "下载指定的录像文件"
+    },
+    {
+      "id": "deviceDetailsQuery",
+      "name": "批量查询设备详细信息",
+      "config": false,
+      "inputs": [],
+      "output": {},
+      "description": "批量查询设备的详细信息，包括设备基本信息、通道信息、子设备信息、配件信息等"
+    }
+  ],
+  "properties": [
+    {
+      "id": "deviceId",
+      "name": "设备序列号",
+      "valueType": {
+        "type": "string"
+      },
+      "description": "设备的唯一标识序列号"
+    },
+    {
+      "id": "deviceOnlineStatus",
+      "name": "设备在线状态",
+      "valueType": {
+        "type": "enum",
+        "elements": [
+          {
+            "text": "离线",
+            "value": "0"
+          },
+          {
+            "text": "在线",
+            "value": "1"
+          }
+        ]
+      },
+      "description": "设备当前的在线状态"
+    },
+    {
+      "id": "deviceName",
+      "name": "设备名称",
+      "valueType": {
+        "type": "string",
+        "expands": {
+          "maxLength": "50"
+        }
+      },
+      "description": "设备的显示名称"
+    },
+    {
+      "id": "deviceType",
+      "name": "设备类型",
+      "valueType": {
+        "type": "string"
+      },
+      "description": "设备的类型标识"
+    },
+    {
+      "id": "firmwareVersion",
+      "name": "固件版本",
+      "valueType": {
+        "type": "string"
+      },
+      "description": "设备当前固件版本号"
+    },
+    {
+      "id": "signalStrength",
+      "name": "信号强度",
+      "valueType": {
+        "type": "int"
+      },
+      "description": "设备网络信号强度"
+    },
+    {
+      "id": "batteryLevel",
+      "name": "电池电量",
+      "valueType": {
+        "max": "100",
+        "min": "0",
+        "type": "int"
+      },
+      "description": "设备电池电量百分比"
+    },
+    {
+      "id": "storageStatus",
+      "name": "存储状态",
+      "valueType": {
+        "type": "enum",
+        "elements": [
+          {
+            "text": "正常",
+            "value": "normal"
+          },
+          {
+            "text": "异常",
+            "value": "error"
+          },
+          {
+            "text": "已满",
+            "value": "full"
+          },
+          {
+            "text": "未插入",
+            "value": "notInserted"
+          }
+        ]
+      },
+      "description": "设备存储状态信息"
+    },
+    {
+      "id": "abilitiesSet",
+      "mode": "r",
+      "name": "能力集",
+      "config": false,
+      "valueType": {
+        "type": "enum",
+        "elements": [
+          {
+            "text": "支持摄像头转动",
+            "value": "cameraTurn"
+          },
+          {
+            "text": "支持摄像头直播",
+            "value": "cameraLiveStream"
+          },
+          {
+            "text": "支持摄像头回放",
+            "value": "cameraPlayback"
+          },
+          {
+            "text": "支持摄像头截图",
+            "value": "cameraSnapshot"
+          },
+          {
+            "text": "支持画面翻转",
+            "value": "cameraFlipSet"
+          },
+          {
+            "text": "支持本地录像设置",
+            "value": "storageLocalStreamSet"
+          },
+          {
+            "text": "支持本地录像查询",
+            "value": "storageLocalStreamQuery"
+          },
+          {
+            "text": "支持本地录像计划设置",
+            "value": "storageLocalPlanSet"
+          },
+          {
+            "text": "支持本地录像计划查询",
+            "value": "storageLocalPlanQuery"
+          },
+          {
+            "text": "支持云录像查询",
+            "value": "storageCloudRecordsQuery"
+          },
+          {
+            "text": "支持云存储服务设置",
+            "value": "storageCloudServiceSet"
+          },
+          {
+            "text": "支持云存储服务查询",
+            "value": "storageCloudListQuery"
+          },
+          {
+            "text": "支持云存储开通",
+            "value": "storageCloudOpen"
+          },
+          {
+            "text": "支持云存储解绑",
+            "value": "storageCloudUnbind"
+          },
+          {
+            "text": "支持免费云存储设置",
+            "value": "storageFreeCloudSet"
+          },
+          {
+            "text": "支持设备音量获取",
+            "value": "deviceSoundVolumeGet"
+          },
+          {
+            "text": "支持设备音量设置",
+            "value": "deviceSoundVolumeSet"
+          },
+          {
+            "text": "支持摄像头状态获取",
+            "value": "deviceCameraStatusGet"
+          },
+          {
+            "text": "支持WiFi设置",
+            "value": "deviceWifiSet"
+          },
+          {
+            "text": "支持WiFi扫描",
+            "value": "deviceWifiScan"
+          },
+          {
+            "text": "支持设备升级",
+            "value": "deviceUpgrade"
+          },
+          {
+            "text": "支持设备版本查询",
+            "value": "deviceVersionQuery"
+          },
+          {
+            "text": "支持设备云存储信息获取",
+            "value": "deviceCloudInfoGet"
+          },
+          {
+            "text": "支持设备使能设置",
+            "value": "deviceEnableSet"
+          },
+          {
+            "text": "支持设备重启",
+            "value": "deviceRestart"
+          },
+          {
+            "text": "支持报警消息查询",
+            "value": "alarmMessageQuery"
+          },
+          {
+            "text": "支持SD卡格式化",
+            "value": "storageSdcardFormat"
+          },
+          {
+            "text": "支持SD卡信息获取",
+            "value": "storageSdcardInfoGet"
+          },
+          {
+            "text": "支持SD卡状态获取",
+            "value": "storageSdcardStatusGet"
+          },
+          {
+            "text": "支持云录像数量查询",
+            "value": "storageCloudVideoCountQuery"
+          },
+          {
+            "text": "支持本地录像数量查询",
+            "value": "storageLocalVideoCountQuery"
+          },
+          {
+            "text": "支持录像下载",
+            "value": "videoDownload"
+          },
+          {
+            "text": "支持设备详细信息查询",
+            "value": "deviceDetailsQuery"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "checked_at": "2026-11-07T19:16:34.525906+08:00",
+  "original_backend_revision": "55373ca49f48724122be25ab9470f55781e54895",
+  "original_frontend_revision": "22e34ec6959de5345439579ec818986a2f1354ee",
+  "original_backend_tracked_changes": [],
+  "original_frontend_tracked_changes": [],
+  "new_git": {
+    "branch": "main",
+    "remotes": [],
+    "history_copied": false
+  },
+  "protocol_directories": [
+    "cn-http-access-protocol",
+    "cn-universal-mqtt-protocol"
+  ],
+  "plugin_directories": [
+    "cn-universal-plugins-message-format",
+    "nexiot-jar-deiver-extend-plugins",
+    "nexiot-web-ide-debug-plugins"
+  ],
+  "packaged_protocol_jars": [
+    "cn-http-access-protocol-1.6-SNAPSHOT.jar",
+    "cn-universal-mqtt-protocol-1.6-SNAPSHOT.jar"
+  ],
+  "excluded_top_level_directories_absent": true,
+  "private_source_configuration_literal_scan": "passed; zero matches",
+  "license": "No new project license selected; existing notices retained.",
+  "status": "passed"
+}

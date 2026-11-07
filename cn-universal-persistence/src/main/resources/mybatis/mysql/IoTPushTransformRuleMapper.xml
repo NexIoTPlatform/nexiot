@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTPushTransformRuleMapper">
+
+  <resultMap id="IoTPushTransformRuleResult" type="cn.universal.persistence.entity.IoTPushTransformRule">
+    <id property="id" column="id"/>
+    <result property="appUniqueId" column="app_unique_id"/>
+    <result property="ruleName" column="rule_name"/>
+    <result property="scopeType" column="scope_type"/>
+    <result property="productKey" column="product_key"/>
+    <result property="ruleType" column="rule_type"/>
+    <result property="presetCode" column="preset_code"/>
+    <result property="content" column="content"/>
+    <result property="options" column="options"/>
+    <result property="sampleInput" column="sample_input"/>
+    <result property="sampleOutput" column="sample_output"/>
+    <result property="status" column="status"/>
+    <result property="version" column="version"/>
+    <result property="deleted" column="deleted"/>
+    <result property="createBy" column="create_by"/>
+    <result property="updateBy" column="update_by"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateTime" column="update_time"/>
+    <result property="publishTime" column="publish_time"/>
+  </resultMap>
+
+  <sql id="selectPushTransformRuleColumns">
+    select id,
+           app_unique_id,
+           rule_name,
+           scope_type,
+           product_key,
+           rule_type,
+           preset_code,
+           content,
+           options,
+           sample_input,
+           sample_output,
+           status,
+           version,
+           deleted,
+           create_by,
+           update_by,
+           create_time,
+           update_time,
+           publish_time
+    from iot_push_transform_rule
+  </sql>
+
+  <select id="selectByAppUniqueId" resultMap="IoTPushTransformRuleResult">
+    <include refid="selectPushTransformRuleColumns"/>
+    where app_unique_id = #{appUniqueId}
+      and deleted = 0
+    order by update_time desc, create_time desc
+  </select>
+
+  <select id="selectPublishedByAppUniqueId" resultMap="IoTPushTransformRuleResult">
+    <include refid="selectPushTransformRuleColumns"/>
+    where app_unique_id = #{appUniqueId}
+      and status = 1
+      and deleted = 0
+    order by publish_time desc, update_time desc
+  </select>
+
+  <select id="selectRuleById" resultMap="IoTPushTransformRuleResult">
+    <include refid="selectPushTransformRuleColumns"/>
+    where id = #{id}
+      and deleted = 0
+  </select>
+
+  <update id="disablePublishedRulesForScope">
+    update iot_push_transform_rule
+    set status = 0,
+        update_by = #{updateBy},
+        update_time = now()
+    where app_unique_id = #{appUniqueId}
+      and scope_type = #{scopeType}
+      and status = 1
+      and deleted = 0
+      <choose>
+        <when test="productKey != null and productKey != ''">
+          and product_key = #{productKey}
+        </when>
+        <otherwise>
+          and (product_key is null or product_key = '')
+        </otherwise>
+      </choose>
+      <if test="excludeId != null">
+        and id != #{excludeId}
+      </if>
+  </update>
+
+  <update id="disablePublishedRulesForApp">
+    update iot_push_transform_rule
+    set status = 0, update_by = #{updateBy}, update_time = now()
+    where app_unique_id = #{appUniqueId} and status = 1 and deleted = 0
+    <if test="excludeId != null">and id != #{excludeId}</if>
+  </update>
+
+  <update id="softDeleteOtherRulesForApp">
+    update iot_push_transform_rule
+    set deleted = 1, status = 2, update_by = #{updateBy}, update_time = now()
+    where app_unique_id = #{appUniqueId} and deleted = 0 and id != #{keepId}
+  </update>
+
+</mapper>

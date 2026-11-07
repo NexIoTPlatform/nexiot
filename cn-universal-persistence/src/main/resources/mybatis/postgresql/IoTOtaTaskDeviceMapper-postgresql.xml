@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTOtaTaskDeviceMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTOtaTaskDevice">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="package_id" jdbcType="BIGINT" property="packageId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId" />
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId" />
+    <result column="current_version" jdbcType="VARCHAR" property="currentVersion" />
+    <result column="target_version" jdbcType="VARCHAR" property="targetVersion" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="progress" jdbcType="INTEGER" property="progress" />
+    <result column="retry_count" jdbcType="INTEGER" property="retryCount" />
+    <result column="max_retry_count" jdbcType="INTEGER" property="maxRetryCount" />
+    <result column="status_detail" jdbcType="VARCHAR" property="statusDetail" />
+    <result column="error_code" jdbcType="VARCHAR" property="errorCode" />
+    <result column="error_message" jdbcType="VARCHAR" property="errorMessage" />
+    <result column="protocol" jdbcType="VARCHAR" property="protocol" />
+    <result column="command_payload" jdbcType="LONGVARCHAR" property="commandPayload" />
+    <result column="raw_report" jdbcType="LONGVARCHAR" property="rawReport" />
+    <result column="transfer_state" jdbcType="LONGVARCHAR" property="transferState" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="pushed_time" jdbcType="TIMESTAMP" property="pushedTime" />
+    <result column="last_report_time" jdbcType="TIMESTAMP" property="lastReportTime" />
+    <result column="success_time" jdbcType="TIMESTAMP" property="successTime" />
+  </resultMap>
+  <resultMap id="TaskDeviceWithExtMap" type="cn.universal.persistence.entity.IoTOtaTaskDevice" extends="BaseResultMap">
+    <result column="task_no" jdbcType="VARCHAR" property="taskNo" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="device_name" jdbcType="VARCHAR" property="deviceName" />
+    <result column="package_name" jdbcType="VARCHAR" property="packageName" />
+    <result column="package_version" jdbcType="VARCHAR" property="packageVersion" />
+    <result column="task_module" jdbcType="VARCHAR" property="module" />
+    <result column="task_package_type" jdbcType="VARCHAR" property="packageType" />
+    <result column="task_custom_type" jdbcType="VARCHAR" property="customType" />
+  </resultMap>
+  <sql id="selectTaskDeviceColumns">
+    select td.id, td.task_id, td.package_id, td.product_key, td.device_id, td.iot_id,
+           td.current_version, td.target_version, td.status, td.progress, td.retry_count,
+           td.max_retry_count, td.status_detail, td.error_code, td.error_message, td.protocol,
+           td.command_payload, td.raw_report, td.transfer_state, td.create_time, td.update_time, td.pushed_time,
+           td.last_report_time, td.success_time,
+           t.task_no, t.task_name, t.module as task_module, t.package_type as task_package_type,
+           t.custom_type as task_custom_type, d.device_name, p.package_name, p.version as package_version
+      from iot_ota_task_device td
+      left join iot_ota_task t on t.id = td.task_id
+      left join iot_device d
+        on d.product_key = td.product_key
+       and d.device_id = td.device_id
+      left join iot_ota_package p on p.id = td.package_id
+  </sql>
+  <select id="selectTaskDeviceList" parameterType="cn.universal.persistence.entity.IoTOtaTaskDevice" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    <where>
+      <if test="id != null">and td.id = #{id}</if>
+      <if test="taskId != null">and td.task_id = #{taskId}</if>
+      <if test="packageId != null">and td.package_id = #{packageId}</if>
+      <if test="productKey != null and productKey != ''">
+        and td.product_key = #{productKey}
+      </if>
+      <if test="deviceId != null and deviceId != ''">
+        and td.device_id = #{deviceId}
+      </if>
+      <if test="status != null and status != ''">
+        and td.status = #{status}
+      </if>
+    </where>
+    order by td.create_time desc, td.id desc
+  </select>
+  <select id="selectTaskDeviceById" parameterType="Long" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.id = #{id}
+  </select>
+  <select id="selectTaskDeviceForUpdate" parameterType="Long" resultMap="BaseResultMap" databaseId="postgresql">
+    select * from iot_ota_task_device where id = #{id} for update
+  </select>
+
+  <select id="selectByTaskId" parameterType="Long" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.task_id = #{taskId}
+    order by td.id asc
+  </select>
+  <select id="selectRecentByDevice" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.product_key = #{productKey}
+      and td.device_id = #{deviceId}
+    order by td.create_time desc, td.id desc
+    limit 10
+  </select>
+  <select id="selectLatestActiveByDevice" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.product_key = #{productKey}
+      and td.device_id = #{deviceId}
+      and td.status in ('WAITING_PUSH', 'PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+    order by td.update_time desc, td.id desc
+    limit 1
+  </select>
+  <select id="selectActiveCandidatesByDevice" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.product_key = #{productKey}
+      and td.device_id = #{deviceId}
+      and td.status in ('WAITING_PUSH', 'PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+    order by td.update_time desc, td.id desc
+  </select>
+  <select id="selectActiveConflictsByDeviceIds" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.product_key = #{productKey}
+      and COALESCE(t.module, 'APPLICATION') = #{module}
+      and td.status in ('WAITING_PUSH', 'PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+      and td.device_id in
+      <foreach collection="deviceIds" item="deviceId" open="(" separator="," close=")">
+        #{deviceId}
+      </foreach>
+    order by td.device_id asc, td.update_time desc, td.id desc
+  </select>
+  <select id="selectTimedOutActiveByTaskId" resultMap="TaskDeviceWithExtMap" databaseId="postgresql">
+    <include refid="selectTaskDeviceColumnsPg" />
+    where td.task_id = #{taskId}
+      and td.status in ('PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+      and extract(epoch from (now() - COALESCE(td.last_report_time, td.pushed_time, td.update_time, td.create_time)))
+          &gt;= #{timeoutSeconds}
+    order by td.id asc
+  </select>
+  <insert id="insertTaskDeviceBatch" databaseId="postgresql">
+    insert into iot_ota_task_device
+      (task_id, tenant_id, package_id, product_key, device_id, iot_id, current_version, target_version,
+       status, progress, retry_count, max_retry_count, status_detail, error_code, error_message,
+       protocol, command_payload, raw_report, transfer_state, create_time, update_time, pushed_time, last_report_time, success_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.taskId}, #{item.tenantId}, #{item.packageId}, #{item.productKey}, #{item.deviceId}, #{item.iotId},
+       #{item.currentVersion}, #{item.targetVersion}, #{item.status}, #{item.progress},
+       #{item.retryCount}, #{item.maxRetryCount}, #{item.statusDetail}, #{item.errorCode},
+       #{item.errorMessage}, #{item.protocol}, #{item.commandPayload}, #{item.rawReport}, #{item.transferState},
+       now(), now(), #{item.pushedTime}, #{item.lastReportTime}, #{item.successTime})
+    </foreach>
+  </insert>
+  <update id="updateTaskDevice" parameterType="cn.universal.persistence.entity.IoTOtaTaskDevice" databaseId="postgresql">
+    update iot_ota_task_device
+    <set>
+      <if test="taskId != null">task_id = #{taskId},</if>
+      <if test="tenantId != null">tenant_id = #{tenantId},</if>
+      <if test="packageId != null">package_id = #{packageId},</if>
+      <if test="productKey != null">product_key = #{productKey},</if>
+      <if test="deviceId != null">device_id = #{deviceId},</if>
+      <if test="iotId != null">iot_id = #{iotId},</if>
+      <if test="currentVersion != null">current_version = #{currentVersion},</if>
+      <if test="targetVersion != null">target_version = #{targetVersion},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="progress != null">progress = #{progress},</if>
+      <if test="retryCount != null">retry_count = #{retryCount},</if>
+      <if test="maxRetryCount != null">max_retry_count = #{maxRetryCount},</if>
+      <if test="statusDetail != null">status_detail = #{statusDetail},</if>
+      <if test="errorCode != null">error_code = #{errorCode},</if>
+      <if test="errorMessage != null">error_message = #{errorMessage},</if>
+      <if test="protocol != null">protocol = #{protocol},</if>
+      <if test="commandPayload != null">command_payload = #{commandPayload},</if>
+      <if test="rawReport != null">raw_report = #{rawReport},</if>
+      <if test="transferState != null">transfer_state = #{transferState},</if>
+      <if test="pushedTime != null">pushed_time = #{pushedTime},</if>
+      <if test="lastReportTime != null">last_report_time = #{lastReportTime},</if>
+      <if test="successTime != null">success_time = #{successTime},</if>
+      update_time = now()
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateTaskDeviceIfActive" parameterType="cn.universal.persistence.entity.IoTOtaTaskDevice" databaseId="postgresql">
+    update iot_ota_task_device
+    <set>
+      <if test="currentVersion != null">current_version = #{currentVersion},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="progress != null">progress = #{progress},</if>
+      <if test="retryCount != null">retry_count = #{retryCount},</if>
+      <if test="statusDetail != null">status_detail = #{statusDetail},</if>
+      <if test="errorCode != null">error_code = #{errorCode},</if>
+      <if test="errorMessage != null">error_message = #{errorMessage},</if>
+      <if test="protocol != null">protocol = #{protocol},</if>
+      <if test="commandPayload != null">command_payload = #{commandPayload},</if>
+      <if test="rawReport != null">raw_report = #{rawReport},</if>
+      <if test="transferState != null">transfer_state = #{transferState},</if>
+      <if test="pushedTime != null">pushed_time = #{pushedTime},</if>
+      <if test="lastReportTime != null">last_report_time = #{lastReportTime},</if>
+      <if test="successTime != null">success_time = #{successTime},</if>
+      update_time = now()
+    </set>
+    where id = #{id}
+      and status in ('WAITING_PUSH', 'PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+  </update>
+  <update id="resetRetryFields" databaseId="postgresql">
+    update iot_ota_task_device
+       set error_code = null, error_message = null, update_time = now()
+     where id = #{id}
+  </update>
+  <update id="markWaitingAsDispatching" databaseId="postgresql">
+    update iot_ota_task_device
+       set status = 'PUSHED',
+           status_detail = '升级指令下发中',
+           update_time = now()
+     where id = #{id}
+       and status = 'WAITING_PUSH'
+  </update>
+  <update id="updateStatusByTaskId" databaseId="postgresql">
+    update iot_ota_task_device
+    set status = #{status},
+        update_time = now()
+    where task_id = #{taskId}
+      and status in ('WAITING_PUSH', 'PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+  </update>
+  <sql id="selectTaskDeviceColumnsPg">
+    select td.id, td.task_id, td.tenant_id, td.package_id, td.product_key, td.device_id, td.iot_id,
+           td.current_version, td.target_version, td.status, td.progress, td.retry_count,
+           td.max_retry_count, td.status_detail, td.error_code, td.error_message, td.protocol,
+           td.command_payload, td.raw_report, td.transfer_state, td.create_time, td.update_time, td.pushed_time,
+           td.last_report_time, td.success_time,
+           t.task_no, t.task_name, t.module as task_module, t.package_type as task_package_type,
+           t.custom_type as task_custom_type, d.device_name, p.package_name, p.version as package_version
+      from iot_ota_task_device td
+      left join iot_ota_task t on t.id = td.task_id
+      left join iot_device d
+        on d.product_key = td.product_key
+       and d.device_id = td.device_id
+      left join iot_ota_package p on p.id = td.package_id
+  </sql>
+  <select id="selectActiveTransfers" resultMap="BaseResultMap" databaseId="postgresql">
+    select id, task_id, transfer_state
+      from iot_ota_task_device
+     where transfer_state is not null and transfer_state &lt;&gt; ''
+       and status in ('PUSHED', 'DOWNLOADING', 'VERIFYING', 'INSTALLING', 'REBOOTING')
+  </select>
+
+  <select id="selectByTaskIdForUpdate" parameterType="Long" resultMap="BaseResultMap" databaseId="postgresql">
+    select * from iot_ota_task_device where task_id = #{taskId} order by id asc for update
+  </select>
+</mapper>

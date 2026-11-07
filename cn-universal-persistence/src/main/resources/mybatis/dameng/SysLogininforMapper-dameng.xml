@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.SysLogininforMapper">
+  <resultMap type="cn.universal.persistence.entity.SysLogininfor" id="SysLogininforResult">
+    <id property="infoId" column="info_id" />
+    <result property="userName" column="user_name" />
+    <result property="status" column="status" />
+    <result property="msg" column="msg" />
+    <result property="loginTime" column="login_time" />
+  </resultMap>
+  <select id="selectList" parameterType="cn.universal.persistence.entity.SysLogininfor" resultMap="SysLogininforResult" databaseId="dameng">
+    select * from sys_logininfor u
+    <where>
+      <if test="status!=null and status!=''">
+        and u.status=#{status}
+      </if>
+      <if test="userName!=null and  userName!=''">
+        and u.user_name like concat('%',#{userName},'%')
+      </if>
+      <if test="msg !=null and msg!=''">
+        and u.msg=#{msg}
+      </if>
+      <if test="params!=null and params.beginTime!=null and params.beginTime!=''">
+        and cast(login_time as date) &gt;= cast(#{params.beginTime} as date)
+      </if>
+      <if test="params!=null and params.endTime!=null and params.endTime!=''">
+        and cast(login_time as date) &lt;= cast(#{params.endTime} as date)
+      </if>
+    </where>
+    order by login_time desc
+  </select>
+</mapper>

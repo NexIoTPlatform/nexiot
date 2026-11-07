@@ -1,0 +1,299 @@
+/**
+ * @file GiForm 组件类型定义
+ * @description 包含表单组件所需的所有类型定义，用于构建动态表单
+ */
+
+import type * as A from '@arco-design/web-vue'
+import type { GridItemProps } from '@arco-design/web-vue'
+import type { Component, VNode } from 'vue'
+import type { MergeMultiple } from '@/types/tool'
+
+type FormItemProps = A.FormItemInstance['$props']
+
+/** 支持的表单项类型 */
+export type FormColumnItemType
+  = | 'input' // 输入框
+    | 'input-number' // 数字输入框
+    | 'input-tag' // 标签输入框
+    | 'input-search' // 搜索框
+    | 'textarea' // 文本域
+    | 'select' // 选择器
+    | 'tree-select' // 树选择器
+    | 'radio' // 单选框
+    | 'radio-group' // 单选框组
+    | 'checkbox' // 复选框
+    | 'checkbox-group' // 复选框组
+    | 'date-picker' // 日期选择器
+    | 'year-picker' // 年份选择器
+    | 'quarter-picker' // 季度选择器
+    | 'month-picker' // 月份选择器
+    | 'week-picker' // 周选择器
+    | 'time-picker' // 时间选择器
+    | 'range-picker' // 范围选择器
+    | 'color-picker' // 颜色选择器
+    | 'rate' // 评分
+    | 'switch' // 开关
+    | 'slider' // 滑块
+    | 'cascader' // 级联选择器
+    | 'upload' // 上传
+    | 'auto-complete' // 自动完成
+    | 'mention' // 提及
+    | 'group-title' // 分组标题
+    | 'slot' // 插槽，由父组件通过具名插槽渲染内容
+    | Component
+
+/** 组件属性合并类型 */
+export type FormComponentProps = MergeMultiple<[
+  Partial<A.InputInstance['$props']>,
+  Partial<A.InputNumberInstance['$props']>,
+  Partial<A.InputTagInstance['$props']>,
+  Partial<A.InputSearchInstance['$props']>,
+  Partial<A.TextareaInstance['$props']>,
+  Partial<A.SelectInstance['$props']>,
+  Partial<A.TreeSelectInstance['$props']>,
+  Partial<A.RadioInstance['$props']>,
+  Partial<A.RadioGroupInstance['$props']>,
+  Partial<A.CheckboxInstance['$props']>,
+  Partial<A.CheckboxGroupInstance['$props']>,
+  Partial<A.DatePickerInstance['$props']>,
+  Partial<A.YearPickerInstance['$props']>,
+  Partial<A.QuarterPickerInstance['$props']>,
+  Partial<A.MonthPickerInstance['$props']>,
+  Partial<A.WeekPickerInstance['$props']>,
+  Partial<A.TimePickerInstance['$props']>,
+  Partial<A.RangePickerInstance['$props']>,
+  Partial<A.ColorPickerInstance['$props']>,
+  Partial<A.RateInstance['$props']>,
+  Partial<A.SwitchInstance['$props']>,
+  Partial<A.SliderInstance['$props']>,
+  Partial<A.CascaderInstance['$props']>,
+  Partial<A.UploadInstance['$props']>,
+  Partial<A.AutoCompleteInstance['$props']>,
+  Partial<A.MentionInstance['$props']>,
+  Partial<A.AlertInstance['$props']>
+]>
+
+/** 选项类型定义 */
+export type FormColumnItemOptions
+  = MergeMultiple<[A.SelectInstance['$props']['options'], A.RadioGroupInstance['$props']['options'], A.CheckboxGroupInstance['$props']['options'], A.CascaderInstance['$props']['options']]>
+
+/** 数据源类型定义 */
+export type FormColumnItemData
+  = MergeMultiple<[A.TreeSelectInstance['$props']['data'], A.AutoCompleteInstance['$props']['data'], A.MentionInstance['$props']['data']]>
+
+/** 自动完成组件插槽 */
+type AutoCompleteSlots = {
+  option: (e: { data: (string | number | A.SelectOptionData | A.SelectOptionGroup)[] }) => VNode
+  footer: () => VNode
+}
+
+/** 级联选择器插槽 */
+type CascaderSlots = {
+  'label': (e: { data: A.CascaderOption }) => VNode
+  'prefix': () => VNode
+  'arrow-icon': () => VNode
+  'loading-icon': () => VNode
+  'search-icon': () => VNode
+  'empty': () => VNode
+  'option': (e: { data: A.CascaderOption }) => VNode
+}
+
+/** 复选框组插槽 */
+type CheckboxGroupSlots = {
+  checkbox: (e: { checked: boolean, disabled: string }) => VNode
+  label: (e: { data: A.CheckboxOption }) => VNode
+}
+
+/** 单选框组插槽 */
+type RadioGroupSlots = {
+  radio: (e: { checked: boolean, disabled: string }) => VNode
+  label: (e: { data: any }) => VNode
+}
+
+/** 日期选择器插槽 */
+type DatePickerSlots = {
+  'prefix': () => VNode
+  'suffix-icon': () => VNode
+  'icon-next-double': () => VNode
+  'icon-prev-double': () => VNode
+  'icon-next': () => VNode
+  'icon-prev': () => VNode
+  'cell': (e: { data: Date }) => VNode
+  'extra': () => VNode
+}
+
+/** 输入框插槽 */
+type InputSlots = {
+  append: (() => VNode) | string
+  prepend: (() => VNode) | string
+  suffix: (() => VNode) | string
+  prefix: (() => VNode) | string
+}
+
+/** 数字输入框插槽 */
+type InputNumberSlots = {
+  minus: (() => VNode) | string
+  plus: (() => VNode) | string
+  append: (() => VNode) | string
+  prepend: (() => VNode) | string
+  suffix: (() => VNode) | string
+}
+
+/** 标签输入框插槽 */
+type InputTagSlots = {
+  tag: (e: { data: A.TagData }) => VNode
+  prefix: (() => VNode) | string
+  suffix: (() => VNode) | string
+}
+
+/** 评分插槽 */
+type RateSlots = {
+  character: (e: { index: number }) => VNode
+}
+
+/** 选择器插槽 */
+type SelectSlots = {
+  'trigger': () => VNode
+  'prefix': () => VNode
+  'search-icon': () => VNode
+  'loading-icon': () => VNode
+  'arrow-icon': () => VNode
+  'footer': () => VNode
+  'header': () => VNode
+  'label': (e: { data: A.SelectOptionData }) => VNode
+  'option': (e: { data: A.SelectOptionData }) => VNode
+  'empty': () => VNode
+}
+
+/** 开关插槽 */
+type SwitchSlots = {
+  'checked-icon': () => VNode
+  'unchecked-icon': () => VNode
+  'checked': () => VNode
+  'unchecked': () => VNode
+}
+
+/** 树选择器插槽 */
+type TreeSelectSlots = {
+  'trigger': () => VNode
+  'prefix': () => VNode
+  'label': (e: { data: any }) => VNode
+  'header': () => VNode
+  'loader': () => VNode
+  'empty': () => VNode
+  'footer': () => VNode
+  'tree-slot-extra': () => VNode
+  'tree-slot-title': (e: { title: string }) => VNode
+  'tree-slot-icon': (e: { node: A.TreeNodeData }) => VNode
+  'tree-slot-switcher-icon': () => VNode
+}
+
+/** 提及插槽 */
+type MentionSlots = {
+  option: (e: { data: any }) => VNode
+}
+
+/** 组件插槽合并类型 */
+export type FormComponentSlots = MergeMultiple<[
+  AutoCompleteSlots,
+  CascaderSlots,
+  CheckboxGroupSlots,
+  RadioGroupSlots,
+  DatePickerSlots,
+  InputSlots,
+  InputNumberSlots,
+  InputTagSlots,
+  RateSlots,
+  SelectSlots,
+  SwitchSlots,
+  TreeSelectSlots,
+  MentionSlots
+]>
+
+/** 表单项插槽接口 */
+export type FormColumnItemSlots = FormComponentSlots
+
+/** 表单项显隐控制类型 */
+export type FormColumnItemHide<F> = boolean | ((form: F) => boolean)
+export type FormColumnItemDisabled<F> = boolean | ((form: F) => boolean)
+
+/** 表单项数据请求相关类型 */
+export type FormColumnItemRequest<F = any> = (form: F) => Promise<any>
+export type FormColumnItemFormat<T = any> = (res: T) => FormColumnItemOptions | FormColumnItemData
+
+/** 表单列配置项接口 */
+export interface FormColumnItem<F = any> {
+  /** 表单项类型 */
+  type?: FormColumnItemType
+  /** 标签名 */
+  label?: string
+  /** 字段名 */
+  field: string
+  fieldName?: string
+  /** 自定义渲染label */
+  labelRender?: (() => VNode)
+  /** 表单项属性 */
+  props?: Partial<FormComponentProps>
+  /** 表单项校验规则 */
+  rules?: FormItemProps['rules']
+  /** 是否必填 */
+  required?: boolean
+  /** 栅格属性 */
+  gridItemProps?: GridItemProps
+  /** 表单项属性 */
+  formItemProps?: FormItemProps
+  /** 表单项插槽 */
+  slots?: FormColumnItemSlots
+  /** 表单项组件插槽 */
+  formItemSlots?: Record<string, string | VNode | (() => VNode)>
+  /** 是否隐藏（支持函数） */
+  hide?: boolean | ((model: F) => boolean)
+  /** 是否禁用（支持函数） */
+  disabled?: boolean | ((model: F) => boolean)
+  /** 栅格跨度 */
+  span?: number | Record<string, number>
+}
+
+/** Props 类型定义 */
+export interface FormProps {
+  /** 表单数据对象 */
+  modelValue: any
+  /** 表单布局方式 */
+  layout?: A.FormInstance['layout']
+  /** 表单尺寸 */
+  size?: A.FormInstance['size']
+  /** 标签布局属性 */
+  labelColProps?: A.FormInstance['labelColProps']
+  /** 表单项布局属性 */
+  wrapperColProps?: A.FormInstance['wrapperColProps']
+  /** 标签对齐方式 */
+  labelAlign?: A.FormInstance['labelAlign']
+  /** 是否禁用表单 */
+  disabled?: A.FormInstance['disabled']
+  /** 表单校验规则 */
+  rules?: A.FormInstance['rules']
+  /** 自动标签宽度 */
+  autoLabelWidth?: A.FormInstance['autoLabelWidth']
+  /** 表单ID */
+  id?: A.FormInstance['id']
+  /** 是否滚动到第一个错误项 */
+  scrollToFirstError?: A.FormInstance['scrollToFirstError']
+  /** 表单列配置 */
+  columns: FormColumnItem[]
+  /** 栅格布局属性 */
+  gridProps?: A.GridProps
+  /** 栅格项属性 */
+  gridItemProps?: GridItemProps
+  /** 是否为搜索模式 */
+  search?: boolean
+  /** 默认是否折叠 */
+  defaultCollapsed?: boolean
+  /** 搜索按钮文字 */
+  searchBtnText?: string
+  /** 是否隐藏折叠按钮 */
+  hideFoldBtn?: boolean
+  /** 是否显示后缀 */
+  suffix?: boolean
+  /** 表单控制 */
+  fc?: Record<string, { disabled?: boolean, hidden?: boolean, required?: boolean }>
+}

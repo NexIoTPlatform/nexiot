@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceShadowMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceShadow">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="iot_id" jdbcType="VARCHAR" property="iotId"/>
+    <result column="product_key" jdbcType="VARCHAR" property="productKey"/>
+    <result column="device_id" jdbcType="VARCHAR" property="deviceId"/>
+    <result column="ext_device_id" jdbcType="VARCHAR" property="extDeviceId"/>
+    <result column="active_time" jdbcType="TIMESTAMP" property="activeTime"/>
+    <result column="online_time" jdbcType="TIMESTAMP" property="onlineTime"/>
+    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime"/>
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+    <result column="metadata" jdbcType="LONGVARCHAR" property="metadata"/>
+    <result column="shadow_instance" jdbcType="VARCHAR" property="instance"/>
+    <result column="version" jdbcType="BIGINT" property="version"/>
+  </resultMap>
+
+
+  <select id="getDeviceShadow" resultMap="BaseResultMap" parameterType="String">
+    select *
+    from iot_device_shadow
+    where iot_id = #{id}
+  </select>
+  <select id="getShadowMetadata" resultType="String">
+    select `metadata`
+    from iot_device_shadow
+    where product_key = #{productKey}
+      AND device_id = #{deviceId} limit 1
+  </select>
+
+  <!-- 批量查询设备影子 -->
+  <select id="selectByIotIds" resultMap="BaseResultMap">
+    select *
+    from iot_device_shadow
+    where iot_id in
+    <foreach collection="iotIds" item="iotId" open="(" separator="," close=")">
+      #{iotId}
+    </foreach>
+  </select>
+
+  <!-- 批量插入设备影子 -->
+  <insert id="batchInsert" parameterType="java.util.List">
+    insert into iot_device_shadow (
+    iot_id, product_key, device_id, ext_device_id,
+    active_time, online_time, last_time, update_date,
+    metadata, shadow_instance, version
+    ) values
+    <foreach collection="shadows" item="shadow" separator=",">
+      (
+      #{shadow.iotId}, #{shadow.productKey}, #{shadow.deviceId}, #{shadow.extDeviceId},
+      #{shadow.activeTime}, #{shadow.onlineTime}, #{shadow.lastTime}, #{shadow.updateDate},
+      #{shadow.metadata}, #{shadow.instance}, #{shadow.version}
+      )
+    </foreach>
+  </insert>
+
+  <update id="batchUpdate" parameterType="java.util.List">
+    UPDATE iot_device_shadow
+    <set>
+      product_key = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.productKey}
+      </foreach>
+      ELSE product_key  <!-- 可选：对于未匹配到的记录，保留原值 -->
+      END,
+      device_id = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.deviceId}
+      </foreach>
+      ELSE device_id
+      END,
+      <!-- 以此类推，为每个需要更新的字段设置一个 CASE WHEN 块 -->
+      ext_device_id = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.extDeviceId}
+      </foreach>
+      ELSE ext_device_id
+      END,
+      shadow_instance = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.instance}
+      </foreach>
+      ELSE shadow_instance
+      END,
+      version = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.version}
+      </foreach>
+      ELSE version
+      END,
+      metadata = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.metadata}
+      </foreach>
+      ELSE metadata
+      END,
+      active_time = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.activeTime}
+      </foreach>
+      ELSE active_time
+      END,
+      online_time = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.onlineTime}
+      </foreach>
+      ELSE online_time
+      END,
+      last_time = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.lastTime}
+      </foreach>
+      ELSE last_time
+      END,
+      update_date = CASE iot_id
+      <foreach collection="shadows" item="shadow">
+        WHEN #{shadow.iotId} THEN #{shadow.updateDate}
+      </foreach>
+      ELSE update_date
+      END
+    </set>
+    WHERE iot_id IN
+    <foreach collection="shadows" item="shadow" open="(" close=")" separator=",">
+      #{shadow.iotId}
+    </foreach>
+  </update>
+</mapper>

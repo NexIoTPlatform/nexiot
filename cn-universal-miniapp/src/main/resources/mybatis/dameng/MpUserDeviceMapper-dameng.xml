@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpUserDeviceMapper">
+  <select id="selectIotIdsByUser" resultType="string" databaseId="dameng">
+    SELECT iot_id
+    FROM mp_user_device
+    WHERE app_id = #{appId}
+      AND user_id = #{userId}
+  </select>
+  <delete id="deleteByUserAndApp" databaseId="dameng">
+    DELETE
+    FROM mp_user_device
+    WHERE app_id = #{appId}
+      AND user_id = #{userId}
+  </delete>
+  <insert id="batchInsert" databaseId="dameng">
+    INSERT INTO mp_user_device (app_id, user_id, iot_id, create_time)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (#{item.appId}, #{item.userId}, #{item.iotId}, #{item.createTime})
+    </foreach>
+  </insert>
+</mapper>

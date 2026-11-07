@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTCertificateMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTCertificate">
+    <id column="id" property="id" />
+    <result column="ssl_key" property="sslKey" />
+    <result column="name" property="name" />
+    <result column="cert_content" property="certContent" typeHandler="cn.universal.persistence.common.typehandler.EncryptedCertificateStringTypeHandler" />
+    <result column="key_content" property="keyContent" typeHandler="cn.universal.persistence.common.typehandler.EncryptedCertificateStringTypeHandler" />
+    <result column="cert_password" property="certPassword" typeHandler="cn.universal.persistence.common.typehandler.EncryptedCertificateStringTypeHandler" />
+    <result column="key_password" property="keyPassword" typeHandler="cn.universal.persistence.common.typehandler.EncryptedCertificateStringTypeHandler" />
+    <result column="tenant_id" property="tenantId" />
+    <result column="certificate_type" property="certificateType" />
+    <result column="trust_mode" property="trustMode" />
+    <result column="trust_cert_content" property="trustCertContent" typeHandler="cn.universal.persistence.common.typehandler.EncryptedCertificateStringTypeHandler" />
+    <result column="fingerprint_sha256" property="fingerprintSha256" />
+    <result column="trust_fingerprint_sha256" property="trustFingerprintSha256" />
+    <result column="expire_time" property="expireTime" />
+    <result column="remark" property="remark" />
+    <result column="create_time" property="createTime" />
+    <result column="update_time" property="updateTime" />
+    <result column="create_user" property="createUser" />
+    <result column="cert_info" property="certInfo" typeHandler="cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler" />
+  </resultMap>
+</mapper>

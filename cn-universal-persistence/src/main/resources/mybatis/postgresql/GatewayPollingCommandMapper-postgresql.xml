@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.GatewayPollingCommandMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.GatewayPollingCommand">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="gateway_product_key" property="gatewayProductKey" jdbcType="VARCHAR" />
+    <result column="gateway_device_id" property="gatewayDeviceId" jdbcType="VARCHAR" />
+    <result column="task_type" property="taskType" jdbcType="VARCHAR" />
+    <result column="slave_device_id" property="slaveDeviceId" jdbcType="VARCHAR" />
+    <result column="command_name" property="commandName" jdbcType="VARCHAR" />
+    <result column="execution_order" property="executionOrder" jdbcType="INTEGER" />
+    <result column="command_hex" property="commandHex" jdbcType="VARCHAR" />
+    <result column="command_type" property="commandType" jdbcType="VARCHAR" />
+    <result column="protocol_params" property="protocolParams" jdbcType="VARCHAR" />
+    <result column="property_mapping" property="propertyMapping" jdbcType="VARCHAR" />
+    <result column="data_parser_script" property="dataParserScript" jdbcType="VARCHAR" />
+    <result column="enabled" property="enabled" jdbcType="SMALLINT" />
+    <result column="timeout_ms" property="timeoutMs" jdbcType="INTEGER" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <select id="selectByGateway" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM iot_gateway_polling_command
+    WHERE gateway_product_key = #{gatewayProductKey}
+      AND gateway_device_id = #{gatewayDeviceId}
+      AND COALESCE(task_type, 'CLOUD_POLLING') = #{taskType}
+      AND enabled = 1
+    ORDER BY execution_order ASC
+  </select>
+  <select id="selectAllByGateway" resultMap="BaseResultMap" databaseId="postgresql">
+    SELECT *
+    FROM iot_gateway_polling_command
+    WHERE gateway_product_key = #{gatewayProductKey}
+      AND gateway_device_id = #{gatewayDeviceId}
+      AND COALESCE(task_type, 'CLOUD_POLLING') = #{taskType}
+    ORDER BY execution_order ASC
+  </select>
+  <delete id="deleteByGateway" databaseId="postgresql">
+    DELETE
+    FROM iot_gateway_polling_command
+    WHERE gateway_product_key = #{gatewayProductKey}
+      AND gateway_device_id = #{gatewayDeviceId}
+      AND COALESCE(task_type, 'CLOUD_POLLING') = #{taskType}
+  </delete>
+  <insert id="batchInsert" databaseId="postgresql">
+    INSERT INTO iot_gateway_polling_command (
+    gateway_product_key,
+    gateway_device_id,
+    task_type,
+    slave_device_id,
+    command_name,
+    execution_order,
+    command_hex,
+    command_type,
+    protocol_params,
+    property_mapping,
+    data_parser_script,
+    enabled,
+    timeout_ms,
+    description
+    ) VALUES
+    <foreach collection="commands" item="item" separator=",">
+      (
+      #{item.gatewayProductKey},
+      #{item.gatewayDeviceId},
+      #{item.taskType},
+      #{item.slaveDeviceId},
+      #{item.commandName},
+      #{item.executionOrder},
+      #{item.commandHex},
+      #{item.commandType},
+      #{item.protocolParams},
+      #{item.propertyMapping},
+      #{item.dataParserScript},
+      #{item.enabled},
+      #{item.timeoutMs},
+      #{item.description}
+      )
+    </foreach>
+  </insert>
+</mapper>

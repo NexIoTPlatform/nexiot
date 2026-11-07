@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDashboardStatisticsMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDashboardStatistics">
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="stat_date" property="statDate" jdbcType="DATE" />
+    <result column="product_key" property="productKey" jdbcType="VARCHAR" />
+    <result column="channel" property="channel" jdbcType="VARCHAR" />
+    <result column="metric_type" property="metricType" jdbcType="VARCHAR" />
+    <result column="metric_value" property="metricValue" jdbcType="BIGINT" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id
+    , stat_date, product_key, channel, metric_type, metric_value, create_time, update_time
+  </sql>
+  <select id="selectByDateAndMetric" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM iot_dashboard_statistics
+    WHERE stat_date = #{statDate}
+    <if test="metricType != null and metricType != ''">
+      AND metric_type = #{metricType}
+    </if>
+    <if test="productKey != null and productKey != ''">
+      AND product_key = #{productKey}
+    </if>
+    <if test="channel != null and channel != ''">
+      AND channel = #{channel}
+    </if>
+    ORDER BY metric_type ASC
+  </select>
+  <select id="selectByDateRange" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM iot_dashboard_statistics
+    WHERE stat_date BETWEEN #{startDate} AND #{endDate}
+    <if test="metricType != null and metricType != ''">
+      AND metric_type = #{metricType}
+    </if>
+    <if test="productKey != null and productKey != ''">
+      AND product_key = #{productKey}
+    </if>
+    <if test="channel != null and channel != ''">
+      AND channel = #{channel}
+    </if>
+    ORDER BY stat_date ASC, metric_type ASC
+  </select>
+  <select id="selectByUniqueKey" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM iot_dashboard_statistics
+    WHERE stat_date = #{statDate}
+    AND metric_type = #{metricType}
+
+    <!-- MyBatis 标准判断：productKey 不为null = 等值匹配；为null = IS NULL -->
+    <if test="productKey != null">
+      AND product_key = #{productKey}
+    </if>
+    <if test="productKey == null">
+      AND product_key IS NULL
+    </if>
+
+    <!-- channel 同上 -->
+    <if test="channel != null">
+      AND channel = #{channel}
+    </if>
+    <if test="channel == null">
+      AND channel IS NULL
+    </if>
+
+    LIMIT 1
+  </select>
+
+  <update id="updateByUniqueKey" databaseId="dameng">
+    UPDATE iot_dashboard_statistics
+    SET metric_value = #{metricValue},
+    update_time  = #{updateTime}
+    WHERE stat_date = #{statDate}
+    AND metric_type = #{metricType}
+
+    <!-- 完全一样的 MyBatis 标准判断 -->
+    <if test="productKey != null">
+      AND product_key = #{productKey}
+    </if>
+    <if test="productKey == null">
+      AND product_key IS NULL
+    </if>
+
+    <if test="channel != null">
+      AND channel = #{channel}
+    </if>
+    <if test="channel == null">
+      AND channel IS NULL
+    </if>
+  </update>
+  <insert id="insert" parameterType="cn.universal.persistence.entity.IoTDashboardStatistics"
+    useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    INSERT INTO iot_dashboard_statistics
+    (stat_date, product_key, channel, metric_type, metric_value, create_time, update_time)
+    VALUES (#{statDate}, #{productKey}, #{channel}, #{metricType}, #{metricValue}, #{createTime},
+            #{updateTime})
+  </insert>
+  <select id="selectMessageStatsByDate" resultType="map" databaseId="dameng">
+    SELECT SUM(CASE
+                 WHEN metric_type = 'message_total' THEN metric_value
+                 ELSE 0 END)                                                           as totalMessages,
+           SUM(CASE
+                 WHEN metric_type = 'message_success' THEN metric_value
+                 ELSE 0 END)                                                           as successMessages,
+           SUM(CASE
+                 WHEN metric_type = 'message_failed' THEN metric_value
+                 ELSE 0 END)                                                           as failedMessages,
+           SUM(CASE
+                 WHEN metric_type = 'message_push' THEN metric_value
+                 ELSE 0 END)                                                           as pushMessages,
+           SUM(CASE
+                 WHEN metric_type = 'message_retry' THEN metric_value
+                 ELSE 0 END)                                                           as retryMessages
+    FROM iot_dashboard_statistics
+    WHERE stat_date = #{statDate}
+      AND product_key IS NULL
+      AND channel IS NULL
+  </select>
+  <select id="selectDailyMessageStats" resultType="map" databaseId="dameng">
+    SELECT stat_date                                                                   as statDate,
+           SUM(CASE
+                 WHEN metric_type = 'message_total' THEN metric_value
+                 ELSE 0 END)                                                           as totalMessages,
+           SUM(CASE
+                 WHEN metric_type = 'message_success' THEN metric_value
+                 ELSE 0 END)                                                           as successMessages
+    FROM iot_dashboard_statistics
+    WHERE stat_date BETWEEN #{startDate} AND #{endDate}
+      AND product_key IS NULL
+    GROUP BY stat_date
+    ORDER BY stat_date
+  </select>
+  <select id="selectChannelDistribution" resultType="map" databaseId="dameng">
+    SELECT channel,
+           SUM(CASE WHEN metric_type = 'message_total' THEN metric_value ELSE 0 END) as messageCount
+    FROM iot_dashboard_statistics
+    WHERE stat_date = #{statDate}
+      AND product_key IS NULL
+      AND channel IS NOT NULL
+    GROUP BY channel
+    ORDER BY messageCount DESC
+  </select>
+  <select id="selectDailyMessageStatsByChannel" resultType="map" databaseId="dameng">
+    SELECT stat_date                                                                   as statDate,
+           channel                                                                     as channel,
+           SUM(CASE
+                 WHEN metric_type = 'message_total' THEN metric_value
+                 ELSE 0 END)                                                           as totalMessages,
+           SUM(CASE
+                 WHEN metric_type = 'message_success' THEN metric_value
+                 ELSE 0 END)                                                           as successMessages
+    FROM iot_dashboard_statistics
+    WHERE stat_date BETWEEN #{startDate} AND #{endDate}
+      AND product_key IS NULL
+      AND channel IS NOT NULL
+    GROUP BY stat_date, channel
+    ORDER BY stat_date, channel
+  </select>
+  <select id="selectDailyDeviceStats" resultType="map" databaseId="dameng">
+    SELECT stat_date                                                                 as statDate,
+           SUM(CASE
+                 WHEN metric_type = 'device_total' THEN metric_value
+                 ELSE 0 END)                                                         as totalDevices,
+           SUM(CASE
+                 WHEN metric_type = 'device_online' THEN metric_value
+                 ELSE 0 END)                                                         as onlineDevices
+    FROM iot_dashboard_statistics
+    WHERE stat_date BETWEEN #{startDate} AND #{endDate}
+      AND product_key IS NULL
+      AND channel IS NULL
+      AND metric_type IN ('device_total', 'device_online')
+    GROUP BY stat_date
+    ORDER BY stat_date
+  </select>
+  <delete id="deleteByDate" databaseId="dameng">
+    DELETE
+    FROM iot_dashboard_statistics
+    WHERE stat_date = #{statDate}
+  </delete>
+</mapper>

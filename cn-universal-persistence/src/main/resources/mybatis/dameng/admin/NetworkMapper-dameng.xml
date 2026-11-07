@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.NetworkMapper">
+  <resultMap id="NetworkResult" type="cn.universal.persistence.entity.Network">
+    <result property="id" column="id" />
+    <result property="type" column="type" />
+    <result property="unionId" column="union_id" />
+    <result property="productKey" column="product_key" />
+    <result property="name" column="name" />
+    <result property="description" column="description" />
+    <result property="createDate" column="create_date" />
+    <result property="createUser" column="create_user" />
+    <result property="tenantId" column="tenant_id" />
+    <result property="state" column="state" />
+    <result property="configuration" column="configuration" />
+  </resultMap>
+  <resultMap id="NetworkBOResult" type="cn.universal.persistence.entity.bo.NetworkBO" extends="NetworkResult">
+    <result property="typeName" column="type_name" />
+    <result property="stateName" column="state_name" />
+    <result property="createDateStr" column="create_date_str" />
+  </resultMap>
+  <sql id="selectNetworkVo">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.tenant_id,
+           n.state,
+           n.configuration,
+           CASE
+             WHEN n.type = 'TCP_CLIENT' THEN 'TCP客户端'
+             WHEN n.type = 'TCP_SERVER' THEN 'TCP服务端'
+             WHEN n.type = 'UDP' THEN 'UDP服务'
+             WHEN n.type = 'MQTT_CLIENT' THEN 'MQTT客户端'
+             WHEN n.type = 'MQTT_SERVER' THEN 'MQTT服务端'
+             ELSE n.type
+             END                                           as type_name,
+           CASE
+             WHEN n.state = 1 THEN '启动'
+             ELSE '关闭'
+             END                                           as state_name,
+           to_char(n.create_date, 'YYYY-MM-DD HH24:MI:SS') as create_date_str
+    FROM iot_network n
+  </sql>
+  <sql id="whereClause">
+    <where>
+      <if test="types != null and types.size() &gt; 0">
+        AND n.type IN
+        <foreach collection="types" item="typeItem" open="(" separator="," close=")">
+          #{typeItem}
+        </foreach>
+      </if>
+      <if test="name != null and name != ''">
+        AND n.name LIKE CONCAT('%', #{name}, '%')
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND n.product_key = #{productKey}
+      </if>
+      <if test="state != null">
+        AND n.state = #{state}
+      </if>
+      <if test="unionId != null and unionId != ''">
+        AND n.union_id = #{unionId}
+      </if>
+      <if test="tenantId != null and tenantId != ''">
+        AND (
+        n.tenant_id = #{tenantId}
+        <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+          OR ((n.tenant_id IS NULL OR n.tenant_id = '') AND n.create_user IN
+          <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+            #{scopeUnionId}
+          </foreach>
+          )
+        </if>
+        )
+      </if>
+      <if test="scopeDenied">
+        AND 1 = 0
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        AND n.create_user IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+    </where>
+  </sql>
+  <select id="selectNetworkList" parameterType="cn.universal.persistence.query.NetworkQuery" resultMap="NetworkBOResult" databaseId="dameng">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.tenant_id,
+           n.state,
+           n.configuration,
+           CASE
+             WHEN n.type = 'TCP_CLIENT' THEN 'TCP客户端'
+             WHEN n.type = 'TCP_SERVER' THEN 'TCP服务端'
+             WHEN n.type = 'UDP' THEN 'UDP服务'
+             WHEN n.type = 'MQTT_CLIENT' THEN 'MQTT客户端'
+             WHEN n.type = 'MQTT_SERVER' THEN 'MQTT服务端'
+             ELSE n.type
+             END as type_name,
+           CASE
+             WHEN n.state = 1 THEN '启动'
+             ELSE '关闭'
+             END as state_name,
+           to_char(n.create_date, 'YYYY-MM-DD HH24:MI:SS') as create_date_str
+    FROM iot_network n
+    <where>
+      <if test="types != null and types.size() &gt; 0">
+        AND n.type IN
+        <foreach collection="types" item="typeItem" open="(" separator="," close=")">
+          #{typeItem}
+        </foreach>
+      </if>
+      <if test="name != null and name != ''">
+        AND n.name LIKE CONCAT('%', #{name}, '%')
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND n.product_key = #{productKey}
+      </if>
+      <if test="state != null">
+        AND n.state = #{state}
+      </if>
+      <if test="unionId != null and unionId != ''">
+        AND n.union_id = #{unionId}
+      </if>
+      <if test="tenantId != null and tenantId != ''">
+        AND (
+        n.tenant_id = #{tenantId}
+        <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+          OR ((n.tenant_id IS NULL OR n.tenant_id = '') AND n.create_user IN
+          <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+            #{scopeUnionId}
+          </foreach>
+          )
+        </if>
+        )
+      </if>
+      <if test="scopeDenied">
+        AND 1 = 0
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        AND n.create_user IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+    </where>
+    ORDER BY n.create_date DESC
+  </select>
+  <select id="selectNetworkCount" parameterType="cn.universal.persistence.query.NetworkQuery" resultType="int" databaseId="dameng">
+    SELECT COUNT(1)
+    FROM iot_network n
+    <include refid="whereClause" />
+  </select>
+  <select id="selectNetworkById" parameterType="Long" resultMap="NetworkResult" databaseId="dameng">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.tenant_id,
+           n.state,
+           n.configuration
+    FROM iot_network n
+    WHERE n.id = #{id}
+  </select>
+  <select id="selectNetworkByTypeAndUnionId" resultMap="NetworkResult" databaseId="dameng">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.tenant_id,
+           n.state,
+           n.configuration
+    FROM iot_network n
+    WHERE n.type = #{type}
+      AND n.union_id = #{unionId}
+  </select>
+  <insert id="insertNetwork" parameterType="cn.universal.persistence.entity.Network" databaseId="dameng">
+    INSERT INTO iot_network (id,
+                             type,
+                             union_id,
+                             product_key,
+                             name,
+                             description,
+                             create_date,
+                             create_user,
+                             tenant_id,
+                             state,
+                             configuration)
+    VALUES (#{id},
+            #{type},
+            #{unionId},
+            #{productKey},
+            #{name},
+            #{description},
+            #{createDate},
+            #{createUser},
+            #{tenantId},
+            #{state},
+            #{configuration})
+  </insert>
+  <update id="updateNetwork" parameterType="cn.universal.persistence.entity.Network" databaseId="dameng">
+    UPDATE iot_network
+    <set>
+      <if test="type != null and type != ''">type = #{type},</if>
+      <if test="unionId != null and unionId != ''">union_id = #{unionId},</if>
+      <if test="productKey != null and productKey != ''">product_key = #{productKey},</if>
+      <if test="name != null and name != ''">name = #{name},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+      <if test="state != null">state = #{state},</if>
+      <if test="configuration != null">configuration = #{configuration},</if>
+    </set>
+    WHERE id = #{id}
+  </update>
+  <delete id="deleteNetworkById" parameterType="Long" databaseId="dameng">
+    DELETE
+    FROM iot_network
+    WHERE id = #{id}
+  </delete>
+  <delete id="deleteNetworkByIds" parameterType="Long" databaseId="dameng">
+    DELETE FROM iot_network WHERE id IN
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <update id="updateNetworkState" databaseId="dameng">
+    UPDATE iot_network
+    SET state = #{state}
+    WHERE id = #{id}
+  </update>
+  <select id="selectNetWorkByPort" resultType="java.lang.Integer" databaseId="dameng">
+    SELECT COUNT(id)
+    FROM iot_network
+    WHERE type = 'TCP_SERVER'
+      AND product_key != #{productKey}
+      AND CAST(JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(configuration, ''), '{}'), '$.port')) AS integer) = #{port}
+  </select>
+  <select id="selectNetworkListV1" resultType="cn.universal.persistence.entity.vo.NetworkVO" databaseId="dameng">
+    select nw.id,nw.name,nw.type,nw.product_key,nw.create_date,nw.create_user,nw.tenant_id,nw.state from
+    iot_network
+    nw
+    <where>
+      1=1
+      <if test="bo.type!=null and bo.type!=''">
+        and nw.type=#{bo.type}
+      </if>
+      <if test="bo.types!=null and bo.types.size() &gt; 0">
+        and nw.type IN
+        <foreach collection="bo.types" item="typeItem" open="(" separator="," close=")">
+          #{typeItem}
+        </foreach>
+      </if>
+      <if test="bo.unionId!=null and bo.unionId!=''">
+        and nw.product_key=#{bo.unionId}
+      </if>
+      <if test="bo.state!=null ">
+        and nw.state=#{bo.state}
+      </if>
+      <if test="bo.name!=null and bo.name!=''">
+        and nw.name=#{bo.name}
+      </if>
+      <if test="bo.tenantId!=null and bo.tenantId!=''">
+        and (
+        nw.tenant_id=#{bo.tenantId}
+        <if test="bo.scopeUnionIds!=null and bo.scopeUnionIds.size() > 0">
+          or ((nw.tenant_id is null or nw.tenant_id='') and nw.create_user in
+          <foreach collection="bo.scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+            #{scopeUnionId}
+          </foreach>
+          )
+        </if>
+        )
+      </if>
+      <if test="bo.scopeDenied">
+        and 1 = 0
+      </if>
+      <if test="bo.scopeUnionIds!=null and bo.scopeUnionIds.size() > 0">
+        and nw.create_user in
+        <foreach collection="bo.scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  <select id="selectById" resultType="cn.universal.persistence.entity.vo.NetworkVO" databaseId="dameng">
+    select nw.*
+    from iot_network nw
+    where nw.id = #{id}
+  </select>
+  <select id="selectTcpNetworkByPort" resultMap="NetworkResult" databaseId="dameng">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.state,
+           n.configuration
+    FROM iot_network n
+    WHERE n.type IN ('TCP_CLIENT', 'TCP_SERVER', 'UDP')
+      AND CAST(JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(n.configuration, ''), '{}'), '$.port')) AS integer) = #{port}
+    <if test="excludeId != null">
+      AND n.id != #{excludeId}
+    </if>
+  </select>
+  <select id="selectMqttNetworkByHostAndUsername" resultMap="NetworkResult" databaseId="dameng">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.state,
+           n.configuration
+    FROM iot_network n
+    WHERE n.type IN ('MQTT_CLIENT', 'MQTT_SERVER')
+      AND JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(n.configuration, ''), '{}'), '$.host')) = #{host}
+      AND JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(n.configuration, ''), '{}'), '$.username')) = #{username}
+    <if test="excludeId != null">
+      AND n.id != #{excludeId}
+    </if>
+  </select>
+  <select id="selectTcpNetworkByPortCount" resultType="int" parameterType="map" databaseId="dameng">
+    SELECT COUNT(1)
+    FROM iot_network
+    WHERE type IN ('TCP_CLIENT', 'TCP_SERVER', 'UDP')
+      AND CAST(JSON_UNQUOTE(JSON_EXTRACT(COALESCE(NULLIF(configuration, ''), '{}'), '$.port')) AS integer) = #{port}
+    <if test="excludeId != null">
+      AND id != #{excludeId}
+    </if>
+  </select>
+  <select id="selectByUnionId" resultMap="NetworkResult" databaseId="dameng">
+    SELECT n.id,
+           n.type,
+           n.union_id,
+           n.product_key,
+           n.name,
+           n.description,
+           n.create_date,
+           n.create_user,
+           n.state,
+           n.configuration
+    FROM iot_network n
+    WHERE n.union_id = #{unionId}
+  </select>
+</mapper>

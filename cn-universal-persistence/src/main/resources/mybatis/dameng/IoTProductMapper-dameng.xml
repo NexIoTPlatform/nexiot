@@ -1,0 +1,941 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTProductMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTProduct">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="product_secret" jdbcType="VARCHAR" property="productSecret" />
+    <result column="third_platform" jdbcType="VARCHAR" property="thirdPlatform" />
+    <result column="third_configuration" jdbcType="VARCHAR" property="thirdConfiguration" />
+    <result column="company_no" jdbcType="VARCHAR" property="companyNo" />
+    <result column="classified_id" jdbcType="VARCHAR" property="classifiedId" />
+    <result column="network_union_id" jdbcType="VARCHAR" property="networkUnionId" />
+    <result column="device_node" jdbcType="VARCHAR" property="deviceNode" />
+    <result column="gw_product_key" jdbcType="VARCHAR" property="gwProductKey" />
+    <result column="classified_name" jdbcType="VARCHAR" property="classifiedName" />
+    <result column="message_protocol" jdbcType="VARCHAR" property="messageProtocol" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="creator_id" jdbcType="VARCHAR" property="creatorId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="state" jdbcType="SMALLINT" property="state" />
+    <result column="product_description" jdbcType="VARCHAR" property="describe" />
+    <result column="store_policy" jdbcType="VARCHAR" property="storePolicy" />
+    <result column="transport_protocol" jdbcType="VARCHAR" property="transportProtocol" />
+    <result column="photo_url" jdbcType="VARCHAR" property="photoUrl" />
+    <result column="create_time" jdbcType="BIGINT" property="createTime" />
+    <result column="configuration" jdbcType="LONGVARCHAR" property="configuration" />
+    <result column="store_policy_configuration" jdbcType="LONGVARCHAR" property="storePolicyConfiguration" />
+    <result column="metadata" jdbcType="LONGVARCHAR" property="metadata" />
+    <result column="third_down_request" jdbcType="LONGVARCHAR" property="thirdDownRequest" />
+    <result column="instance" jdbcType="VARCHAR" property="instance" />
+    <result column="is_deleted" jdbcType="SMALLINT" property="isDeleted" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap id="productVoMap" type="cn.universal.persistence.entity.vo.IoTProductVO" extends="BaseResultMap">
+    <result column="devNum" jdbcType="INTEGER" property="devNum" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+  <select id="openAPIProductList" resultMap="productVoMap" databaseId="dameng">
+    SELECT *
+    FROM iot_product
+    <where>
+      state = 0
+      <if test="deviceNode != null and deviceNode != ''">
+        AND device_node = #{deviceNode}
+      </if>
+      <if test="productName != null and productName != ''">
+        AND name LIKE CONCAT('%', #{productName}, '%')
+      </if>
+      <if test="transportProtocol != null and transportProtocol != ''">
+        AND transport_protocol = #{transportProtocol}
+      </if>
+      <if test="productId != null and productId != ''">
+        AND product_id = #{productId}
+      </if>
+      <if test="companyNo != null and companyNo != ''">
+        AND company_no LIKE CONCAT('%', #{companyNo}, '%')
+      </if>
+    </where>
+  </select>
+  <select id="apiProductDetail" resultMap="productVoMap" databaseId="dameng">
+    SELECT *
+    FROM iot_product
+    WHERE product_key = #{productKey}
+      AND state = 0
+  </select>
+  <sql id="selectDevProductVo">
+    select p.id,
+           p.product_id,
+           p.product_key,
+           p.product_secret,
+           p.third_platform,
+           p.third_configuration,
+           p.company_no,
+           p.classified_id,
+           p.configuration,
+           p.network_union_id,
+           p.device_node,
+           p.gw_product_key,
+           p.classified_name,
+           p.message_protocol,
+           p.name,
+           p.creator_id,
+           p.tenant_id,
+           p.product_description,
+           p.store_policy,
+           p.store_policy_configuration,
+           p.transport_protocol,
+           p.photo_url,
+           p.metadata,
+           p.create_time,
+           p.state
+    from iot_product p
+    left join iot_user au on p.creator_id = au.union_id
+  </sql>
+  <sql id="productScopeCondition">
+    <if test="scopeDenied == true">and 1 = 0</if>
+    <if test="scopeDenied != true and ((scopeDeptIds != null and scopeDeptIds.size() > 0) or (scopeUnionIds != null and scopeUnionIds.size() > 0))">
+      and (
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0">
+        au.dept_id in
+        <foreach item="deptId" collection="scopeDeptIds" open="(" separator="," close=")">
+          #{deptId}
+        </foreach>
+      </if>
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0 and scopeUnionIds != null and scopeUnionIds.size() > 0">
+        or
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        a.creator_id in
+        <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+    </if>
+  </sql>
+  <sql id="deviceScopeCondition">
+    <if test="scopeDenied == true">and 1 = 0</if>
+    <if test="scopeDenied != true and ((scopeDeptIds != null and scopeDeptIds.size() > 0) or (scopeUnionIds != null and scopeUnionIds.size() > 0))">
+      and (
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0">
+        di.dept_id in
+        <foreach item="deptId" collection="scopeDeptIds" open="(" separator="," close=")">
+          #{deptId}
+        </foreach>
+      </if>
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0 and scopeUnionIds != null and scopeUnionIds.size() > 0">
+        or
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        di.creator_id in
+        <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+    </if>
+  </sql>
+  <sql id="joinedDeviceScopeCondition">
+    <if test="scopeDenied == true">and 1 = 0</if>
+    <if test="scopeDenied != true and ((scopeDeptIds != null and scopeDeptIds.size() > 0) or (scopeUnionIds != null and scopeUnionIds.size() > 0))">
+      and (
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0">
+        b.dept_id in
+        <foreach item="deptId" collection="scopeDeptIds" open="(" separator="," close=")">
+          #{deptId}
+        </foreach>
+      </if>
+      <if test="scopeDeptIds != null and scopeDeptIds.size() > 0 and scopeUnionIds != null and scopeUnionIds.size() > 0">
+        or
+      </if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        b.creator_id in
+        <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+      )
+    </if>
+  </sql>
+  <select id="selectDevProductList" parameterType="cn.universal.persistence.entity.IoTProduct" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectDevProductVo" />
+    <where>
+      <if test="productId != null  and productId != ''">and p.product_id = #{productId}</if>
+      <if test="productKey != null  and productKey != ''">and p.product_key like concat('%',
+        #{productKey}, '%')
+      </if>
+      <if test="productSecret != null  and productSecret != ''">and p.product_secret =
+        #{productSecret}
+      </if>
+      <if test="thirdPlatform != null  and thirdPlatform != ''">and p.third_platform like concat('%',
+        #{thirdPlatform}, '%')
+      </if>
+      <if test="thirdConfiguration != null  and thirdConfiguration != ''">and p.third_configuration =
+        #{thirdConfiguration}
+      </if>
+      <if test="companyNo != null  and companyNo != ''">and p.company_no like concat('%',
+        #{companyNo}, '%')
+      </if>
+      <if test="classifiedId != null  and classifiedId != ''">and p.classified_id = #{classifiedId}
+      </if>
+      <if test="configuration != null  and configuration != ''">and p.configuration =
+        #{configuration}
+      </if>
+      <if test="networkUnionId != null  and networkUnionId != ''">and p.network_union_id =
+        #{networkUnionId}
+      </if>
+      <if test="deviceNode != null  and deviceNode != ''">and p.device_node = #{deviceNode}</if>
+      <if test="gwProductKey != null  and gwProductKey != ''">and p.gw_product_key = #{gwProductKey}
+      </if>
+      <if test="classifiedName != null  and classifiedName != ''">and p.classified_name like
+        concat('%', #{classifiedName}, '%')
+      </if>
+      <if test="messageProtocol != null  and messageProtocol != ''">and p.message_protocol =
+        #{messageProtocol}
+      </if>
+      <if test="name != null  and name != ''">and p.name like concat('%', #{name}, '%')</if>
+      <if test="tenantId != null and tenantId != ''">
+        and (p.tenant_id = #{tenantId}
+        or ((p.tenant_id is null or p.tenant_id = '') and au.tenant_id = #{tenantId}))
+      </if>
+      <if test="creatorId != null and creatorId != ''">and p.creator_id = #{creatorId}</if>
+      <if test="describe != null  and describe != ''">and p.product_description = #{describe}</if>
+      <if test="storePolicy != null  and storePolicy != ''">and p.store_policy = #{storePolicy}</if>
+      <if test="storePolicyConfiguration != null  and storePolicyConfiguration != ''">and
+        p.store_policy_configuration = #{storePolicyConfiguration}
+      </if>
+      <if test="transportProtocol != null  and transportProtocol != ''">and p.transport_protocol like
+        concat('%', #{transportProtocol}, '%')
+      </if>
+      <if test="photoUrl != null  and photoUrl != ''">and p.photo_url = #{photoUrl}</if>
+      <if test="metadata != null  and metadata != ''">and p.metadata = #{metadata}</if>
+      <if test="state != null  and state != ''">and p.state = #{state}</if>
+    </where>
+    ORDER BY p.id desc
+  </select>
+  <select id="selectDevProductV2List" parameterType="cn.universal.persistence.query.IoTProductQuery" resultMap="productVoMap" databaseId="dameng">
+    SELECT a.id,
+           a.product_id,
+           a.product_key,
+           a.third_platform,
+           a.third_configuration,
+           a.company_no,
+           a.classified_id,
+           a.configuration,
+           a.network_union_id,
+           a.device_node,
+           a.message_protocol,
+           a.name AS name,
+           a.creator_id,
+           a.tenant_id,
+           a.product_description AS describe,
+           a.store_policy,
+           a.store_policy_configuration,
+           a.transport_protocol,
+           a.photo_url,
+           a.create_time,
+           a.state,
+           count(b.id) AS devNum
+    FROM iot_product a
+      LEFT JOIN iot_device b ON a.product_key = b.product_key
+      LEFT JOIN iot_user au ON a.creator_id = au.union_id
+    <where>
+      <if test="productId != null and productId != ''">
+        AND a.product_id = #{productId}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND a.product_key LIKE CONCAT('%', #{productKey}, '%')
+      </if>
+      <if test="thirdPlatform != null and thirdPlatform != ''">
+        AND a.third_platform LIKE CONCAT('%', #{thirdPlatform}, '%')
+      </if>
+      <if test="networkUnionId != null and networkUnionId != ''">
+        AND a.network_union_id = #{networkUnionId}
+      </if>
+      <if test="deviceNode != null and deviceNode != ''">
+        AND a.device_node = #{deviceNode}
+      </if>
+      <if test="gwProductKey != null and gwProductKey != ''">
+        AND a.gw_product_key = #{gwProductKey}
+      </if>
+      <if test="classifiedId != null and classifiedId != ''">
+        AND a.classified_id = #{classifiedId}
+      </if>
+      <if test="classifiedName != null and classifiedName != ''">
+        AND a.classified_name LIKE CONCAT('%', #{classifiedName}, '%')
+      </if>
+      <if test="companyNo != null and companyNo != ''">
+        AND a.company_no LIKE CONCAT('%', #{companyNo}, '%')
+      </if>
+      <if test="messageProtocol != null and messageProtocol != ''">
+        AND a.message_protocol = #{messageProtocol}
+      </if>
+      <if test="name != null and name != ''">
+        AND a.name LIKE CONCAT('%', #{name}, '%')
+      </if>
+      <if test="tenantId != null and tenantId != ''">
+        AND (a.tenant_id = #{tenantId}
+        OR ((a.tenant_id is null or a.tenant_id = '') AND au.tenant_id = #{tenantId}))
+      </if>
+      <if test="creatorId != null and creatorId != ''">AND a.creator_id = #{creatorId}</if>
+      <if test="hasDevice == true">
+        <if test="tenantId != null and tenantId != ''">
+          AND (
+          b.tenant_id = #{tenantId}
+          <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+            OR ((b.tenant_id is null or b.tenant_id = '') AND b.creator_id in
+            <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+              #{scopeUnionId}
+            </foreach>
+            )
+          </if>
+          )
+        </if>
+        <include refid="joinedDeviceScopeCondition"/>
+      </if>
+      <if test="describe != null and describe != ''">
+        AND a.product_description = #{describe}
+      </if>
+      <if test="storePolicy != null and storePolicy != ''">
+        AND a.store_policy = #{storePolicy}
+      </if>
+      <if test="transportProtocol != null and transportProtocol != ''">
+        AND a.transport_protocol LIKE CONCAT('%', #{transportProtocol}, '%')
+      </if>
+      <if test="state != null and state != ''">
+        AND a.state = #{state}
+      </if>
+    </where>
+    GROUP BY a.id,
+             a.product_id,
+             a.product_key,
+             a.third_platform,
+             a.third_configuration,
+             a.company_no,
+             a.classified_id,
+             a.configuration,
+             a.network_union_id,
+             a.device_node,
+             a.message_protocol,
+             a.name,
+             a.creator_id,
+             a.product_description,
+             a.store_policy,
+             a.store_policy_configuration,
+             a.transport_protocol,
+             a.photo_url,
+             a.create_time,
+             a.state
+    <if test="hasDevice == true">
+      HAVING count(b.id) &gt; 0
+    </if>
+    ORDER BY a.id DESC
+  </select>
+  <select id="selectDevProductV3List" parameterType="cn.universal.persistence.query.IoTProductQuery" resultMap="productVoMap" databaseId="dameng">
+    SELECT a.id,
+           a.tags,
+           a.product_id,
+           a.product_key,
+           a.network_union_id,
+           a.third_platform,
+           a.company_no,
+           a.device_node,
+           a.name AS name,
+           a.creator_id,
+           a.tenant_id,
+           a.transport_protocol,
+           a.photo_url,
+           a.create_time,
+           a.state,
+           a.metadata,
+           COALESCE(d.dev_num, 0) AS devNum
+    FROM iot_product a
+      LEFT JOIN iot_user au ON a.creator_id = au.union_id
+      LEFT JOIN (
+        SELECT di.product_key,
+               COUNT(di.id) AS dev_num
+        FROM iot_device di
+        <where>
+          <if test="tenantId != null and tenantId != ''">
+            (
+            di.tenant_id = #{tenantId}
+            <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+              or ((di.tenant_id is null or di.tenant_id = '') and di.creator_id in
+              <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+                #{scopeUnionId}
+              </foreach>
+              )
+            </if>
+            )
+          </if>
+          <include refid="deviceScopeCondition"/>
+        </where>
+        GROUP BY di.product_key
+      ) d ON a.product_key = d.product_key
+    <where>
+      <if test="productId != null and productId != ''">
+        a.product_id = #{productId}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND a.product_key LIKE CONCAT('%', #{productKey}, '%')
+      </if>
+      <if test="thirdPlatform != null and thirdPlatform != ''">
+        AND a.third_platform LIKE CONCAT('%', #{thirdPlatform}, '%')
+      </if>
+      <if test="networkUnionId != null and networkUnionId != ''">
+        AND a.network_union_id = #{networkUnionId}
+      </if>
+      <if test="deviceNode != null and deviceNode != ''">
+        AND a.device_node = #{deviceNode}
+      </if>
+      <if test="gwProductKey != null and gwProductKey != ''">
+        AND a.gw_product_key = #{gwProductKey}
+      </if>
+      <if test="classifiedId != null and classifiedId != ''">
+        AND a.classified_id = #{classifiedId}
+      </if>
+      <if test="classifiedName != null and classifiedName != ''">
+        AND a.classified_name LIKE CONCAT('%', #{classifiedName}, '%')
+      </if>
+      <if test="companyNo != null and companyNo != ''">
+        AND a.company_no LIKE CONCAT('%', #{companyNo}, '%')
+      </if>
+      <if test="messageProtocol != null and messageProtocol != ''">
+        AND a.message_protocol = #{messageProtocol}
+      </if>
+      <if test="name != null and name != ''">
+        AND (a.name LIKE CONCAT('%', #{name}, '%') OR a.product_key LIKE CONCAT('%', #{name}, '%'))
+      </if>
+      <if test="tenantId != null and tenantId != ''">
+        AND (a.tenant_id = #{tenantId}
+        OR ((a.tenant_id is null or a.tenant_id = '') AND au.tenant_id = #{tenantId}))
+      </if>
+      <if test="creatorId != null and creatorId != ''">AND a.creator_id = #{creatorId}</if>
+      <if test="describe != null and describe != ''">
+        AND a.product_description = #{describe}
+      </if>
+      <if test="storePolicy != null and storePolicy != ''">
+        AND a.store_policy = #{storePolicy}
+      </if>
+      <if test="transportProtocol != null and transportProtocol != ''">
+        AND a.transport_protocol LIKE CONCAT('%', #{transportProtocol}, '%')
+      </if>
+      <if test="state != null and state != ''">
+        AND a.state = #{state}
+      </if>
+      <if test="tags != null">
+        AND
+        <foreach collection="tags" item="tag" open="(" close=")" separator=" AND ">
+          position(',' || #{tag} || ',' in ',' || COALESCE(a.tags, '') || ',') &gt; 0
+        </foreach>
+      </if>
+    </where>
+    ORDER BY a.create_time DESC
+  </select>
+  <select id="selectAllDevProductV2List" parameterType="cn.universal.persistence.query.IoTProductQuery" resultType="cn.universal.persistence.entity.vo.IoTProductExportVO" databaseId="dameng">
+    SELECT a.id,
+           a.product_id,
+           a.product_key,
+           a.third_platform,
+           a.third_configuration,
+           a.company_no,
+           a.classified_id,
+           a.configuration,
+           a.network_union_id,
+           a.device_node,
+           a.message_protocol,
+           a.name AS name,
+           a.creator_id,
+           a.tenant_id,
+           a.product_description AS describe,
+           a.store_policy,
+           a.store_policy_configuration,
+           a.transport_protocol,
+           a.photo_url,
+           a.create_time,
+           a.state,
+           a.metadata,
+           a.third_down_request,
+           COUNT(b.id) AS devNum,
+           MAX(p.name) AS protocolName2,
+           MAX(p.state) AS protocolState,
+           MAX(p.type) AS protocolType,
+           MAX(p.configuration) AS protocolConfiguration,
+           MAX(p.example) AS protocolExample,
+           MAX(n.type) AS networkType,
+           MAX(n.name) AS networkName,
+           MAX(n.description) AS networkDescription,
+           MAX(n.configuration) AS networkConfiguration,
+           MAX(n.state) AS networkState
+    FROM iot_product a
+      LEFT JOIN iot_device b ON a.product_key = b.product_key
+      LEFT JOIN iot_user au ON a.creator_id = au.union_id
+      LEFT JOIN iot_device_protocol p ON a.product_key = p.id
+      LEFT JOIN iot_network n ON n.union_id = a.product_key
+    <where>
+      <if test="id != null and id != ''">
+        AND a.id = #{id}
+      </if>
+      <if test="productId != null and productId != ''">
+        AND a.product_id = #{productId}
+      </if>
+      <if test="productKey != null and productKey != ''">
+        AND a.product_key LIKE CONCAT('%', #{productKey}, '%')
+      </if>
+      <if test="name != null and name != ''">
+        AND (a.name LIKE CONCAT('%', #{name}, '%') OR a.product_key LIKE CONCAT('%', #{name}, '%'))
+      </if>
+      <if test="tenantId != null and tenantId != ''">
+        AND (a.tenant_id = #{tenantId}
+        OR ((a.tenant_id is null or a.tenant_id = '') AND au.tenant_id = #{tenantId}))
+      </if>
+      <if test="creatorId != null and creatorId != ''">AND a.creator_id = #{creatorId}</if>
+      <if test="hasDevice == true">
+        <if test="tenantId != null and tenantId != ''">
+          AND (
+          b.tenant_id = #{tenantId}
+          <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+            OR ((b.tenant_id is null or b.tenant_id = '') AND b.creator_id in
+            <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+              #{scopeUnionId}
+            </foreach>
+            )
+          </if>
+          )
+        </if>
+        <include refid="joinedDeviceScopeCondition"/>
+      </if>
+    </where>
+    GROUP BY a.id,
+             a.product_id,
+             a.product_key,
+             a.third_platform,
+             a.third_configuration,
+             a.company_no,
+             a.classified_id,
+             a.configuration,
+             a.network_union_id,
+             a.device_node,
+             a.message_protocol,
+             a.name,
+             a.creator_id,
+             a.product_description,
+             a.store_policy,
+             a.store_policy_configuration,
+             a.transport_protocol,
+             a.photo_url,
+             a.create_time,
+             a.state,
+             a.metadata,
+             a.third_down_request
+    <if test="hasDevice == true">
+      HAVING COUNT(b.id) &gt; 0
+    </if>
+    ORDER BY a.create_time DESC
+  </select>
+  <select id="selectDevProductById" parameterType="String" resultMap="productVoMap" databaseId="dameng">
+    select p.id,
+           p.product_id,
+           p.tags,
+           p.product_key,
+           p.product_secret,
+           p.third_platform,
+           p.third_configuration,
+           p.company_no,
+           p.classified_id,
+           p.configuration,
+           p.network_union_id,
+           p.device_node,
+           p.gw_product_key,
+           p.classified_name,
+           p.message_protocol,
+           p.name AS name,
+           p.creator_id,
+           p.tenant_id,
+           p.product_description AS describe,
+           p.store_policy,
+           p.store_policy_configuration,
+           p.transport_protocol,
+           p.photo_url,
+           p.metadata,
+           p.create_time,
+           p.state,
+           t.type
+    from iot_product p
+      LEFT JOIN iot_device_protocol t on p.product_key = t.id
+    where p.id = CAST(#{id} AS bigint)
+  </select>
+  <insert id="insertDevProduct" parameterType="cn.universal.persistence.entity.IoTProduct" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into iot_product
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="productId != null and productId != ''">product_id,</if>
+      <if test="productKey != null">product_key,</if>
+      <if test="productSecret != null">product_secret,</if>
+      <if test="thirdPlatform != null">third_platform,</if>
+      <if test="thirdConfiguration != null">third_configuration,</if>
+      <if test="companyNo != null">company_no,</if>
+      <if test="classifiedId != null">classified_id,</if>
+      <if test="configuration != null">configuration,</if>
+      <if test="networkUnionId != null">network_union_id,</if>
+      <if test="deviceNode != null">device_node,</if>
+      <if test="gwProductKey != null">gw_product_key,</if>
+      <if test="classifiedName != null">classified_name,</if>
+      <if test="messageProtocol != null">message_protocol,</if>
+      <if test="name != null">name,</if>
+      <if test="creatorId != null">creator_id,</if>
+      <if test="tenantId != null">tenant_id,</if>
+      <if test="describe != null">product_description,</if>
+      <if test="storePolicy != null">store_policy,</if>
+      <if test="storePolicyConfiguration != null">store_policy_configuration,</if>
+      <if test="transportProtocol != null">transport_protocol,</if>
+      <if test="photoUrl != null">photo_url,</if>
+      <if test="metadata != null">metadata,</if>
+      <if test="createTime != null">create_time,</if>
+      <if test="state != null">state,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="productId != null and productId != ''">#{productId},</if>
+      <if test="productKey != null">#{productKey},</if>
+      <if test="productSecret != null">#{productSecret},</if>
+      <if test="thirdPlatform != null">#{thirdPlatform},</if>
+      <if test="thirdConfiguration != null">#{thirdConfiguration},</if>
+      <if test="companyNo != null">#{companyNo},</if>
+      <if test="classifiedId != null">#{classifiedId},</if>
+      <if test="configuration != null">#{configuration},</if>
+      <if test="networkUnionId != null">#{networkUnionId},</if>
+      <if test="deviceNode != null">#{deviceNode},</if>
+      <if test="gwProductKey != null">#{gwProductKey},</if>
+      <if test="classifiedName != null">#{classifiedName},</if>
+      <if test="messageProtocol != null">#{messageProtocol},</if>
+      <if test="name != null">#{name},</if>
+      <if test="creatorId != null">#{creatorId},</if>
+      <if test="tenantId != null">#{tenantId},</if>
+      <if test="describe != null">#{describe},</if>
+      <if test="storePolicy != null">#{storePolicy},</if>
+      <if test="storePolicyConfiguration != null">#{storePolicyConfiguration},</if>
+      <if test="transportProtocol != null">#{transportProtocol},</if>
+      <if test="photoUrl != null">#{photoUrl},</if>
+      <if test="metadata != null">#{metadata},</if>
+      <if test="createTime != null">#{createTime},</if>
+      <if test="state != null">#{state},</if>
+    </trim>
+  </insert>
+  <update id="updateDevProduct" parameterType="cn.universal.persistence.entity.IoTProduct" databaseId="dameng">
+    update iot_product
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="productId != null and productId != ''">product_id = #{productId},</if>
+      <if test="productKey != null">product_key = #{productKey},</if>
+      <if test="productSecret != null">product_secret = #{productSecret},</if>
+      <if test="thirdPlatform != null">third_platform = #{thirdPlatform},</if>
+      <if test="thirdConfiguration != null">third_configuration = #{thirdConfiguration},</if>
+      <if test="companyNo != null">company_no = #{companyNo},</if>
+      <if test="classifiedId != null">classified_id = #{classifiedId},</if>
+      <if test="configuration != null">configuration = #{configuration},</if>
+      <if test="networkUnionId != null">network_union_id = #{networkUnionId},</if>
+      <if test="deviceNode != null">device_node = #{deviceNode},</if>
+      <if test="gwProductKey != null">gw_product_key = #{gwProductKey},</if>
+      <if test="classifiedName != null">classified_name = #{classifiedName},</if>
+      <if test="messageProtocol != null">message_protocol = #{messageProtocol},</if>
+      <if test="name != null">name = #{name},</if>
+      <if test="creatorId != null">creator_id = #{creatorId},</if>
+      <if test="describe != null">product_description = #{describe},</if>
+      <if test="storePolicy != null">store_policy = #{storePolicy},</if>
+      <if test="storePolicyConfiguration != null">store_policy_configuration = #{storePolicyConfiguration},</if>
+      <if test="transportProtocol != null">transport_protocol = #{transportProtocol},</if>
+      <if test="photoUrl != null">photo_url = #{photoUrl},</if>
+      <if test="metadata != null">metadata = #{metadata},</if>
+      <if test="createTime != null">create_time = #{createTime},</if>
+      <if test="state != null">state = #{state},</if>
+      <if test="tags != null">tags = #{tags},</if>
+    </trim>
+    where id = #{id}
+  </update>
+  <delete id="deleteDevProductById" parameterType="String" databaseId="dameng">
+    delete
+    from iot_product
+    where id = CAST(#{id} AS bigint)
+  </delete>
+  <delete id="deleteDevProductByIds" parameterType="String" databaseId="dameng">
+    delete from iot_product where id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      CAST(#{id} AS bigint)
+    </foreach>
+  </delete>
+  <select id="getProductByProductKey" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT *
+    FROM iot_product
+    WHERE product_key = #{productKey}
+      AND state = 0
+  </select>
+  <select id="getModelByProductKey" parameterType="String" resultType="cn.universal.persistence.entity.vo.IoTDeviceModelVO" databaseId="dameng">
+    SELECT device_model,
+           device_model_name,
+           icon,
+           protocol,
+           product_key,
+           cast(page_ctrl as varchar) as page_ctrl,
+           cast(ext_conf as varchar) as ext_conf
+    FROM iot_device_model
+    WHERE product_key = #{productKey}
+  </select>
+  <update id="insertMetadata" parameterType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    update iot_product
+    set metadata=json_array_append(metadata, #{path}, cast(#{jsonStr} as json))
+    where product_key = #{productKey}
+  </update>
+  <update id="deleteMetadata" parameterType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    update iot_product
+    set metadata=json_remove(metadata, replace(
+      replace(json_search(metadata, 'one', #{oldId}, null, #{path}), '"', ''), '.id', ''))
+    where product_key = #{productKey}
+  </update>
+  <update id="updateMetadata" parameterType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    update iot_product
+    set metadata=json_set(metadata, replace(
+      replace(json_search(metadata, 'one', #{oldId}, null, #{path}), '"', ''), '.id', ''),
+                          cast(#{jsonStr} as json))
+    where product_key = #{productKey}
+  </update>
+  <select id="getMetadata" parameterType="cn.universal.persistence.entity.bo.IoTProductBO" resultType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    select json_extract(metadata, replace(
+      replace(json_search(metadata, 'one', #{oldId}, null, #{path}), '"', ''), '.id',
+      '')) as jsonStr
+    from iot_product
+    where product_key = #{productKey}
+  </select>
+  <update id="insertMetadataV2" parameterType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    update iot_product
+    set metadata = CASE
+      -- 如果metadata为NULL或空对象，初始化基础结构
+      WHEN metadata IS NULL OR metadata = '{}' OR metadata = '' THEN
+        CASE #{type}
+          WHEN 'properties' THEN JSON_OBJECT('properties', JSON_ARRAY(CAST(#{jsonStr} AS JSON)), 'events', JSON_ARRAY(), 'functions', JSON_ARRAY())
+          WHEN 'events' THEN JSON_OBJECT('properties', JSON_ARRAY(), 'events', JSON_ARRAY(CAST(#{jsonStr} AS JSON)), 'functions', JSON_ARRAY())
+          WHEN 'functions' THEN JSON_OBJECT('properties', JSON_ARRAY(), 'events', JSON_ARRAY(), 'functions', JSON_ARRAY(CAST(#{jsonStr} AS JSON)))
+        END
+      -- 如果对应的数组字段不存在，初始化该字段
+      WHEN JSON_EXTRACT(metadata, #{path}) IS NULL THEN
+        JSON_SET(metadata, #{path}, JSON_ARRAY(CAST(#{jsonStr} AS JSON)))
+      -- 如果ID已存在，覆盖更新
+      WHEN JSON_SEARCH(metadata, 'one', #{oldId}, null, #{path}) IS NOT NULL THEN
+        JSON_SET(metadata, 
+          REPLACE(REPLACE(JSON_SEARCH(metadata, 'one', #{oldId}, null, #{path}), '"', ''), '.id', ''),
+          CAST(#{jsonStr} AS JSON))
+      -- 否则追加到数组
+      ELSE
+        JSON_ARRAY_APPEND(metadata, #{path}, CAST(#{jsonStr} AS JSON))
+    END
+    where product_key = #{productKey}
+  </update>
+  <select id="getMetadataProductKey" resultType="String" databaseId="dameng">
+    select metadata
+    from iot_product
+    where product_key = #{productKey}
+  </select>
+  <select id="countDevNumberByProductKey" parameterType="String" resultType="cn.universal.persistence.entity.vo.IoTProductVO" databaseId="dameng">
+    select di.product_key , count(di.id) as devNum
+    from iot_device di
+    <where>
+      <if test="unionId!=null and unionId!=''">
+        di.creator_id=#{unionId}
+      </if>
+    </where>
+    group by di.product_key
+  </select>
+  <select id="selectDevProductAllList" resultType="cn.universal.persistence.entity.vo.IoTProductVO" databaseId="dameng">
+    select *
+    from iot_product
+    where state = 0
+  </select>
+  <select id="selectProductName" resultType="cn.universal.persistence.entity.vo.IoTProductVO" databaseId="dameng">
+    select product_key,name from iot_product where product_key in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+  <select id="getGatewaySubDeviceList" resultType="cn.universal.persistence.entity.vo.IoTProductVO" databaseId="dameng">
+    select *
+    from iot_product
+    where device_node = 'GATEWAY_SUB_DEVICE'
+      and state = 0
+      and gw_product_key = #{productKey}
+  </select>
+  <select id="selectNetworkUnionId" resultType="String" databaseId="dameng">
+    select network_union_id
+    from iot_product
+    WHERE product_key = #{productKey}
+      AND state = 0
+      AND is_deleted = 0
+  </select>
+  <select id="selectAllEnableNetworkProductKey" resultType="java.lang.String" databaseId="dameng">
+    SELECT product_key
+    FROM iot_product
+    WHERE ((network_union_id is not null and is_deleted = 0 and state = 0))
+  </select>
+  <select id="countByNetworkUnionId" resultType="int" parameterType="string" databaseId="dameng">
+    SELECT COUNT(1)
+    FROM iot_product
+    WHERE network_union_id = #{networkUnionId}
+      AND is_deleted = 0
+  </select>
+  <select id="searchProductKeyAndName" resultType="map" parameterType="string" databaseId="dameng">
+    SELECT product_key, name
+    FROM iot_product
+    WHERE is_deleted = 0
+      AND (product_key LIKE CONCAT('%', #{name}, '%') OR
+           name LIKE CONCAT('%', #{name}, '%'))
+      LIMIT 20
+  </select>
+  <update id="updateNetworkUnionIdByProductKey" parameterType="map" databaseId="dameng">
+    UPDATE iot_product
+    SET network_union_id = #{networkUnionId}
+    WHERE product_key = #{productKey}
+      AND is_deleted = 0
+  </update>
+  <select id="findProductKeyByNetworkUnionId" resultType="string" parameterType="string" databaseId="dameng">
+    SELECT product_key
+    FROM iot_product
+    WHERE network_union_id = #{networkUnionId}
+      AND is_deleted = 0 LIMIT 1
+  </select>
+  <select id="selectMqttProductsUseNetwork" resultType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    SELECT product_key,
+           name,
+           device_node,
+           third_platform,
+           photo_url,
+           company_no
+    FROM iot_product
+    WHERE network_union_id = #{networkUnionId}
+      AND is_deleted = 0
+  </select>
+  <update id="updateNetworkProductsUseNetwork" databaseId="dameng">
+    update iot_product
+    set network_union_id = null
+    WHERE network_union_id = #{networkUnionId}
+  </update>
+  <select id="selectTcpProductsUseNetwork" resultType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    SELECT product_key,
+           name,
+           device_node,
+           third_platform,
+           photo_url,
+           company_no
+    FROM iot_product
+    WHERE product_key = #{productKey}
+      AND is_deleted = 0
+    limit 1
+  </select>
+  <select id="selectProductNameByProductKeys" resultType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    SELECT product_key,
+           name,
+           device_node,
+           third_platform,
+           company_no,
+           classified_name,
+           message_protocol,
+           transport_protocol,
+           state
+    FROM iot_product
+    WHERE product_key IN
+    <foreach collection="productKeys" item="productKey" open="(" separator="," close=")">
+      #{productKey}
+    </foreach>
+    AND is_deleted = 0
+    ORDER BY create_time DESC
+  </select>
+  <select id="selectTransportProtocol" resultType="cn.universal.persistence.entity.bo.IoTProductBO" databaseId="dameng">
+    SELECT product_key,
+           name,
+           device_node,
+           third_platform,
+           company_no,
+           classified_name,
+           message_protocol,
+           transport_protocol,
+           state
+    FROM iot_product
+    WHERE product_key = #{productKey}
+      AND is_deleted = 0
+  </select>
+  <select id="countAllProducts" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_product
+    WHERE is_deleted = 0
+  </select>
+  <select id="countProductsByCreator" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_product
+    WHERE (tenant_id = (
+      SELECT COALESCE(NULLIF(parent.tenant_id, ''), NULLIF(parent.union_id, ''), NULLIF(u.tenant_id, ''), NULLIF(u.union_id, ''), #{creatorId})
+      FROM iot_user u
+      LEFT JOIN iot_user parent ON u.parent_union_id = parent.union_id
+      WHERE u.union_id = #{creatorId}
+    )
+      OR ((tenant_id is null or tenant_id = '')
+      AND creator_id = (
+        SELECT COALESCE(NULLIF(parent.union_id, ''), NULLIF(u.union_id, ''), #{creatorId})
+        FROM iot_user u
+        LEFT JOIN iot_user parent ON u.parent_union_id = parent.union_id
+        WHERE u.union_id = #{creatorId}
+      )))
+      AND is_deleted = 0
+  </select>
+  <select id="countProductsByScope" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_product p
+    LEFT JOIN iot_user au ON p.creator_id = au.union_id
+    WHERE p.is_deleted = 0
+    <if test="scopeDenied == true">AND 1 = 0</if>
+    <if test="scopeDenied != true and tenantId != null and tenantId != ''">
+      AND (p.tenant_id = #{tenantId}
+      OR ((p.tenant_id is null or p.tenant_id = '') AND au.tenant_id = #{tenantId}))
+    </if>
+    <if test="scopeDenied != true and scopeUnionIds != null and scopeUnionIds.size() > 0">
+      AND p.creator_id IN
+      <foreach item="scopeUnionId" collection="scopeUnionIds" open="(" separator="," close=")">
+        #{scopeUnionId}
+      </foreach>
+    </if>
+  </select>
+  <select id="countProductsCreatedByUser" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_product
+    WHERE creator_id = #{creatorId}
+      AND is_deleted = 0
+  </select>
+  <select id="selectProductForUpdate" parameterType="String" resultMap="BaseResultMap" databaseId="dameng">
+    select * from iot_product where product_key = #{productKey} for update
+  </select>
+  <resultMap id="productOptionMap" type="cn.universal.persistence.entity.vo.IoTProductOptionVO">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="product_key" jdbcType="VARCHAR" property="productKey"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+  </resultMap>
+  <select id="selectProductOptions" parameterType="cn.universal.persistence.query.IoTProductQuery"
+    resultMap="productOptionMap" databaseId="dameng">
+    SELECT a.id, a.product_key, a.name
+    FROM iot_product a
+    LEFT JOIN iot_user au ON a.creator_id = au.union_id
+    WHERE a.is_deleted = 0 AND a.state = 0
+    <if test="tenantId != null and tenantId != ''">
+      AND (a.tenant_id = #{tenantId}
+      OR ((a.tenant_id is null or a.tenant_id = '') AND au.tenant_id = #{tenantId}))
+    </if>
+    <include refid="productScopeCondition"/>
+    <if test="creatorId != null and creatorId != ''">
+      AND a.creator_id = #{creatorId}
+    </if>
+    <if test="productKey != null and productKey != ''">
+      AND a.product_key = #{productKey}
+    </if>
+    <if test="name != null and name != ''">
+      AND (a.name LIKE CONCAT('%', #{name}, '%')
+      OR a.product_key LIKE CONCAT('%', #{name}, '%'))
+    </if>
+    ORDER BY a.create_time DESC, a.id DESC
+  </select>
+</mapper>

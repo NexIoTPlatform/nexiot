@@ -1,0 +1,47 @@
+{
+  "started_at": "2026-11-07T11:17:47.705904+00:00",
+  "base_url": "http://127.0.0.1:19092",
+  "run_id": "11071930",
+  "checks": {
+    "health": "passed",
+    "captcha_rsa_admin_login_and_get_info": "passed",
+    "excluded_menu_components_absent": "passed",
+    "only_mqtt_and_http_protocols_registered": "passed",
+    "tenant_api_create_captcha_login_and_scope": "passed",
+    "tenant_product_category_create": "passed",
+    "mqtt_product_device_metadata_create": "passed",
+    "mqtt_qos1_publish_shadow_and_history_api_read": "passed",
+    "http_product_device_metadata_create": "passed",
+    "http_magic_driver_save_and_decode": "passed",
+    "http_network_validate_start_status": "passed",
+    "http_ingress_rejects_missing_api_key": "passed",
+    "http_authenticated_ingress_decode_shadow_and_history_api_read": "passed",
+    "http_device_create_update_delete_lifecycle": "passed"
+  },
+  "test_data": {
+    "tenant_id": "274520043520",
+    "tenant_code": "ossacceptance-11071930",
+    "username": "ossapi11071930",
+    "mqtt": {
+      "product_id": "1",
+      "product_key": "JpVBy7Y7dhuo",
+      "device_id": "oss-mqtt-11071930",
+      "iot_id": "JpVBy7Y7dhuooss-mqtt-11071930"
+    },
+    "http": {
+      "product_id": "2",
+      "product_key": "qt97d9QMOB3W",
+      "device_id": "oss-http-11071930",
+      "iot_id": "qt97d9QMOB3Woss-http-11071930",
+      "network_id": "2119023488645222400"
+    }
+  },
+  "observations": {
+    "mqtt_temperature": 23.39,
+    "http_temperature": 27.81
+  },
+  "status": "passed",
+  "test_data_policy": "Synthetic tenant/products/devices retained only in the isolated local OSS database for UI review; credentials and tokens are omitted.",
+  "admin_menu_count": 52,
+  "finished_at": "2026-11-07T11:17:51.315187+00:00"
+}

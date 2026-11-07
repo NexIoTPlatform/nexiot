@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.miniapp.mapper.MpUserPermissionMapper">
+
+  <select id="selectPermissionsByUserAndApp" resultType="string">
+    SELECT permission_code
+    FROM mp_user_permission
+    WHERE user_id = #{userId}
+      AND app_id = #{appId}
+  </select>
+
+  <select id="hasPermission" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM mp_user_permission
+    WHERE user_id = #{userId}
+      AND app_id = #{appId}
+      AND permission_code = #{permissionCode}
+  </select>
+
+  <delete id="deleteByUserAndApp">
+    DELETE
+    FROM mp_user_permission
+    WHERE user_id = #{userId}
+      AND app_id = #{appId}
+  </delete>
+
+  <insert id="batchInsert">
+    INSERT INTO mp_user_permission (user_id, app_id, permission_code, create_time)
+    VALUES
+    <foreach collection="permissions" item="item" separator=",">
+      (#{item.userId}, #{item.appId}, #{item.permissionCode}, NOW())
+    </foreach>
+  </insert>
+
+</mapper>

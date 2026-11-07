@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTUserApplicationMapper">
+  <resultMap type="cn.universal.persistence.entity.IoTUserApplication" id="IotUserApplicationResult">
+    <result property="unionId" column="union_id" />
+    <result property="tenantId" column="tenant_id" />
+    <result property="appName" column="app_name" />
+    <result property="appUniqueId" column="app_unique_id" />
+    <result property="appId" column="app_id" />
+    <result property="upTopic" column="up_topic" />
+    <result property="downTopic" column="down_topic" />
+    <result property="notifyUrl" column="notify_url" />
+    <result property="appSecret" column="app_secret" />
+    <result property="validEndDate" column="valid_end_date" />
+    <result property="scope" column="scope" />
+    <result property="appStatus" column="app_status" />
+    <result property="instance" column="instance" />
+    <result property="remark" column="remark" />
+    <result property="createDate" column="create_date" />
+    <result property="deleted" column="deleted" />
+    <result property="cfg" column="cfg" jdbcType="OTHER"
+      typeHandler="cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler" />
+  </resultMap>
+  <resultMap type="cn.universal.persistence.entity.vo.IoTUserApplicationVO" id="IotUserApplicationVoResult">
+    <result property="unionId" column="union_id" />
+    <result property="tenantId" column="tenant_id" />
+    <result property="appName" column="app_name" />
+    <result property="appUniqueId" column="app_unique_id" />
+    <result property="appId" column="app_id" />
+    <result property="upTopic" column="up_topic" />
+    <result property="downTopic" column="down_topic" />
+    <result property="notifyUrl" column="notify_url" />
+    <result property="appSecret" column="app_secret" />
+    <result property="validEndDate" column="valid_end_date" />
+    <result property="scope" column="scope" />
+    <result property="appStatus" column="app_status" />
+    <result property="instance" column="instance" />
+    <result property="remark" column="remark" />
+    <result property="createDate" column="create_date" />
+    <result property="deleted" column="deleted" />
+    <result property="httpEnable" column="http_enable" />
+    <result property="mqttEnable" column="mqtt_enable" />
+    <result property="cfg" column="cfg" jdbcType="OTHER"
+      typeHandler="cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler" />
+  </resultMap>
+  <sql id="selectIotUserApplicationVo">
+    select union_id,
+           tenant_id,
+           app_secret,
+           app_name,
+           app_unique_id,
+           app_id,
+           up_topic,
+           down_topic,
+           notify_url,
+           valid_end_date,
+           scope,
+           app_status,
+           instance,
+           remark,
+           create_date,
+           deleted,
+           http_enable,
+           mqtt_enable,
+           cfg
+    from iot_user_application
+  </sql>
+  <select id="selectIotUserApplicationList" parameterType="cn.universal.persistence.entity.IoTUserApplication" resultMap="IotUserApplicationVoResult" databaseId="dameng">
+    <include refid="selectIotUserApplicationVo" />
+    <where>
+      <choose>
+        <when test="tenantId != null and tenantId != '' and unionId != null and unionId != ''">
+          and (tenant_id = #{tenantId}
+          or ((tenant_id is null or tenant_id = '') and union_id = #{unionId}))
+        </when>
+        <when test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</when>
+        <when test="unionId != null and unionId != ''">and union_id = #{unionId}</when>
+      </choose>
+      <if test="appName != null  and appName != ''">and app_name like concat('%', #{appName}, '%')
+      </if>
+      <if test="appUniqueId != null  and appUniqueId != ''">and app_unique_id = #{appUniqueId}</if>
+      <if test="appId != null  and appId != ''">and app_id = #{appId}</if>
+      <if test="upTopic != null  and upTopic != ''">and up_topic = #{upTopic}</if>
+      <if test="downTopic != null  and downTopic != ''">and down_topic = #{downTopic}</if>
+      <if test="notifyUrl != null  and notifyUrl != ''">and notify_url = #{notifyUrl}</if>
+      <if test="appSecret != null  and appSecret != ''">and app_secret = #{appSecret}</if>
+      <if test="validEndDate != null ">and valid_end_date = #{validEndDate}</if>
+      <if test="scope != null  and scope != ''">and scope = #{scope}</if>
+      <if test="appStatus != null ">and app_status = #{appStatus}</if>
+      <if test="instance != null  and instance != ''">and instance = #{instance}</if>
+      <if test="createDate != null ">and create_date = #{createDate}</if>
+      <if test="deleted != null ">and deleted = #{deleted}</if>
+    </where>
+    order by create_date desc
+  </select>
+  <select id="selectIotUserApplicationById" parameterType="String" resultMap="IotUserApplicationResult" databaseId="dameng">
+    <include refid="selectIotUserApplicationVo" />
+    where app_unique_id = #{appUniqueId}
+  </select>
+  <select id="selectIotUserApplicationByAppId" parameterType="String" resultMap="IotUserApplicationResult" databaseId="dameng">
+    select union_id,
+           tenant_id,
+           app_name,
+           app_unique_id,
+           app_id,
+           up_topic,
+           app_secret,
+           down_topic,
+           notify_url,
+           valid_end_date,
+           scope,
+           app_status,
+           instance,
+           remark,
+           create_date,
+           deleted,
+           http_enable,
+           mqtt_enable,
+           cfg
+    from iot_user_application
+    where app_id = #{appId}
+  </select>
+  <select id="selectIotUserApplicationByUnionId" parameterType="String" resultMap="IotUserApplicationResult" databaseId="dameng">
+    <include refid="selectIotUserApplicationVo" />
+    where union_id = #{unionId}
+  </select>
+  <select id="selectIotUserApplicationsByIds" resultMap="IotUserApplicationResult" databaseId="dameng">
+    <include refid="selectIotUserApplicationVo" />
+    where app_unique_id in
+    <foreach item="appUniqueId" collection="array" open="(" separator="," close=")">
+      #{appUniqueId,jdbcType=VARCHAR}
+    </foreach>
+  </select>
+  <insert id="insertIotUserApplication" parameterType="cn.universal.persistence.entity.IoTUserApplication" useGeneratedKeys="true" keyProperty="appUniqueId" databaseId="dameng">
+    insert into iot_user_application
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="unionId != null  and unionId != ''">union_id,</if>
+      <if test="tenantId != null  and tenantId != ''">tenant_id,</if>
+      <if test="appName != null  and appName != ''">app_name,</if>
+      <if test="appUniqueId != null  and appUniqueId != ''">app_unique_id,</if>
+      <if test="appId != null  and appId != ''">app_id,</if>
+      <if test="upTopic != null  and upTopic != ''">up_topic,</if>
+      <if test="downTopic != null  and downTopic != ''">down_topic,</if>
+      <if test="notifyUrl != null  and notifyUrl != ''">notify_url,</if>
+      <if test="appSecret != null  and appSecret != ''">app_secret,</if>
+      <if test="validEndDate != null ">valid_end_date,</if>
+      <if test="scope != null  and scope != ''">scope,</if>
+      <if test="appStatus != null ">app_status,</if>
+      <if test="instance != null  and instance != ''">instance,</if>
+      <if test="remark != null  and remark != ''">remark,</if>
+      <if test="createDate != null ">create_date,</if>
+      <if test="deleted != null ">deleted,</if>
+      <if test="httpEnable != null ">http_enable,</if>
+      <if test="mqttEnable != null ">mqtt_enable,</if>
+      <if test="cfg != null ">cfg,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="unionId != null  and unionId != ''">#{unionId},</if>
+      <if test="tenantId != null  and tenantId != ''">#{tenantId},</if>
+      <if test="appName != null  and appName != ''">#{appName},</if>
+      <if test="appUniqueId != null  and appUniqueId != ''">#{appUniqueId},</if>
+      <if test="appId != null  and appId != ''">#{appId},</if>
+      <if test="upTopic != null  and upTopic != ''">#{upTopic},</if>
+      <if test="downTopic != null  and downTopic != ''">#{downTopic},</if>
+      <if test="notifyUrl != null  and notifyUrl != ''">#{notifyUrl},</if>
+      <if test="appSecret != null  and appSecret != ''">#{appSecret},</if>
+      <if test="validEndDate != null ">#{validEndDate},</if>
+      <if test="scope != null  and scope != ''">#{scope},</if>
+      <if test="appStatus != null ">#{appStatus},</if>
+      <if test="instance != null  and instance != ''">#{instance},</if>
+      <if test="remark != null  and remark != ''">#{remark},</if>
+      <if test="createDate != null ">#{createDate},</if>
+      <if test="deleted != null ">#{deleted},</if>
+      <if test="httpEnable != null ">#{httpEnable},</if>
+      <if test="mqttEnable != null ">#{mqttEnable},</if>
+      <if test="cfg != null ">#{cfg, jdbcType=OTHER, typeHandler=cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler},</if>
+    </trim>
+  </insert>
+  <update id="updateIotUserApplication" parameterType="cn.universal.persistence.entity.IoTUserApplication" databaseId="dameng">
+    update iot_user_application
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="appName != null  and appName != ''">app_name = #{appName},</if>
+      <if test="appId != null  and appId != ''">app_id = #{appId},</if>
+      <if test="upTopic != null  and upTopic != ''">up_topic = #{upTopic},</if>
+      <if test="downTopic != null  and downTopic != ''">down_topic = #{downTopic},</if>
+      <if test="notifyUrl != null  and notifyUrl != ''">notify_url = #{notifyUrl},</if>
+      <if test="appSecret != null  and appSecret != ''">app_secret = #{appSecret},</if>
+      <if test="validEndDate != null ">valid_end_date = #{validEndDate},</if>
+      <if test="scope != null  and scope != ''">scope = #{scope},</if>
+      <if test="appStatus != null ">app_status = #{appStatus},</if>
+      <if test="instance != null  and instance != ''">instance = #{instance},</if>
+      <if test="remark != null  and remark != ''">remark = #{remark},</if>
+      <if test="createDate != null ">create_date = #{createDate},</if>
+      <if test="deleted != null ">deleted = #{deleted},</if>
+      <if test="httpEnable != null ">http_enable = #{httpEnable},</if>
+      <if test="mqttEnable != null ">mqtt_enable = #{mqttEnable},</if>
+      <if test="cfg != null ">cfg = #{cfg, jdbcType=OTHER, typeHandler=cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler},</if>
+      <if test="tenantId != null">tenant_id = #{tenantId},</if>
+    </trim>
+    where app_unique_id = #{appUniqueId} and union_id = #{unionId}
+  </update>
+  <delete id="deleteIotUserApplicationById" parameterType="String" databaseId="dameng">
+    delete
+    from iot_user_application
+    where app_unique_id = #{appUniqueId}
+  </delete>
+  <delete id="deleteIotUserApplicationByIds" parameterType="String" databaseId="dameng">
+    delete from iot_user_application where app_unique_id in
+    <foreach item="appUniqueId" collection="array" open="(" separator="," close=")">
+      #{appUniqueId}
+    </foreach>
+  </delete>
+  <select id="countMqtt" parameterType="String" resultType="int" databaseId="dameng">
+    select count(*)
+    from iot_user_application
+    where up_topic is not null
+      and up_topic!='' and union_id=#{unionId}
+  </select>
+  <select id="selectApplicationList" parameterType="cn.universal.persistence.entity.IoTUserApplication" resultMap="IotUserApplicationVoResult" databaseId="dameng">
+    <include refid="selectIotUserApplicationVo" />
+    <where>
+      <choose>
+        <when test="tenantId != null and tenantId != '' and unionId != null and unionId != ''">
+          and (tenant_id = #{tenantId}
+          or ((tenant_id is null or tenant_id = '') and union_id = #{unionId}))
+        </when>
+        <when test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</when>
+        <when test="unionId != null and unionId != ''">and union_id = #{unionId}</when>
+      </choose>
+      <if test="appName != null  and appName != ''">and app_name like concat('%', #{appName}, '%')
+      </if>
+      <if test="appUniqueId != null  and appUniqueId != ''">and app_unique_id = #{appUniqueId}</if>
+      <if test="appId != null  and appId != ''">and app_id = #{appId}</if>
+      <if test="upTopic != null  and upTopic != ''">and up_topic = #{upTopic}</if>
+      <if test="downTopic != null  and downTopic != ''">and down_topic = #{downTopic}</if>
+      <if test="notifyUrl != null  and notifyUrl != ''">and notify_url = #{notifyUrl}</if>
+      <if test="appSecret != null  and appSecret != ''">and app_secret = #{appSecret}</if>
+      <if test="validEndDate != null ">and valid_end_date = #{validEndDate}</if>
+      <if test="scope != null  and scope != ''">and scope = #{scope}</if>
+      <if test="appStatus != null ">and app_status = #{appStatus}</if>
+      <if test="instance != null  and instance != ''">and instance = #{instance}</if>
+      <if test="createDate != null ">and create_date = #{createDate}</if>
+      <if test="deleted != null ">and deleted = #{deleted}</if>
+    </where>
+    order by create_date desc limit 500
+  </select>
+  <select id="countAllApplications" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_user_application
+    WHERE deleted = 0
+  </select>
+  <select id="countApplicationsByUnionId" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_user_application
+    WHERE (tenant_id = (
+      SELECT COALESCE(NULLIF(parent.tenant_id, ''), NULLIF(parent.union_id, ''), NULLIF(u.tenant_id, ''), NULLIF(u.union_id, ''), #{unionId})
+      FROM iot_user u
+      LEFT JOIN iot_user parent ON u.parent_union_id = parent.union_id
+      WHERE u.union_id = #{unionId}
+    )
+      OR ((tenant_id is null or tenant_id = '')
+      AND union_id = (
+        SELECT COALESCE(NULLIF(parent.union_id, ''), NULLIF(u.union_id, ''), #{unionId})
+        FROM iot_user u
+        LEFT JOIN iot_user parent ON u.parent_union_id = parent.union_id
+        WHERE u.union_id = #{unionId}
+      )))
+      AND deleted = 0
+  </select>
+  <select id="countApplicationsByScope" resultType="long" databaseId="dameng">
+    SELECT COUNT(*)
+    FROM iot_user_application
+    WHERE deleted = 0
+    <if test="scopeDenied == true">AND 1 = 0</if>
+    <if test="scopeDenied != true and tenantId != null and tenantId != ''">
+      AND (
+      tenant_id = #{tenantId}
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        OR ((tenant_id is null or tenant_id = '') AND union_id IN
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+        )
+      </if>
+      )
+    </if>
+    <if test="scopeDenied != true and scopeUnionIds != null and scopeUnionIds.size() > 0">
+      AND union_id IN
+      <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+        #{scopeUnionId}
+      </foreach>
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,278 @@
+import type { TableData, TableInstance } from '@arco-design/web-vue'
+import { Message, Modal } from '@arco-design/web-vue'
+import { useBreakpoint, usePagination } from '@/hooks'
+
+interface Options<T, U> {
+  formatResult?: (data: T[]) => U[]
+  onSuccess?: () => void
+  immediate?: boolean
+  rowKey?: keyof T
+  /** 是否开启跨页多选，开启后切换分页会保留已选中的 key */
+  crossPageSelect?: boolean
+  defaultPageSize?: number
+  listAPI: (params: { page: number, size: number }) => Promise<ApiRes<PageRes<T[]>>> | Promise<ApiRes<T[]>>
+  deleteAPI?: (ids: string[]) => Promise<ApiRes<unknown>>
+}
+
+/** 删除操作的配置选项 */
+interface DeleteOptions {
+  /** 确认框标题 */
+  title?: string
+  /** 确认框内容 */
+  content?: string
+  /** 成功提示信息 */
+  successTip?: string
+  /** 是否显示确认框 */
+  showModal?: boolean
+}
+
+/**
+ * 表格数据管理 Hook
+ * @description 提供表格数据管理的响应式 Hook，支持分页、搜索、刷新、删除等功能
+ * @template T - 原始数据类型
+ * @template U - 格式化后的数据类型
+ * @param options - 表格配置选项
+ * @returns 表格相关的状态和方法
+ * @example
+ * const {
+ *   loading,
+ *   tableData,
+ *   pagination,
+ *   selectedKeys,
+ *   search,
+ *   refresh,
+ *   handleDelete
+ * } = useTable({
+ *   listAPI: (p) => getTableApi(p),
+ *   formatResult: (data) => data.map(formatData),
+ *   immediate: true,
+ *   rowKey: 'id'
+ * })
+ */
+export function useTable<T extends U, U = T>(options: Options<T, U>) {
+  const { formatResult, onSuccess, immediate = true, rowKey = 'id', crossPageSelect = false, defaultPageSize = 10, listAPI, deleteAPI }
+    = options || {}
+
+  // 分页相关
+  const { pagination, setTotal } = usePagination(() => getTableData(), { defaultPageSize })
+  const loading = ref(false)
+  const tableData: Ref<U[]> = ref([])
+
+  /**
+   * 获取表格数据
+   * @description 调用 API 获取数据，处理分页、格式化等逻辑
+   */
+  async function getTableData() {
+    try {
+      loading.value = true
+      const res = await listAPI({ page: pagination.current, size: pagination.pageSize })
+      // 处理返回的数据结构可能是分页或数组的情况
+      const data = !Array.isArray(res.data) ? res.data.records : res.data
+      tableData.value = formatResult ? formatResult(data) : data
+      // 设置总数据量
+      const total = !Array.isArray(res.data) ? res.data.total : data.length
+      setTotal(total)
+      onSuccess?.()
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // 首次加载数据
+  immediate && getTableData()
+
+  // 多选
+  const selectedKeys = ref<(string | number)[]>([])
+
+  /** 当前页所有行的 key（用于跨页多选时合并） */
+  function getCurrentPageKeys() {
+    return (tableData.value as TableData[]).map((i) => i[rowKey as string])
+  }
+
+  /**
+   * 行选择回调
+   * @param rowKeys - 表格传入的选中行 key（可能仅为当前页，也可能含跨页；以当前页 key 为准做合并避免重复）
+   */
+  const select: TableInstance['onSelect'] = (rowKeys) => {
+    if (crossPageSelect) {
+      const pageKeys = getCurrentPageKeys()
+      const rest = selectedKeys.value.filter((k) => !pageKeys.includes(k))
+      // 只合并当前页的选中：避免表格传入的 rowKeys 含其它页时造成重复
+      const currentPageSelected = rowKeys.filter((k) => pageKeys.includes(k))
+      selectedKeys.value = [...new Set([...rest, ...currentPageSelected])]
+    } else {
+      selectedKeys.value = rowKeys
+    }
+  }
+
+  /**
+   * 全选回调
+   * @param checked - 是否全选
+   */
+  const selectAll: TableInstance['onSelectAll'] = (checked) => {
+    const arr = (tableData.value as TableData[]).filter((i) => !(i?.disabled ?? false))
+    const pageKeys = arr.map((i) => i[rowKey as string])
+    if (crossPageSelect) {
+      if (checked) {
+        const rest = selectedKeys.value.filter((k) => !pageKeys.includes(k))
+        selectedKeys.value = [...rest, ...pageKeys]
+      } else {
+        selectedKeys.value = selectedKeys.value.filter((k) => !pageKeys.includes(k))
+      }
+    } else {
+      selectedKeys.value = checked ? pageKeys : []
+    }
+  }
+
+  /** 获取选中的数据 */
+  const getSelectedData = () => {
+    return tableData.value.filter((i) => selectedKeys.value.includes(i[rowKey as string]))
+  }
+
+  /**
+   * 搜索
+   * @description 重置页码为1并重新获取数据
+   */
+  const search = () => {
+    selectedKeys.value = []
+    pagination.onChange(1)
+  }
+
+  /**
+   * 刷新表格数据
+   * @description 使用当前的分页参数重新获取数据
+   */
+  const refresh = () => {
+    getTableData()
+  }
+
+  /**
+   * 处理删除操作
+   * @description 支持删除确认框，自动处理删除后的刷新
+   * @param deleteApi - 删除操作的 API 函数
+   * @param options - 删除操作的配置选项
+   * @returns Promise<boolean | undefined> 删除操作的结果
+   */
+  const handleDelete = async <T>(
+    deleteApi: () => Promise<ApiRes<T>>,
+    options?: DeleteOptions
+  ): Promise<boolean | undefined> => {
+    const onDelete = async (isMultiple: boolean) => {
+      try {
+        const res = await deleteApi()
+        if (res.success) {
+          Message.success(options?.successTip || '删除成功！')
+          // 处理当前页码
+          const deleteNum = isMultiple ? selectedKeys.value.length : 1
+          const totalPage = Math.ceil((pagination.total - deleteNum) / pagination.pageSize)
+          if (pagination.current > totalPage) {
+            pagination.current = totalPage > 0 ? totalPage : 1
+          }
+          isMultiple && (selectedKeys.value = [])
+          getTableData()
+        }
+        return res.success
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.log('删除失败', error)
+        return false
+      }
+    }
+
+    if (!(options?.showModal ?? true)) {
+      return onDelete(false)
+    }
+
+    Modal.warning({
+      title: options?.title || '提示',
+      content: options?.content || '是否确认删除？',
+      hideCancel: false,
+      maskClosable: false,
+      onBeforeOk: () => onDelete(true)
+    })
+  }
+
+  /**
+   * 删除单条数据
+   * @description 需在 options 中配置 deleteAPI
+   * @param row - 要删除的行数据
+   */
+  const onDelete = (row: U) => {
+    if (!deleteAPI) {
+      Message.error('deleteAPI 没有配置')
+      return
+    }
+    const ids = String(row[rowKey as keyof U])
+    return handleDelete(() => deleteAPI([ids]), { showModal: false })
+  }
+
+  /**
+   * 批量删除数据
+   * @description 需在 options 中配置 deleteAPI
+   */
+  const onBatchDelete = () => {
+    if (!deleteAPI) {
+      Message.error('deleteAPI 没有配置')
+      return
+    }
+    if (!selectedKeys.value.length) {
+      Message.warning('请选择要删除的数据')
+      return
+    }
+    handleDelete(() => deleteAPI(selectedKeys.value as string[]), {
+      title: '批量删除',
+      content: `确定要删除选中的 ${selectedKeys.value.length} 条数据吗？`
+    })
+  }
+
+  // 自定义扩展...
+  // 导入
+  const onImport = () => {
+    Message.warning('点击了导入')
+  }
+  // 导出
+  const onExport = () => {
+    Message.success('点击了导出')
+  }
+  // 下载模板
+  // const onDownloadTemplate = () => {}
+
+  // 响应式处理表格操作列固定状态
+  const { breakpoint } = useBreakpoint()
+  const fixed = computed(() => !['xs', 'sm'].includes(breakpoint.value) ? 'right' : undefined)
+
+  return {
+    /** 表格加载状态 */
+    loading,
+    /** 表格数据 */
+    tableData,
+    /** 获取表格数据 */
+    getTableData,
+    /** 搜索，页码会重置为1 */
+    search,
+    /** 分页的传参 */
+    pagination,
+    /** 选择的行keys */
+    selectedKeys,
+    /** 选择行 */
+    select,
+    /** 全选行 */
+    selectAll,
+    /** 获取选择的数据  */
+    getSelectedData,
+    /** 处理删除、批量删除 */
+    handleDelete,
+    /** 删除单条数据，需配置 deleteAPI */
+    onDelete,
+    /** 批量删除数据，需配置 deleteAPI */
+    onBatchDelete,
+    /** 刷新表格数据，页码会缓存 */
+    refresh,
+    /** 操作列在小屏场景下不固定在右侧 */
+    fixed,
+    /** 导入 */
+    onImport,
+    /** 导出 */
+    onExport
+  }
+}

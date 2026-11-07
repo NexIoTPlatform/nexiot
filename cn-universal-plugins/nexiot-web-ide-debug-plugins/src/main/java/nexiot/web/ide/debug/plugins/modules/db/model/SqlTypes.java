@@ -1,0 +1,35 @@
+package nexiot.web.ide.debug.plugins.modules.db.model;
+
+import cn.universal.core.engine.reflection.JavaReflection;
+import java.lang.reflect.Field;
+import java.sql.Types;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class SqlTypes {
+
+  private static final Map<String, Integer> SQL_TYPE_MAPPINGS;
+
+  static {
+    Field[] fields = Types.class.getFields();
+    SQL_TYPE_MAPPINGS =
+        Stream.of(fields)
+            .collect(
+                Collectors.toMap(
+                    field -> field.getName().toLowerCase(),
+                    field -> (Integer) JavaReflection.getFieldValue(Types.class, field)));
+  }
+
+  public static Integer getSqlType(String type) {
+    return getSqlType(type, true);
+  }
+
+  public static Integer getSqlType(String type, boolean defaultNull) {
+    Integer value = SQL_TYPE_MAPPINGS.get(type.toLowerCase());
+    if (value == null && defaultNull) {
+      return Types.NULL;
+    }
+    return value;
+  }
+}

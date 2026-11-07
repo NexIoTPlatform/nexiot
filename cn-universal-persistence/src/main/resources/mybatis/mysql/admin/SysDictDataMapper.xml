@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.admin.SysDictDataMapper">
+
+  <resultMap type="cn.universal.persistence.entity.admin.SysDictData" id="SysDictDataResult">
+    <id property="dictCode" column="dict_code"/>
+    <result property="dictSort" column="dict_sort"/>
+    <result property="dictLabel" column="dict_label"/>
+    <result property="dictValue" column="dict_value"/>
+    <result property="dictType" column="dict_type"/>
+    <result property="cssClass" column="css_class"/>
+    <result property="listClass" column="list_class"/>
+    <result property="isDefault" column="is_default"/>
+    <result property="status" column="status"/>
+    <result property="createBy" column="create_by"/>
+    <result property="createTime" column="create_time"/>
+    <result property="updateBy" column="update_by"/>
+    <result property="updateTime" column="update_time"/>
+    <result property="remark" column="remark"/>
+  </resultMap>
+  <select id="selectDictData" parameterType="cn.universal.persistence.entity.admin.SysDictData"
+    resultMap="SysDictDataResult">
+    select * from sys_dict_data
+    <where>
+      <if test="status!=null and status !=''">
+        and status=#{status}
+      </if>
+      <if test="dictType!=null and dictType !=''">
+        and dict_type=#{dictType}
+      </if>
+      <if test="dictLabel!=null and dictLabel !=''">
+        and dict_label like concat('%',#{dictLabel},'%')
+      </if>
+      <if test="startTime!=null and startTime !=''">
+        and create_time&gt;=#{startTime}
+      </if>
+      <if test="endTime!=null and endTime !=''">
+        and create_time&lt;=#{endTime}
+      </if>
+    </where>
+    order by dict_sort asc , create_time desc
+  </select>
+  <select id="selectDictDataByType" resultMap="SysDictDataResult">
+    select *
+    from sys_dict_data
+    where status = '0'
+      and dict_type = #{dictType}
+    order by dict_sort asc
+  </select>
+</mapper> 

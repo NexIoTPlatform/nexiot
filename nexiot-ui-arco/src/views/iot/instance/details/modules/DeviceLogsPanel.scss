@@ -1,0 +1,152 @@
+.device-logs {
+  &__filters {
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-1);
+    border-radius: 6px;
+  }
+
+  &__message-id,
+  &__message-type {
+    width: 150px;
+  }
+
+  &__date-range {
+    width: 300px;
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 40px;
+
+    div {
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+      color: var(--color-text-2);
+    }
+
+    strong {
+      font-size: 22px;
+      color: rgb(var(--primary-6));
+    }
+
+    small,
+    > span {
+      font-size: 12px;
+      color: var(--color-text-3);
+    }
+  }
+
+  &__pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 14px;
+    font-size: 12px;
+    color: var(--color-text-3);
+  }
+
+  &__page-size {
+    width: 112px;
+  }
+
+  &__error {
+    margin-bottom: 12px;
+  }
+
+  &__detail-heading {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-1);
+    //border-left: 3px solid rgb(var(--primary-6));
+    border-radius: 4px;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    strong {
+      font-size: 14px;
+      color: var(--color-text-1);
+    }
+
+    span {
+      font-size: 12px;
+      color: var(--color-text-3);
+    }
+  }
+
+  &__detail-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__raw-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__raw-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    strong {
+      font-size: 13px;
+      color: var(--color-text-1);
+    }
+  }
+
+  &__raw {
+    max-height: 360px;
+    padding: 14px;
+    margin: 0;
+    overflow: hidden;
+    overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--color-text-2);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    background: var(--color-fill-1);
+    border: 1px solid var(--color-border-1);
+    border-radius: 4px;
+  }
+}
+
+@media (width <= 768px) {
+  .device-logs {
+    &__filters {
+      align-items: stretch;
+    }
+
+    &__message-id,
+    &__message-type,
+    &__date-range {
+      width: 100%;
+    }
+
+    &__summary > span {
+      display: none;
+    }
+
+    &__gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+  }
+}

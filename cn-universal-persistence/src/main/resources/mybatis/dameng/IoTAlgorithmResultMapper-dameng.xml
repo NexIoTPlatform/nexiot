@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTAlgorithmResultMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTAlgorithmResult">
+    <id column="id" property="id" />
+    <result column="device_id" property="deviceId" />
+    <result column="product_key" property="productKey" />
+    <result column="algorithm_type" property="algorithmType" />
+    <result column="algorithm_name" property="algorithmName" />
+    <result column="result_json" property="resultJson" />
+    <result column="health_score" property="healthScore" />
+    <result column="health_level" property="healthLevel" />
+    <result column="is_anomaly" property="isAnomaly" jdbcType="SMALLINT"
+      typeHandler="cn.universal.persistence.common.typehandler.PostgreSqlNumericBooleanTypeHandler" />
+    <result column="anomaly_score" property="anomalyScore" />
+    <result column="success" property="success" jdbcType="SMALLINT"
+      typeHandler="cn.universal.persistence.common.typehandler.PostgreSqlNumericBooleanTypeHandler" />
+    <result column="error_message" property="errorMessage" />
+    <result column="create_time" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, device_id, product_key, algorithm_type, algorithm_name,
+    result_json, health_score, health_level, is_anomaly, anomaly_score,
+    success, error_message, create_time
+  </sql>
+  <select id="selectByDeviceId" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT <include refid="Base_Column_List" />
+    FROM iot_algorithm_result
+    WHERE device_id = #{deviceId}
+    <if test="startTime != null">
+      AND create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime != null">
+      AND create_time &lt;= #{endTime}
+    </if>
+    ORDER BY create_time DESC
+  </select>
+  <select id="selectByDeviceIdAndType" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT <include refid="Base_Column_List" />
+    FROM iot_algorithm_result
+    WHERE device_id = #{deviceId} AND algorithm_type = #{algorithmType}
+    <if test="startTime != null">
+      AND create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime != null">
+      AND create_time &lt;= #{endTime}
+    </if>
+    ORDER BY create_time DESC
+  </select>
+  <select id="selectByProductKey" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT <include refid="Base_Column_List" />
+    FROM iot_algorithm_result
+    WHERE product_key = #{productKey}
+    <if test="startTime != null">
+      AND create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime != null">
+      AND create_time &lt;= #{endTime}
+    </if>
+    ORDER BY create_time DESC
+  </select>
+  <select id="selectLatestByDeviceIdAndType" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT <include refid="Base_Column_List" />
+    FROM iot_algorithm_result
+    WHERE device_id = #{deviceId} AND algorithm_type = #{algorithmType}
+    ORDER BY create_time DESC
+    LIMIT 1
+  </select>
+  <select id="selectAnomalyResults" resultMap="BaseResultMap" databaseId="dameng">
+    SELECT <include refid="Base_Column_List" />
+    FROM iot_algorithm_result
+    WHERE product_key = #{productKey} AND is_anomaly = 1
+    <if test="startTime != null">
+      AND create_time &gt;= #{startTime}
+    </if>
+    <if test="endTime != null">
+      AND create_time &lt;= #{endTime}
+    </if>
+    ORDER BY create_time DESC
+  </select>
+  <delete id="deleteExpiredResults" databaseId="dameng">
+    DELETE FROM iot_algorithm_result
+    WHERE create_time &lt; #{beforeTime}
+  </delete>
+</mapper>

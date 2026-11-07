@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.admin.SysMenuMapper">
+  <resultMap type="cn.universal.persistence.entity.admin.SysMenu" id="SysMenuResult">
+    <id property="menuId" column="menu_id" />
+    <result property="menuName" column="menu_name" />
+    <result property="parentId" column="parent_id" />
+    <result property="orderNum" column="order_num" />
+    <result property="path" column="path" />
+    <result property="component" column="component" />
+    <result property="isFrame" column="is_frame" />
+    <result property="isCache" column="is_cache" />
+    <result property="menuType" column="menu_type" />
+    <result property="visible" column="visible" />
+    <result property="status" column="status" />
+    <result property="perms" column="perms" />
+    <result property="icon" column="icon" />
+    <result property="createBy" column="create_by" />
+    <result property="createTime" column="create_time" />
+    <result property="updateTime" column="update_time" />
+    <result property="updateBy" column="update_by" />
+    <result property="remark" column="remark" />
+  </resultMap>
+  <sql id="selectMenuVo">
+    select menu_id,
+           menu_name,
+           parent_id,
+           order_num,
+           path,
+           component,
+           is_frame,
+           is_cache,
+           menu_type,
+           visible,
+           status,
+           ifnull(perms, '') as perms,
+           icon,
+           create_time
+    from sys_menu
+  </sql>
+  <select id="selectMenuList" parameterType="cn.universal.persistence.entity.admin.SysMenu" resultMap="SysMenuResult" databaseId="postgresql">
+    select distinct m.menu_id,
+                    m.parent_id,
+                    m.menu_name,
+                    m.path,
+                    m.component,
+                    m.visible,
+                    m.status,
+                    coalesce(m.perms, '') as perms,
+                    m.is_frame,
+                    m.is_cache,
+                    m.menu_type,
+                    m.icon,
+                    m.order_num,
+                    m.create_time
+    from sys_menu m
+    <where>
+      <if test="menuName!=null and menuName!=''">
+        and menu_name like concat('%', #{menuName}, '%')
+      </if>
+      <if test="visible!=null and visible!=''">
+        and visible = #{visible}
+      </if>
+      <if test="status!=null and status!=''">
+        and status =#{status}
+      </if>
+      <if test="parentId!=null and parentId!=''">
+        and parent_id =#{parentId}
+      </if>
+      <if test="isFrame != null">
+        and is_frame =#{isFrame}
+      </if>
+      <if test="isCache != null">
+        and is_cache =#{isCache}
+      </if>
+      <if test="menuType!=null and menuType!=''">
+        and menu_type =#{menuType}
+      </if>
+    </where>
+    order by parent_id,order_num asc
+  </select>
+  <select id="selectMenuTreeAll" resultMap="SysMenuResult" databaseId="postgresql">
+    select distinct m.menu_id,
+                    m.parent_id,
+                    m.menu_name,
+                    m.path,
+                    m.component,
+                    m.visible,
+                    m.status,
+                    coalesce(m.perms, '') as perms,
+                    m.is_frame,
+                    m.is_cache,
+                    m.menu_type,
+                    m.icon,
+                    m.order_num,
+                    m.create_time
+    from sys_menu m
+    where m.menu_type in ('M', 'C')
+      and m.status = '0'
+    order by m.parent_id, m.order_num
+  </select>
+  <select id="selectMenuListByUserId" parameterType="cn.universal.persistence.entity.admin.SysMenu" resultMap="SysMenuResult" databaseId="postgresql">
+    select distinct m.menu_id,
+                    m.parent_id,
+                    m.menu_name,
+                    m.path,
+                    m.component,
+                    m.visible,
+                    m.status,
+                    coalesce(m.perms, '') as perms,
+                    m.is_frame,
+                    m.is_cache,
+                    m.menu_type,
+                    m.icon,
+                    m.order_num,
+                    m.create_time
+    from sys_menu m
+    left join sys_role_menu rm on m.menu_id = rm.menu_id
+    left join sys_user_role ur on rm.role_id = ur.role_id
+    left join sys_role ro on ur.role_id = ro.role_id
+    where ur.union_id = #{params.unionId}
+    <if test="menuName != null and menuName != ''">
+      AND menu_name like concat('%', #{menuName}, '%')
+    </if>
+    <if test="visible != null and visible != ''">
+      AND visible = #{visible}
+    </if>
+    <if test="status != null and status != ''">
+      AND status = #{status}
+    </if>
+    order by m.parent_id, m.order_num
+  </select>
+  <select id="selectMenuTreeByUnionId" resultMap="SysMenuResult" databaseId="postgresql">
+    select distinct m.menu_id,
+                    m.parent_id,
+                    m.menu_name,
+                    m.path,
+                    m.component,
+                    m.visible,
+                    m.status,
+                    coalesce(m.perms, '') as perms,
+                    m.is_frame,
+                    m.is_cache,
+                    m.menu_type,
+                    m.icon,
+                    m.order_num,
+                    m.create_time
+    from sys_menu m
+           left join sys_role_menu rm on m.menu_id = rm.menu_id
+           left join sys_user_role ur on rm.role_id = ur.role_id
+           left join sys_role ro on ur.role_id = ro.role_id
+           left join iot_user u on ur.union_id = u.union_id
+    where u.union_id = #{unionId}
+      and m.menu_type in ('M', 'C')
+      and m.status = '0'
+      and ro.status = '0'
+    order by m.parent_id, m.order_num
+  </select>
+  <select id="selectMenuListByRoleId" resultType="Long" databaseId="postgresql">
+    select m.menu_id
+    from sys_menu m
+    left join sys_role_menu rm on m.menu_id = rm.menu_id
+    where rm.role_id = #{roleId}
+    <if test="menuCheckStrictly">
+      and m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on
+      m.menu_id =
+      rm.menu_id and rm.role_id = #{roleId})
+    </if>
+    order by m.parent_id, m.order_num
+  </select>
+  <select id="selectMenuPerms" resultType="String" databaseId="postgresql">
+    select distinct m.perms
+    from sys_menu m
+           left join sys_role_menu rm on m.menu_id = rm.menu_id
+           left join sys_user_role ur on rm.role_id = ur.role_id
+  </select>
+  <select id="selectMenuPermsByUserId" parameterType="String" resultType="String" databaseId="postgresql">
+    select distinct m.perms
+    from sys_menu m
+           left join sys_role_menu rm on m.menu_id = rm.menu_id
+           left join sys_user_role ur on rm.role_id = ur.role_id
+           left join sys_role r on r.role_id = ur.role_id
+    where m.status = '0'
+      and r.status = '0'
+      and ur.union_id = #{unionId}
+  </select>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.databridge.mapper.DataBridgeConfigMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.databridge.entity.DataBridgeConfig">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="name" jdbcType="VARCHAR" property="name"/>
+    <result column="source_scope" jdbcType="VARCHAR" property="sourceScope"/>
+    <result column="source_product_keys" jdbcType="LONGVARCHAR" property="sourceProductKeys"/>
+    <result column="source_application_id" jdbcType="BIGINT" property="sourceApplicationId"/>
+    <result column="target_resource_id" jdbcType="BIGINT" property="targetResourceId"/>
+    <result column="bridge_type" jdbcType="VARCHAR" property="bridgeType"/>
+    <result column="template" jdbcType="LONGVARCHAR" property="template"/>
+    <result column="magic_script" jdbcType="LONGVARCHAR" property="magicScript"/>
+    <result column="config" jdbcType="LONGVARCHAR" property="config"/>
+    <result column="status" jdbcType="TINYINT" property="status"/>
+    <result column="description" jdbcType="VARCHAR" property="description"/>
+    <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id
+    , name, source_scope, source_product_keys, source_application_id,
+        target_resource_id, bridge_type, template, magic_script, config,
+        status, description, create_by, create_time, update_by, update_time
+  </sql>
+
+  <!-- 根据产品KEY获取活跃配置（兼容新结构：ALL_PRODUCTS 直接命中；SPECIFIC_PRODUCTS 判断JSON列表包含；APPLICATION 由上层按应用过滤） -->
+  <select id="selectActiveConfigsByProductKey" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM iot_data_bridge_config
+    WHERE status = 1
+    AND (
+    source_scope = 'ALL_PRODUCTS'
+    OR (
+    source_scope = 'SPECIFIC_PRODUCTS'
+    AND JSON_CONTAINS(CAST(source_product_keys AS JSON), CONCAT('"', #{productKey}, '"'))
+    )
+    )
+    ORDER BY create_time DESC
+  </select>
+
+  <!-- 根据桥接类型获取配置 -->
+  <select id="selectConfigsByBridgeType" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM iot_data_bridge_config
+    WHERE bridge_type = #{bridgeType}
+    ORDER BY create_time DESC
+  </select>
+
+  <!-- 根据目标资源ID获取配置 -->
+  <select id="selectConfigsByTargetResourceId" parameterType="long" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM iot_data_bridge_config
+    WHERE target_resource_id = #{targetResourceId}
+    ORDER BY create_time DESC
+  </select>
+
+  <!-- 批量更新配置状态 -->
+  <update id="batchUpdateStatus">
+    UPDATE iot_data_bridge_config
+    SET status = #{status},
+    update_by = #{updateBy},
+    update_time = NOW()
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <!-- 根据名称查询配置（用于重名检查） -->
+  <select id="selectByName" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM iot_data_bridge_config
+    WHERE name = #{name}
+    <if test="excludeId != null">
+      AND id != #{excludeId}
+    </if>
+    LIMIT 1
+  </select>
+
+  <!-- 根据创建者查询配置列表 -->
+  <select id="selectByCreateBy" parameterType="string" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM iot_data_bridge_config
+    WHERE create_by = #{createBy}
+    ORDER BY create_time DESC
+  </select>
+
+</mapper>

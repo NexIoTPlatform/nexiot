@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "base_image": "postgres:18.4-alpine",
+  "built_image": "nexiot-community/postgres:local",
+  "checks": {
+    "postgres_official_entrypoint_initialization": "passed",
+    "seed_menu_count_244": "passed",
+    "public_admin_identity": "passed",
+    "bootstrap_history_once": "passed",
+    "same_seed_replay_is_noop": "passed",
+    "compose_configuration_validation": "passed"
+  },
+  "scope": "Fresh isolated container; no existing databases changed."
+}

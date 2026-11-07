@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTStandardFieldCategoryRelMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTStandardFieldCategoryRel">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="field_id" jdbcType="BIGINT" property="fieldId" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <select id="selectCategoryIdsByFieldId" resultType="java.lang.Long" databaseId="dameng">
+    SELECT category_id
+    FROM iot_standard_field_category_rel
+    WHERE field_id = #{fieldId}
+  </select>
+  <insert id="batchInsert" databaseId="dameng">
+    INSERT INTO iot_standard_field_category_rel (field_id, category_id, create_time)
+    VALUES
+    <foreach collection="relations" item="item" separator=",">
+      (#{item.fieldId}, #{item.categoryId}, NOW())
+    </foreach>
+  </insert>
+  <delete id="deleteByFieldId" databaseId="dameng">
+    DELETE FROM iot_standard_field_category_rel
+    WHERE field_id = #{fieldId}
+  </delete>
+  <delete id="deleteByCategoryId" databaseId="dameng">
+    DELETE FROM iot_standard_field_category_rel
+    WHERE category_id = #{categoryId}
+  </delete>
+</mapper>

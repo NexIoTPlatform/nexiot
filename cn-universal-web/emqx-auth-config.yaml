@@ -1,0 +1,45 @@
+# EMQX HTTP认证配置文件示例
+# 将此配置添加到EMQX的配置文件中
+
+# 启用HTTP认证
+auth.http.enable = true
+  
+  # HTTP认证服务地址
+  # 替换为你的实际服务器地址和端口
+auth.http.url = "http://your-server:8080/emqx/sys/auth"
+  
+  # HTTP认证方法
+auth.http.method = "POST"
+  
+  # HTTP认证请求头
+auth.http.headers.content_type = "application/json"
+  
+  # 认证超时时间
+auth.http.timeout = 5s
+  
+  # 认证缓存时间
+auth.http.cache_time = 5m
+  
+  # 认证失败时的行为
+auth.http.failure_action = "deny"
+  
+  # 启用认证缓存
+auth.http.cache_enable = true
+  
+  # 认证请求重试次数
+auth.http.retry_count = 3
+  
+  # 认证请求重试间隔
+auth.http.retry_interval = 1s
+  
+  # 启用TLS（如果使用HTTPS）
+  # auth.http.tls.enable = true
+  # auth.http.tls.verify = false
+  # auth.http.tls.server_name_indication = "your-server.com"
+  
+  # 日志配置
+log.level = info
+log.file = "emqx.log"
+  
+  # 认证插件优先级
+auth.http.order = 1

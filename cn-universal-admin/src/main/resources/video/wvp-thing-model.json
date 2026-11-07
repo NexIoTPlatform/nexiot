@@ -1,0 +1,2269 @@
+{
+  "tags": [],
+  "events": [
+    {
+      "id": "online",
+      "name": "设备上线",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}}
+        ]
+      }
+    },
+    {
+      "id": "offline",
+      "name": "设备下线",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}}
+        ]
+      }
+    },
+    {
+      "id": "phoneAlarm",
+      "name": "电话报警",
+      "description": "GB/T 28181-2022 AlarmMethod=1",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "deviceAlarm",
+      "name": "设备报警",
+      "description": "GB/T 28181-2022 AlarmMethod=2",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "smsAlarm",
+      "name": "短信报警",
+      "description": "GB/T 28181-2022 AlarmMethod=3",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "gpsAlarm",
+      "name": "GPS报警",
+      "description": "GB/T 28181-2022 AlarmMethod=4",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "otherAlarm",
+      "name": "其他报警",
+      "description": "GB/T 28181-2022 AlarmMethod=7",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "videoLoss",
+      "name": "视频丢失",
+      "description": "GB/T 28181-2022 AlarmMethod=2; AlarmType=1",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "deviceTamper",
+      "name": "设备防拆",
+      "description": "GB/T 28181-2022 AlarmMethod=2; AlarmType=2",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "diskFull",
+      "name": "硬盘满",
+      "description": "GB/T 28181-2022 AlarmMethod=2; AlarmType=3",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "deviceOverTemperature",
+      "name": "设备高温",
+      "description": "GB/T 28181-2022 AlarmMethod=2; AlarmType=4",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "deviceUnderTemperature",
+      "name": "设备低温",
+      "description": "GB/T 28181-2022 AlarmMethod=2; AlarmType=5",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "manualVideoAlarm",
+      "name": "人工视频报警",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=1",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "motionDetection",
+      "name": "移动侦测",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=2",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "objectLeft",
+      "name": "遗留物检测",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=3",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "objectRemoved",
+      "name": "物体移除",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=4",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "lineCrossing",
+      "name": "绊线检测",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=5",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "regionIntrusion",
+      "name": "区域入侵",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=6",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "reverseDirection",
+      "name": "逆行检测",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=7",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "loitering",
+      "name": "徘徊检测",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=8",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "trafficStatistics",
+      "name": "流量统计",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=9",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "densityDetection",
+      "name": "密度检测",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=10",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "videoException",
+      "name": "视频异常",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=11",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "fastMovement",
+      "name": "快速移动",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=12",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "videoTamper",
+      "name": "视频遮挡",
+      "description": "GB/T 28181-2022 AlarmMethod=5; AlarmType=13",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "diskError",
+      "name": "硬盘故障",
+      "description": "GB/T 28181-2022 AlarmMethod=6; AlarmType=1",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "fanError",
+      "name": "风扇故障",
+      "description": "GB/T 28181-2022 AlarmMethod=6; AlarmType=2",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    },
+    {
+      "id": "wvpGb28181Event",
+      "name": "国标未解析事件",
+      "description": "未知、停用或无法唯一解析的 AlarmMethod/AlarmType；保留原始国标报文",
+      "valueType": {
+        "type": "object",
+        "properties": [
+          {"valueType":{"type":"string"},"name":"平台实例","id":"instanceKey"},
+          {"valueType":{"type":"string"},"name":"设备ID","id":"deviceId"},
+          {"valueType":{"type":"string"},"name":"通道号","id":"channelId"},
+          {"valueType":{"type":"string"},"name":"通道名称","id":"channelName"},
+          {"valueType":{"type":"string"},"name":"国标事件代码（报警方式:类型）","id":"vendorEventCode"},
+          {"valueType":{"type":"string"},"name":"事件追踪ID","id":"eventId"},
+          {"valueType":{"type":"string"},"name":"告警描述","id":"description"},
+          {"valueType":{"type":"long"},"name":"告警时间","id":"alarmTime"},
+          {"valueType":{"elements":[{"text":"触发","value":"start"},{"text":"恢复","value":"stop"},{"text":"瞬时事件","value":"pulse"},{"text":"未知","value":"unknown"}],"type":"enum"},"name":"告警状态","id":"alarmState"},
+          {"id":"platformType","name":"视频平台类型","valueType":{"type":"string"}},
+          {"id":"cameraEventType","name":"摄像头事件类型","valueType":{"type":"string"}},
+          {"id":"sourceState","name":"来源状态","valueType":{"type":"string"}},
+          {"id":"occurredAt","name":"发生时间","valueType":{"type":"long"}},
+          {"id":"evidence","name":"已归档取证文件","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"id","name":"id","valueType":{"type":"string"}},{"id":"ossId","name":"ossId","valueType":{"type":"string"}},{"id":"objectKey","name":"objectKey","valueType":{"type":"string"}},{"id":"url","name":"url","valueType":{"type":"string"}},{"id":"name","name":"name","valueType":{"type":"string"}},{"id":"kind","name":"kind","valueType":{"type":"string"}},{"id":"mimeType","name":"mimeType","valueType":{"type":"string"}},{"id":"status","name":"status","valueType":{"type":"string"}},{"id":"sourceUrl","name":"sourceUrl","valueType":{"type":"string"}}]}}},
+          {"id":"sdkEventFamily","name":"事件协议族","valueType":{"type":"string"}},
+          {"id":"alarmMethod","name":"国标报警方式","valueType":{"type":"string"}},
+          {"id":"gbAlarmType","name":"国标报警类型","valueType":{"type":"string"}},
+          {"id":"alarmLevel","name":"告警级别","valueType":{"type":"string"}},
+          {"id":"alarmDescription","name":"国标报警描述","valueType":{"type":"string"}},
+          {"id":"longitude","name":"经度","valueType":{"type":"double"}},
+          {"id":"latitude","name":"纬度","valueType":{"type":"double"}},
+          {"id":"images","name":"告警图片","valueType":{"type":"array","elementType":{"type":"object","properties":[{"id":"url","name":"图片地址","valueType":{"type":"string"}},{"id":"status","name":"存储状态","valueType":{"type":"string"}},{"id":"imageSource","name":"图片来源","valueType":{"type":"string"}},{"id":"capturedAt","name":"抓拍时间","valueType":{"type":"string"}},{"id":"contentType","name":"媒体类型","valueType":{"type":"string"}},{"id":"size","name":"文件大小","valueType":{"type":"long"}},{"id":"width","name":"图片宽度","valueType":{"type":"int"}},{"id":"height","name":"图片高度","valueType":{"type":"int"}},{"id":"sha256","name":"文件摘要","valueType":{"type":"string"}},{"id":"ossId","name":"归档文件ID","valueType":{"type":"string"}},{"id":"objectKey","name":"归档对象键","valueType":{"type":"string"}}]}}}
+        ]
+      }
+    }
+  ],
+  "functions": [
+    {
+      "id": "cameraLiveStream",
+      "name": "实时预览",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "streamType",
+          "name": "码流类型",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "主码流",
+                "value": "main"
+              },
+              {
+                "text": "子码流",
+                "value": "sub"
+              }
+            ]
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": [
+          {
+            "id": "rtsp",
+            "name": "RTSP地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "rtmp",
+            "name": "RTMP地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "flv",
+            "name": "FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "hls",
+            "name": "HLS地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "webrtc",
+            "name": "WebRTC地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "ws_flv",
+            "name": "WS-FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "wss_flv",
+            "name": "WSS-FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "httpflv",
+            "name": "HTTP-FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "httpsflv",
+            "name": "HTTPS-FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "httpmp4",
+            "name": "HTTP-MP4地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "httpsmp4",
+            "name": "HTTPS-MP4地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "hik",
+            "name": "海康私有协议地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "preferredUrl",
+            "name": "首选播放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "streamProtocol",
+            "name": "首选协议",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "streamType",
+            "name": "码流类型",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "streamSource",
+            "name": "取流来源",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "playHint",
+            "name": "播放提示",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "urls",
+            "name": "协议地址集合",
+            "valueType": {
+              "type": "object",
+              "properties": [
+                {
+                  "id": "rtsp",
+                  "name": "RTSP地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "rtmp",
+                  "name": "RTMP地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "flv",
+                  "name": "FLV地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "hls",
+                  "name": "HLS地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "webrtc",
+                  "name": "WebRTC地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "stopPreview",
+      "name": "停止预览",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {}
+    },
+    {
+      "id": "cameraTurn",
+      "name": "云台控制",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "command",
+          "name": "控制命令",
+          "valueType": {
+            "type": "enum",
+            "elements": [
+              {
+                "text": "上",
+                "value": "up"
+              },
+              {
+                "text": "下",
+                "value": "down"
+              },
+              {
+                "text": "左",
+                "value": "left"
+              },
+              {
+                "text": "右",
+                "value": "right"
+              },
+              {
+                "text": "左上",
+                "value": "leftUp"
+              },
+              {
+                "text": "左下",
+                "value": "leftDown"
+              },
+              {
+                "text": "右上",
+                "value": "rightUp"
+              },
+              {
+                "text": "右下",
+                "value": "rightDown"
+              },
+              {
+                "text": "放大",
+                "value": "zoomIn"
+              },
+              {
+                "text": "缩小",
+                "value": "zoomOut"
+              },
+              {
+                "text": "停止",
+                "value": "stop"
+              }
+            ]
+          }
+        },
+        {
+          "id": "speed",
+          "name": "速度",
+          "valueType": {
+            "type": "int"
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": [
+          {
+            "id": "deviceId",
+            "name": "设备ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "channelId",
+            "name": "通道ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "command",
+            "name": "控制命令",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "speed",
+            "name": "速度",
+            "valueType": {
+              "type": "int"
+            }
+          },
+          {
+            "id": "executed",
+            "name": "是否已执行",
+            "valueType": {
+              "type": "boolean"
+            }
+          },
+          {
+            "id": "ts",
+            "name": "执行时间",
+            "valueType": {
+              "type": "long"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "cameraPlayback",
+      "name": "录像回放",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "long"
+          }
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "long"
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": [
+          {
+            "id": "rtsp",
+            "name": "RTSP回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "rtmp",
+            "name": "RTMP回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "flv",
+            "name": "FLV回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "hls",
+            "name": "HLS回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "ws_flv",
+            "name": "WS-FLV回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "wss_flv",
+            "name": "WSS-FLV回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "https_hls",
+            "name": "HTTPS-HLS回放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "downloadUrl",
+            "name": "录像下载地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "app",
+            "name": "流应用名",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "stream",
+            "name": "流ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "mediaServerId",
+            "name": "媒体服务ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "key",
+            "name": "播放会话Key",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "channelId",
+            "name": "通道ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "startTime",
+            "name": "开始时间",
+            "valueType": {
+              "type": "long"
+            }
+          },
+          {
+            "id": "endTime",
+            "name": "结束时间",
+            "valueType": {
+              "type": "long"
+            }
+          },
+          {
+            "id": "beginTime",
+            "name": "厂商开始时间",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "protocol",
+            "name": "协议类型",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "prefer",
+            "name": "首选协议",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "urls",
+            "name": "协议地址集合",
+            "valueType": {
+              "type": "object",
+              "properties": [
+                {
+                  "id": "rtsp",
+                  "name": "RTSP地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "rtmp",
+                  "name": "RTMP地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "flv",
+                  "name": "FLV地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "id": "hls",
+                  "name": "HLS地址",
+                  "valueType": {
+                    "type": "string"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "records",
+            "name": "关联录像片段",
+            "valueType": {
+              "type": "array",
+              "elementType": {
+                "type": "object",
+                "properties": [
+                  {
+                    "id": "id",
+                    "name": "记录ID",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "name",
+                    "name": "记录名称",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "startTime",
+                    "name": "开始时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "endTime",
+                    "name": "结束时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "playbackUrl",
+                    "name": "回放地址",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "responseData",
+            "name": "厂商原始响应",
+            "valueType": {
+              "type": "object"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "stopPlayback",
+      "name": "停止回放",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {}
+    },
+    {
+      "id": "cameraSnapshot",
+      "name": "抓拍",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": [
+          {
+            "id": "snapshotUrl",
+            "name": "抓拍图片地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "snapshotData",
+            "name": "抓拍图片数据",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "picInfo",
+            "name": "图片相对路径",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "picLen",
+            "name": "图片大小",
+            "valueType": {
+              "type": "int"
+            }
+          },
+          {
+            "id": "cameraIndexCode",
+            "name": "海康监控点编码",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "deviceCode",
+            "name": "大华设备编码",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "responseData",
+            "name": "厂商原始响应",
+            "valueType": {
+              "type": "object"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "queryRecords",
+      "name": "查询录像",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "startTime",
+          "name": "开始时间",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "endTime",
+          "name": "结束时间",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {
+        "type": "array",
+        "elementType": {
+          "type": "object",
+          "properties": [
+            {
+              "id": "id",
+              "name": "记录ID",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "name",
+              "name": "记录名称",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "channelId",
+              "name": "通道ID",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "cameraIndexCode",
+              "name": "海康监控点编码",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "startTime",
+              "name": "开始时间",
+              "valueType": {
+                "type": "long"
+              }
+            },
+            {
+              "id": "endTime",
+              "name": "结束时间",
+              "valueType": {
+                "type": "long"
+              }
+            },
+            {
+              "id": "beginTime",
+              "name": "厂商开始时间",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "recordType",
+              "name": "录像类型",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "recordLocation",
+              "name": "录像位置",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "recordSource",
+              "name": "录像来源",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "streamType",
+              "name": "码流类型",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "fileSize",
+              "name": "文件大小",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "fileSizeBytes",
+              "name": "文件大小字节数",
+              "valueType": {
+                "type": "long"
+              }
+            },
+            {
+              "id": "fileLength",
+              "name": "文件时长",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "filePath",
+              "name": "文件路径",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "playbackUrl",
+              "name": "回放地址",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "address",
+              "name": "录像地址",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "secrecy",
+              "name": "保密属性",
+              "valueType": {
+                "type": "int"
+              }
+            },
+            {
+              "id": "type",
+              "name": "记录类型",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "recordName",
+              "name": "录像名称",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "videoRecordType",
+              "name": "视频录像类型",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "planId",
+              "name": "计划ID",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "ssId",
+              "name": "存储服务ID",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "diskId",
+              "name": "磁盘ID",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "streamId",
+              "name": "流ID",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "forgotten",
+              "name": "遗忘标记",
+              "valueType": {
+                "type": "string"
+              }
+            },
+            {
+              "id": "raw",
+              "name": "厂商原始记录",
+              "valueType": {
+                "type": "object"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "queryCloudRecords",
+      "name": "查询云端录像",
+      "config": false,
+      "inputs": [
+        {
+          "id": "app",
+          "name": "应用名",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "stream",
+          "name": "流ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "page",
+          "name": "页码",
+          "valueType": {
+            "type": "int"
+          }
+        },
+        {
+          "id": "count",
+          "name": "每页数量",
+          "valueType": {
+            "type": "int"
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": [
+          {
+            "id": "app",
+            "name": "应用名",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "stream",
+            "name": "流ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "page",
+            "name": "页码",
+            "valueType": {
+              "type": "int"
+            }
+          },
+          {
+            "id": "count",
+            "name": "每页数量",
+            "valueType": {
+              "type": "int"
+            }
+          },
+          {
+            "id": "total",
+            "name": "总数量",
+            "valueType": {
+              "type": "long"
+            }
+          },
+          {
+            "id": "list",
+            "name": "录像列表",
+            "valueType": {
+              "type": "array",
+              "elementType": {
+                "type": "object",
+                "properties": [
+                  {
+                    "id": "id",
+                    "name": "录像ID",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "cloudRecordId",
+                    "name": "云端录像ID",
+                    "valueType": {
+                      "type": "int"
+                    }
+                  },
+                  {
+                    "id": "app",
+                    "name": "应用名",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "stream",
+                    "name": "流ID",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "startTime",
+                    "name": "开始时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "endTime",
+                    "name": "结束时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "duration",
+                    "name": "时长",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "fileSize",
+                    "name": "文件大小",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "url",
+                    "name": "录像地址",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "raw",
+                    "name": "原始记录",
+                    "valueType": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "items",
+            "name": "录像条目",
+            "valueType": {
+              "type": "array",
+              "elementType": {
+                "type": "object",
+                "properties": [
+                  {
+                    "id": "id",
+                    "name": "录像ID",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "cloudRecordId",
+                    "name": "云端录像ID",
+                    "valueType": {
+                      "type": "int"
+                    }
+                  },
+                  {
+                    "id": "startTime",
+                    "name": "开始时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "endTime",
+                    "name": "结束时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "url",
+                    "name": "录像地址",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "raw",
+                    "name": "原始记录",
+                    "valueType": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "records",
+            "name": "录像记录",
+            "valueType": {
+              "type": "array",
+              "elementType": {
+                "type": "object",
+                "properties": [
+                  {
+                    "id": "id",
+                    "name": "录像ID",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "cloudRecordId",
+                    "name": "云端录像ID",
+                    "valueType": {
+                      "type": "int"
+                    }
+                  },
+                  {
+                    "id": "startTime",
+                    "name": "开始时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "endTime",
+                    "name": "结束时间",
+                    "valueType": {
+                      "type": "long"
+                    }
+                  },
+                  {
+                    "id": "url",
+                    "name": "录像地址",
+                    "valueType": {
+                      "type": "string"
+                    }
+                  },
+                  {
+                    "id": "raw",
+                    "name": "原始记录",
+                    "valueType": {
+                      "type": "object"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "responseData",
+            "name": "平台原始响应",
+            "valueType": {
+              "type": "object"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "loadCloudRecord",
+      "name": "加载云端录像",
+      "config": false,
+      "inputs": [
+        {
+          "id": "app",
+          "name": "应用名",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "stream",
+          "name": "流ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "cloudRecordId",
+          "name": "录像ID",
+          "valueType": {
+            "type": "int"
+          }
+        }
+      ],
+      "output": {
+        "type": "object",
+        "properties": [
+          {
+            "id": "app",
+            "name": "应用名",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "stream",
+            "name": "流ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "cloudRecordId",
+            "name": "云端录像ID",
+            "valueType": {
+              "type": "int"
+            }
+          },
+          {
+            "id": "mediaServerId",
+            "name": "媒体服务ID",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "rtsp",
+            "name": "RTSP地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "rtmp",
+            "name": "RTMP地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "flv",
+            "name": "FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "hls",
+            "name": "HLS地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "ws_flv",
+            "name": "WS-FLV地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "downloadUrl",
+            "name": "下载地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "playUrl",
+            "name": "播放地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "url",
+            "name": "资源地址",
+            "valueType": {
+              "type": "string"
+            }
+          },
+          {
+            "id": "responseData",
+            "name": "平台原始响应",
+            "valueType": {
+              "type": "object"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "queryPresets",
+      "name": "查询预置位",
+      "config": false,
+      "inputs": [
+        {
+          "id": "deviceId",
+          "name": "设备ID",
+          "valueType": {
+            "type": "string"
+          }
+        },
+        {
+          "id": "channelId",
+          "name": "通道ID",
+          "valueType": {
+            "type": "string"
+          }
+        }
+      ],
+      "output": {}
+    }
+  ],
+  "properties": [
+    {
+      "id": "deviceStatus",
+      "mode": "r",
+      "name": "设备状态",
+      "config": false,
+      "source": "device",
+      "valueType": {
+        "type": "enum",
+        "elements": [
+          {
+            "text": "在线",
+            "value": "online"
+          },
+          {
+            "text": "离线",
+            "value": "offline"
+          }
+        ]
+      }
+    },
+    {
+      "id": "manufacturer",
+      "mode": "r",
+      "name": "厂商",
+      "config": false,
+      "source": "device",
+      "valueType": {
+        "type": "string"
+      }
+    },
+    {
+      "id": "model",
+      "mode": "r",
+      "name": "型号",
+      "config": false,
+      "source": "device",
+      "valueType": {
+        "type": "string"
+      }
+    }
+  ]
+}

@@ -1,0 +1,335 @@
+/* 全局样式 */
+@use './var.scss' as *;
+
+// hover按钮
+.g-hover-btn {
+  background-color: transparent;
+  border: 0 !important;
+
+  &:hover {
+    background: var(--color-secondary-hover) !important;
+  }
+
+  &:active {
+    background: var(--color-secondary-active) !important;
+  }
+}
+
+// 卡片组件，使body的高度自动撑满
+.g-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .arco-card-body {
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+// 页面卡片，右侧有返回按钮
+.g-page-card {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: var(--margin);
+  overflow: hidden;
+
+  .arco-card-body {
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
+
+.g-gradient-bg {
+  background-image: linear-gradient(to right top, transparent, transparent,
+  color-mix(in oklab, rgb(var(--primary-6)) 12%, transparent),
+  color-mix(in oklab, rgb(var(--primary-6)) 12%, transparent));
+}
+
+// 卡片标题，标题左侧的伪类样式
+.g-card-title {
+  .arco-card-header-title::before {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 4px;
+    height: 50%;
+    content: '';
+    background-color: rgb(var(--warning-5));
+    border-radius: 0 4px 4px 0;
+    transform: translateY(-50%);
+  }
+}
+
+// 使用场景，页面内容超出高度会自动滚动
+.g-page {
+  box-sizing: border-box;
+  flex: 1;
+  padding: var(--margin);
+  overflow-y: auto;
+}
+
+// 表格类名 高度自适应
+.g-table {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+
+  >.arco-spin {
+    height: auto;
+    max-height: 100%;
+    overflow: hidden;
+  }
+}
+
+// 表格类名，高度自适应，分页始终固定在最底部
+.g-full-table {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+
+  .arco-table-container {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .arco-table-scroll-y {
+    border-right: 1px solid var(--color-border-1);
+  }
+
+  .arco-table-tr .arco-table-td:last-child,
+  .arco-table-tr .arco-table-th:last-child {
+    border-right: none;
+  }
+
+  .arco-table-content {
+    .arco-scrollbar {
+      &:last-child {
+        flex: 1;
+
+        &:not(.arco-scrollbar-both) {
+          .arco-table-element {
+            border-bottom: 1px solid var(--color-border-1);
+          }
+        }
+      }
+    }
+  }
+}
+
+.g-full-tabs {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  .arco-tabs-content {
+    flex: 1;
+    padding-top: 0;
+
+    .arco-tabs-content-list {
+      height: 100%;
+    }
+
+    .arco-tabs-pane {
+      height: 100%;
+      overflow-y: auto;
+    }
+  }
+}
+
+// 编辑表格，表头的必填红色星号
+.g-column-require {
+  .arco-table-th-title {
+    &::before {
+      padding-right: 2px;
+      color: red;
+      content: '*';
+    }
+  }
+}
+
+.g-full-column {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.g-badge-primary {
+  .arco-badge-number {
+    background-color: rgb(var(--primary-5));
+  }
+}
+
+.g-badge-success {
+  .arco-badge-number {
+    background-color: rgb(var(--success-5));
+  }
+}
+
+.g-badge-warning {
+  .arco-badge-number {
+    background-color: rgb(var(--warning-5));
+  }
+}
+
+.g-row-tool {
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+// 以下这些类名要放到下面，涉及到css权重优先级问题
+.g-mt {
+  margin-top: var(--margin);
+}
+
+.g-mb {
+  margin-bottom: var(--margin);
+}
+
+.g-ml {
+  margin-left: var(--margin);
+}
+
+.g-mr {
+  margin-right: var(--margin);
+}
+
+.g-mx {
+  margin-right: var(--margin);
+  margin-left: var(--margin);
+}
+
+.g-my {
+  margin-top: var(--margin);
+  margin-bottom: var(--margin);
+}
+
+.g-m0 {
+  margin: 0;
+}
+
+.g-pt {
+  padding-top: var(--margin);
+}
+
+.g-pb {
+  padding-bottom: var(--margin);
+}
+
+.g-pl {
+  padding-left: var(--margin);
+}
+
+.g-pr {
+  padding-right: var(--margin);
+}
+
+.g-px {
+  padding-right: var(--padding);
+  padding-left: var(--padding);
+}
+
+.g-py {
+  padding-top: var(--padding);
+  padding-bottom: var(--padding);
+}
+
+.g-p0 {
+  padding: 0;
+}
+
+.g-round {
+  border-radius: 100px;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+// 一般结合<a-row class="flex-column"></a-row>使用
+.flex-column {
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// 通用外边距
+.g-margin {
+  margin: var(--margin);
+}
+
+// 通用内边距
+.g-padding {
+  padding: var(--padding);
+}
+
+.g-select-input {
+  flex-shrink: 0;
+  width: 100px;
+}
+
+.g-search-input {
+  flex-shrink: 0;
+  width: 250px;
+}
+
+.g-line-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.g-line-2 {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.g-line-3 {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.g-line-4 {
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
+.g-line-5 {
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
+.g-line-2,
+.g-line-3,
+.g-line-4,
+.g-line-5 {
+  display: -webkit-box; /* 弹性伸缩盒 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  -webkit-box-orient: vertical; /* 设置伸缩盒子元素排列方式 */
+}

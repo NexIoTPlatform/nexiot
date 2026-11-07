@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTOtaPackageTagRelMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTOtaPackageTagRel">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="package_id" jdbcType="BIGINT" property="packageId" />
+    <result column="tag_id" jdbcType="BIGINT" property="tagId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <delete id="deleteByPackageId" parameterType="Long" databaseId="dameng">
+    delete from iot_ota_package_tag_rel where package_id = #{packageId}
+  </delete>
+  <delete id="deleteByTagId" parameterType="Long" databaseId="dameng">
+    delete from iot_ota_package_tag_rel where tag_id = #{tagId}
+  </delete>
+  <insert id="insertBatch" databaseId="dameng">
+    insert into iot_ota_package_tag_rel (package_id, tag_id, create_time)
+    values
+    <foreach collection="tagIds" item="tagId" separator=",">
+      (#{packageId}, #{tagId}, now())
+    </foreach>
+  </insert>
+  <select id="selectTagIdsByPackageId" parameterType="Long" resultType="Long" databaseId="dameng">
+    select tag_id from iot_ota_package_tag_rel where package_id = #{packageId} order by id asc
+  </select>
+</mapper>

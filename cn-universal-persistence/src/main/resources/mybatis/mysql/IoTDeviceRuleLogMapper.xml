@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTDeviceRuleLogMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTDeviceRuleLog">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="c_id" jdbcType="VARCHAR" property="cId"/>
+    <result column="c_name" jdbcType="VARCHAR" property="cName"/>
+    <result column="c_status" jdbcType="TINYINT" property="cStatus"/>
+    <result column="c_type" jdbcType="TINYINT" property="cType"/>
+    <result column="conditions" jdbcType="VARCHAR" property="conditions"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+    <result column="c_device_meta" jdbcType="LONGVARCHAR" property="cDeviceMeta"/>
+  </resultMap>
+
+  <!-- 关联查询场景联动执行日志 -->
+  <select id="selectSceneLinkageLogs"
+    resultType="cn.universal.persistence.entity.vo.SceneLinkageLogVO">
+    SELECT
+    l.id,
+    l.c_id,
+    l.c_name,
+    l.c_status,
+    l.c_type,
+    l.create_time,
+    l.update_time,
+    l.create_by,
+    l.content,
+    l.c_device_meta,
+    s.scene_name,
+    s.touch,
+    s.trigger_condition,
+    s.exec_action,
+    s.status as scene_status,
+    CASE
+    WHEN JSON_CONTAINS(s.trigger_condition, JSON_OBJECT('trigger', 'device'), '$') THEN 'device'
+    WHEN JSON_CONTAINS(s.trigger_condition, JSON_OBJECT('trigger', 'time'), '$') THEN 'time'
+    WHEN JSON_CONTAINS(s.trigger_condition, JSON_OBJECT('trigger', 'manual'), '$') THEN 'manual'
+    ELSE 'unknown'
+    END as trigger_type
+    FROM iot_device_rule_log l
+    LEFT JOIN scene_linkage s ON l.c_id = s.id
+    WHERE l.c_type = 1
+    <if test="createBy != null and createBy != ''">
+      AND l.create_by = #{createBy}
+    </if>
+    <if test="cName != null and cName != ''">
+      AND l.c_name LIKE CONCAT('%', #{cName}, '%')
+    </if>
+    <if test="cStatus != null">
+      AND l.c_status = #{cStatus}
+    </if>
+    <if test="cType != null">
+      AND l.c_type = #{cType}
+    </if>
+    <if test="cId != null and cId != ''">
+      AND l.c_id LIKE CONCAT('%', #{cId}, '%')
+    </if>
+    <if test="triggerType != null and triggerType != ''">
+      AND (
+      CASE
+      WHEN JSON_CONTAINS(s.trigger_condition, JSON_OBJECT('trigger', 'device'), '$') THEN 'device'
+      WHEN JSON_CONTAINS(s.trigger_condition, JSON_OBJECT('trigger', 'time'), '$') THEN 'time'
+      WHEN JSON_CONTAINS(s.trigger_condition, JSON_OBJECT('trigger', 'manual'), '$') THEN 'manual'
+      ELSE 'unknown'
+      END = #{triggerType}
+      )
+    </if>
+
+
+    <if test="createTimeStart != null and createTimeStart != ''">
+      AND l.create_time &gt;= #{createTimeStart}
+    </if>
+    <if test="createTimeEnd != null and createTimeEnd != ''">
+      AND l.create_time &lt;= #{createTimeEnd}
+    </if>
+
+    ORDER BY l.create_time DESC
+  </select>
+</mapper>

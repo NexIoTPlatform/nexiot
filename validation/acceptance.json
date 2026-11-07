@@ -1,0 +1,72 @@
+{
+  "checked_at": "2026-11-07T19:19:42.912942+08:00",
+  "status": "passed",
+  "backend": {
+    "default_database": "PostgreSQL",
+    "default_full_reactor_build": "passed",
+    "runtime_package_and_targeted_tests": "passed",
+    "tests": 167,
+    "failures": 0,
+    "errors": 0,
+    "health": "UP"
+  },
+  "frontend": {
+    "dependency_install": "passed",
+    "typecheck": "passed",
+    "production_build": "passed",
+    "regressions": 12,
+    "browser_login_and_pages": "passed"
+  },
+  "database": {
+    "server": "PostgreSQL 18.4",
+    "checks": 28,
+    "new_install_and_incremental_upgrade": "passed",
+    "docker_entrypoint": "passed"
+  },
+  "api_and_messaging": {
+    "checks": 14,
+    "mqtt_report_shadow_history": "passed",
+    "http_authenticated_report_shadow_history": "passed",
+    "http_device_create_update_delete": "passed"
+  },
+  "original_projects": {
+    "branch": "202609",
+    "tracked_changes": false,
+    "original_history_copied": false
+  },
+  "new_git": {
+    "branch": "main",
+    "initialized": true,
+    "remotes": [],
+    "commits_created": false
+  },
+  "local_services": {
+    "frontend": "http://127.0.0.1:18000",
+    "backend": "http://127.0.0.1:19092",
+    "postgres_port": 25432,
+    "redis_port": 26379,
+    "mqtt_port": 21883
+  },
+  "package": {
+    "path": "cn-universal-web/target/cn-universal-web.tar.gz",
+    "bytes": 337321380,
+    "sha256": "4acaaeee85dcaf5dc30e0946cf528f8f142d765414c3909981da49b280fdd20e"
+  },
+  "boundaries": [
+    "MySQL and Dameng migration scripts were not executed against live servers.",
+    "No new project license selected; existing third-party notices retained.",
+    "GUI login used the development password flow; CAPTCHA/RSA authentication was verified through real APIs.",
+    "Test tenant and primary devices remain in the isolated acceptance database for review."
+  ],
+  "evidence": [
+    "backend-tests.json",
+    "frontend-acceptance.json",
+    "database-acceptance.json",
+    "docker-initialization.json",
+    "api-acceptance.json",
+    "scope-and-provenance.json",
+    "open-source-menu.jpg",
+    "mqtt-page.jpg",
+    "http-page.jpg"
+  ]
+}

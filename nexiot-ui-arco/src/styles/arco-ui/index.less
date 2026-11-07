@@ -1,0 +1,61 @@
+@import '@arco-themes/vue-gi-demo/index.less';
+
+// 平台统一文字色阶：标题/正文、常规文字、辅助信息、禁用/空值。
+// 在主题入口覆盖 Less token，使 Arco 组件和业务 CSS 变量使用同一套配色。
+@color-text-1: #0c0d0e;
+@color-text-2: #42464e;
+@color-text-3: #737a87;
+@color-text-4: #C7CCD5;
+@color-bg-1:#fff;
+@color-bg-2:#fcfdfe;
+@color-bg-3:#fafbfc;
+@color-bg-4:#f6f8fa;
+@color-bg-5:#f1f3f5;
+@--color-fill-1: #c7ccd6;
+@--color-fill-2: #737a87;
+@--color-fill-3: #42464e;
+@--color-fill-4: #0c0d0e;
+@--color-border-1: #f2f3f5;
+@--color-border-2: #eaedf1;
+@--color-border-3: #dde2e9;
+@--color-border-4: #86909c;
+
+@import './a-alert.less';
+@import './a-card.less';
+@import './a-color-picker.less';
+@import './a-descriptions.less';
+@import './a-form.less';
+@import './a-input-number.less';
+@import './a-input.less';
+@import './a-menu.less';
+@import './a-message.less';
+@import './a-modal.less';
+@import './a-page-header.less';
+@import './a-pagination.less';
+@import './a-picker.less';
+@import './a-radio.less';
+@import './a-scrollbar.less';
+@import './a-space.less';
+@import './a-steps.less';
+@import './a-switch.less';
+@import './a-table.less';
+@import './a-tabs.less';
+@import './a-tree.less';
+
+.app-menu-dark:extend(body[arco-theme='dark']) {
+  --color-menu-dark-bg: #222222;
+}
+
+// 禁止文本复制
+.arco-link,
+.arco-menu-title,
+.arco-menu-item-inner,
+.arco-tabs-tab-title,
+.arco-breadcrumb-item,
+.arco-checkbox-label {
+  user-select: none;
+}
+
+.arco-menu .arco-menu-item {
+  display: inline-flex;
+}

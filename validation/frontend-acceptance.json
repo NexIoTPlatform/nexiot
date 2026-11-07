@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "dependency_install": "npm ci --no-audit --no-fund",
+  "typecheck": "npm run typecheck",
+  "production_build": "npm run build",
+  "regression_command": "node --test tests/*.test.mjs",
+  "regression_files": 12,
+  "regression_passed": 12,
+  "regression_failed": 0,
+  "browser": {
+    "login": "passed (development password login)",
+    "menu_scope": "passed",
+    "mqtt_page": "passed",
+    "http_page": "passed",
+    "evidence": [
+      "open-source-menu.jpg",
+      "mqtt-page.jpg",
+      "http-page.jpg"
+    ]
+  },
+  "production_captcha": "Production configuration retained; API CAPTCHA/RSA authentication tested separately."
+}

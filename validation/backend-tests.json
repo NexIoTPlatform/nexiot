@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "tests": 167,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": 38,
+  "scope": "Targeted MQTT/HTTP, device import, MQTT auth, generic WebSocket and XSS tests."
+}

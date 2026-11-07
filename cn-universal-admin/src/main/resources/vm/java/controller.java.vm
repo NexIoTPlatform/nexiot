@@ -1,0 +1,107 @@
+package ${basePackage}.${moduleName}.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+import cn.universal.security.BaseController;
+import cn.universal.persistence.query.AjaxResult;
+import com.zebra.common.utils.poi.ExcelUtil;
+    #if($table.crud)
+    import cn.universal.persistence.page.TableDataInfo;
+    #elseif($table.tree)
+    import com.zebra.common.core.domain.Ztree;
+    #end
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Api;
+
+/**
+ * ${functionName}Controller
+ *
+ * @Author ${Author}
+ * @date ${datetime}
+ */
+@RestController
+@Api(value = "${functionName}管理" , tags = {"${functionName}管理" })
+@RequestMapping("/admin/${moduleName}/${businessName}" )
+public class ${ClassName}Controller extends BaseController {
+
+  @Autowired
+  private I${ClassName}Service ${className}Service;
+
+/**
+ * 查询${functionName}列表
+ */
+@ApiOperation("查询${functionName}列表" )
+@GetMapping("/list" )
+    #if($table.crud || $table.sub)
+    public TableDataInfo list(${ClassName} ${className}) {
+      startPage();
+      List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+      return getDataTable(list);
+    }
+    #elseif($table.tree)
+      public AjaxResult list(${ClassName} ${className}) {
+        List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+        return AjaxResult.success(list);
+      }
+    #end
+
+  /**
+   * 导出${functionName}列表
+   */
+  @ApiOperation("导出${functionName}列表" )
+  @PostMapping("/export" )
+  public void export(HttpServletResponse response, ${ClassName} ${className}) {
+    List<${ClassName}> list = ${className}Service.select${ClassName}List(${className});
+    ExcelUtil<${ClassName}> util = new ExcelUtil<${ClassName}>(${ClassName}. class);
+    util.exportExcel(response, list, "${functionName}数据" );
+  }
+
+  /**
+   * 获取${functionName}详细信息
+   */
+  @ApiOperation("获取${functionName}详细信息" )
+  @GetMapping(value = "/{${pkColumn.javaField}}" )
+  public AjaxResult<${ClassName}> getInfo(
+      @PathVariable("${pkColumn.javaField}" ) ${pkColumn.javaType} ${pkColumn.javaField}) {
+    return AjaxResult.success(${className}Service.select${ClassName}ById(${pkColumn.javaField}));
+  }
+
+  /**
+   * 新增${functionName}
+   */
+  @ApiOperation("新增${functionName}" )
+  @PostMapping
+  public AjaxResult<Void> add(@RequestBody ${ClassName} ${className}) {
+          ${className}Service.insert${ClassName}(${className});
+    return AjaxResult.success();
+  }
+
+  /**
+   * 修改${functionName}
+   */
+  @ApiOperation("修改${functionName}" )
+  @PutMapping
+  public AjaxResult<Void> edit(@RequestBody ${ClassName} ${className}) {
+          ${className}Service.update${ClassName}(${className});
+    return AjaxResult.success();
+  }
+
+  /**
+   * 删除${functionName}
+   */
+  @ApiOperation("删除${functionName}" )
+  @DeleteMapping("/{${pkColumn.javaField}s}" )
+  public AjaxResult<Void> remove(@PathVariable ${pkColumn.javaType}[] ${pkColumn.javaField}s) {
+          ${className}Service.delete${ClassName}ByIds(${pkColumn.javaField}s);
+    return AjaxResult.success();
+  }
+}

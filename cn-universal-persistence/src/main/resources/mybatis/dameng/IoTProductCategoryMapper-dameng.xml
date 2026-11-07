@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTProductSortMapper">
+  <resultMap type="cn.universal.persistence.entity.IoTProductCategory" id="DevProductSortResult">
+    <result property="id" column="id" />
+    <result property="parentId" column="parent_id" />
+    <result property="hasChild" column="has_child" />
+    <result property="identification" column="identification" />
+    <result property="classifiedName" column="classified_name" />
+    <result property="description" column="description" />
+    <result property="createTime" column="create_time" />
+    <result property="createBy" column="create_by" />
+    <result property="tenantId" column="tenant_id" />
+  </resultMap>
+  <sql id="selectDevProductSortVo">
+    select id,
+           parent_id,
+           has_child,
+           identification,
+           classified_name,
+           description,
+           create_time,
+           create_by,
+           tenant_id
+    from iot_product_category
+  </sql>
+  <select id="selectDevProductSortList" parameterType="cn.universal.persistence.entity.IoTProductCategory" resultMap="DevProductSortResult" databaseId="dameng">
+    <include refid="selectDevProductSortVo" />
+    <where>
+      <if test="parentId != null  and parentId != ''">and parent_id = #{parentId}</if>
+      <if test="hasChild != null ">and has_child = #{hasChild}</if>
+      <if test="identification != null  and identification != ''">and identification like
+        concat('%', #{identification}, '%')
+      </if>
+      <if test="classifiedName != null  and classifiedName != ''">and classified_name like
+        concat('%', #{classifiedName}, '%')
+      </if>
+      <if test="description != null  and description != ''">and description = #{description}</if>
+      <if test="createTime != null ">and create_time = #{createTime}</if>
+      <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+      <if test="tenantId != null and tenantId != ''">
+        and (
+        tenant_id = #{tenantId}
+        <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+          or ((tenant_id is null or tenant_id = '') and create_by in
+          <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+            #{scopeUnionId}
+          </foreach>
+          )
+        </if>
+        )
+      </if>
+      <if test="scopeDenied">and 1 = 0</if>
+      <if test="scopeUnionIds != null and scopeUnionIds.size() > 0">
+        and create_by in
+        <foreach collection="scopeUnionIds" item="scopeUnionId" open="(" separator="," close=")">
+          #{scopeUnionId}
+        </foreach>
+      </if>
+    </where>
+  </select>
+  <select id="selectDevProductSortById" parameterType="String" resultMap="DevProductSortResult" databaseId="dameng">
+    <include refid="selectDevProductSortVo" />
+    where id = #{id}
+  </select>
+  <insert id="insertDevProductSort" parameterType="cn.universal.persistence.entity.IoTProductCategory" databaseId="dameng">
+    insert into iot_product_category
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">id,</if>
+      <if test="parentId != null">parent_id,</if>
+      <if test="hasChild != null">has_child,</if>
+      <if test="identification != null and identification != ''">identification,</if>
+      <if test="classifiedName != null and classifiedName != ''">classified_name,</if>
+      <if test="description != null">description,</if>
+      <if test="createTime != null">create_time,</if>
+      <if test="createBy != null">create_by,</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">#{id},</if>
+      <if test="parentId != null">#{parentId},</if>
+      <if test="hasChild != null">#{hasChild},</if>
+      <if test="identification != null and identification != ''">#{identification},</if>
+      <if test="classifiedName != null and classifiedName != ''">#{classifiedName},</if>
+      <if test="description != null">#{description},</if>
+      <if test="createTime != null">#{createTime},</if>
+      <if test="createBy != null">#{createBy},</if>
+      <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+    </trim>
+  </insert>
+  <update id="updateDevProductSort" parameterType="cn.universal.persistence.entity.IoTProductCategory" databaseId="dameng">
+    update iot_product_category
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="parentId != null">parent_id = #{parentId},</if>
+      <if test="hasChild != null">has_child = #{hasChild},</if>
+      <if test="identification != null and identification != ''">identification =
+        #{identification},
+      </if>
+      <if test="classifiedName != null and classifiedName != ''">classified_name =
+        #{classifiedName},
+      </if>
+      <if test="description != null">description = #{description},</if>
+      <if test="createTime != null">create_time = #{createTime},</if>
+      <if test="createBy != null">create_by = #{createBy},</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+    </trim>
+    where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </update>
+  <delete id="deleteDevProductSortById" parameterType="String" databaseId="dameng">
+    delete
+    from iot_product_category
+    where id = #{id}
+  </delete>
+  <delete id="deleteDevProductSortByIds" parameterType="String" databaseId="dameng">
+    delete from iot_product_category where id in
+    <foreach item="id" collection="array" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+  <select id="getListByParentId" resultMap="DevProductSortResult" databaseId="dameng">
+    <include refid="selectDevProductSortVo" />
+    where parent_id = #{parentId}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    order by id desc
+  </select>
+</mapper>

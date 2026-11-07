@@ -1,0 +1,89 @@
+<template>
+  <GiPageLayout margin size="200px" :body-style="{ overflowY: 'auto' }">
+    <template #left>
+      <a-tabs v-model:active-key="selectedKey" position="left" hide-content>
+        <a-tab-pane v-for="(item, index) in menuList" :key="index" :title="item.name"></a-tab-pane>
+      </a-tabs>
+    </template>
+
+    <transition name="fade-slide" mode="out-in" appear>
+      <component :is="menuList[selectedKey].value"></component>
+    </transition>
+  </GiPageLayout>
+</template>
+
+<script lang="ts" setup>
+import ApiTest from './examples/api-test/index.vue'
+import Area from './examples/area-demo/index.vue'
+import Button from './examples/button/index.vue'
+import Editor from './examples/editor/index.vue'
+import FnComponent from './examples/fn-component/index.vue'
+import GiButtonDemo from './examples/gi-button-demo/index.vue'
+import GiDotDemo from './examples/gi-dot-demo/index.vue'
+import GiFlexDemo from './examples/gi-flex-demo/index.vue'
+import GiIconBoxDemo from './examples/gi-icon-box-demo/index.vue'
+import GiIconSelectorDemo from './examples/gi-icon-selector-demo/index.vue'
+import GiTagDemo from './examples/gi-tag-demo/index.vue'
+import IconDemo from './examples/icon-demo/index.vue'
+import JSModal from './examples/js-modal/index.vue'
+import Mitt from './examples/mitt/index.vue'
+import RowTreeTable from './examples/row-tree-table/index.vue'
+
+defineOptions({ name: 'DemoIndex' })
+
+const selectedKey = ref(0)
+
+const menuList = [
+  { name: '接口测试', value: ApiTest },
+  { name: '按钮', value: Button },
+  { name: 'GiButton', value: GiButtonDemo },
+  { name: 'GiTag', value: GiTagDemo },
+  { name: 'GiFlex', value: GiFlexDemo },
+  { name: 'GiIconBox', value: GiIconBoxDemo },
+  { name: 'GiDot', value: GiDotDemo },
+  { name: 'GiIconSelector', value: GiIconSelectorDemo },
+  { name: 'IconPark图标', value: IconDemo },
+  { name: '函数调用模态框', value: JSModal },
+  { name: '横向树表格', value: RowTreeTable },
+  { name: '省市区', value: Area },
+  { name: '富文本', value: Editor },
+  { name: 'Mitt中央通信', value: Mitt },
+  { name: '函数式组件', value: FnComponent }
+]
+</script>
+
+<style lang="scss" scoped>
+:deep(.arco-tabs-nav-vertical.arco-tabs-nav-type-line .arco-tabs-tab) {
+  padding: 0;
+  padding: 8px 16px;
+  margin: 0;
+
+  &:hover {
+    background: var(--color-fill-1);
+
+    .arco-tabs-tab-title {
+      &::before {
+        display: none !important;
+      }
+    }
+  }
+
+  &.arco-tabs-tab-active {
+    background: rgb(var(--primary-6), 0.08);
+  }
+}
+
+:deep(.arco-tabs-nav-vertical::before) {
+  left: 0;
+  display: none;
+}
+
+:deep(.arco-tabs-nav-vertical .arco-tabs-nav-ink) {
+  left: 0;
+}
+
+:deep(.arco-tabs-nav-vertical) {
+  float: none;
+  flex-direction: row;
+}
+</style>

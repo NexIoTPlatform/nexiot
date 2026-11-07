@@ -1,0 +1,46 @@
+<template>
+  <a-layout-header class="header">
+    <section class="header__left">
+      <MenuFoldBtn></MenuFoldBtn>
+    </section>
+    <a-row align="center" class="h-full header__right">
+      <a-col :xs="0" :md="10" :lg="10" :xl="12" :xxl="12">
+        <Breadcrumb></Breadcrumb>
+      </a-col>
+      <a-col :xs="24" :md="14" :lg="14" :xl="12" :xxl="12">
+        <a-row justify="end" align="center">
+          <HeaderRightBar></HeaderRightBar>
+        </a-row>
+      </a-col>
+    </a-row>
+  </a-layout-header>
+</template>
+
+<script setup lang="ts">
+import Breadcrumb from '../Breadcrumb/index.vue'
+import HeaderRightBar from '../HeaderRightBar/index.vue'
+import MenuFoldBtn from '../MenuFoldBtn.vue'
+
+defineOptions({ name: 'AppHeader' })
+</script>
+
+<style lang="scss" scoped>
+.arco-dropdown-open .arco-icon-down {
+  transform: rotate(180deg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 0 var(--padding);
+  background: var(--color-bg-1);
+  border-bottom: 1px solid var(--color-neutral-3);
+
+  &__right {
+    flex: 1;
+    margin-left: var(--padding);
+    overflow: hidden;
+  }
+}
+</style>

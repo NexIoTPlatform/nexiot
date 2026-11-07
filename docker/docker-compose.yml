@@ -1,0 +1,45 @@
+name: nexiot-community
+services:
+  postgres:
+    image: nexiot-community/postgres:local
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
+    environment:
+      POSTGRES_DB: nexiot
+      POSTGRES_USER: nexiot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${PG_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U nexiot -d nexiot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  redis:
+    image: redis:8.4.0
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  mqtt:
+    image: emqx/emqx:5.10.0
+    environment:
+      EMQX_DASHBOARD__DEFAULT_PASSWORD: ${EMQX_DASHBOARD_PASSWORD:?Set EMQX_DASHBOARD_PASSWORD in .env}
+    ports:
+      - "${MQTT_PORT:-1883}:1883"
+      - "${MQTT_WS_PORT:-8083}:8083"
+      - "127.0.0.1:${MQTT_DASHBOARD_PORT:-18083}:18083"
+    volumes:
+      - mqtt-data:/opt/emqx/data
+volumes:
+  postgres-data:
+  redis-data:
+  mqtt-data:

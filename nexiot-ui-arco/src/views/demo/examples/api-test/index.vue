@@ -1,0 +1,38 @@
+<template>
+  <a-space direction="vertical">
+    <a-space fill wrap>
+      <a-button type="primary" @click="success">成功接口请求</a-button>
+      <a-button type="primary" status="danger" @click="fail">失败接口请求</a-button>
+    </a-space>
+    <a-space fill wrap>
+      <a-input v-model="currentTabTitle" placeholder="输入当前tab页签名称"></a-input>
+      <a-button type="primary" @click="changeTabTitle">修改</a-button>
+    </a-space>
+  </a-space>
+</template>
+
+<script lang="ts" setup>
+import { Message } from '@arco-design/web-vue'
+import { getTestFail, getTestSuccess } from '@/apis/test'
+import { useTabsStore } from '@/stores'
+
+const result = ref('')
+const success = async () => {
+  const res = await getTestSuccess()
+  Message.success('请求成功啦，哈哈~') // 如果await后面的语句时成功的promise，那么这行代码会执行
+  result.value = res.data
+}
+
+const fail = async () => {
+  await getTestFail()
+  Message.success('请求成功') // 如果await后面的语句时失败的promise，那么这行代码以及往下的代码都不会执行
+}
+
+const { setTabTitle } = useTabsStore()
+const currentTabTitle = ref('')
+const changeTabTitle = () => {
+  setTabTitle(currentTabTitle.value)
+}
+</script>
+
+<style lang="scss" scoped></style>

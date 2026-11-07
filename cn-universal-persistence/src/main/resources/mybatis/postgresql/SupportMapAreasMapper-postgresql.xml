@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.SupportMapAreasMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.SupportMapAreas">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="full_name" jdbcType="VARCHAR" property="fullName" />
+    <result column="deep" jdbcType="BIGINT" property="deep" />
+    <result column="location" jdbcType="VARCHAR" property="location" />
+    <result column="polygon" jdbcType="VARCHAR" property="polygon" />
+  </resultMap>
+  <!-- Requires docs/202603-202604-upgrade/20260329_pg_support_map_areas_postgis.sql. -->
+  <select id="selectMapAreas" resultType="cn.universal.persistence.entity.SupportMapAreas" databaseId="postgresql">
+    select id
+    from support_map_areas
+    where st_within(
+      st_setsrid(st_makepoint(cast(#{lon} as double precision), cast(#{lat} as double precision)), 4326),
+      ${@cn.universal.persistence.support.SupportMapAreasSpatialColumns@getPostgreSqlPolygonColumn()}
+    )
+    order by cast(deep as integer) desc
+    limit 1
+  </select>
+</mapper>

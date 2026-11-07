@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTOtaTagMapper">
+
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTOtaTag">
+    <id column="id" jdbcType="BIGINT" property="id"/>
+    <result column="tag_code" jdbcType="VARCHAR" property="tagCode"/>
+    <result column="tag_name" jdbcType="VARCHAR" property="tagName"/>
+    <result column="color" jdbcType="VARCHAR" property="color"/>
+    <result column="description" jdbcType="VARCHAR" property="description"/>
+    <result column="creator_id" jdbcType="VARCHAR" property="creatorId"/>
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId"/>
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+  </resultMap>
+
+  <sql id="selectTagVo">
+    select id, tag_code, tag_name, color, description, creator_id, tenant_id, create_time, update_time
+    from iot_ota_tag
+  </sql>
+
+  <select id="selectTagList" parameterType="cn.universal.persistence.entity.IoTOtaTag" resultMap="BaseResultMap">
+    <include refid="selectTagVo"/>
+    <where>
+      <if test="tagCode != null and tagCode != ''">
+        and tag_code like concat('%', #{tagCode}, '%')
+      </if>
+      <if test="tagName != null and tagName != ''">
+        and tag_name like concat('%', #{tagName}, '%')
+      </if>
+      <choose>
+        <when test="tenantId != null and tenantId != '' and creatorId != null and creatorId != ''">
+          and (tenant_id = #{tenantId}
+          or ((tenant_id is null or tenant_id = '') and creator_id = #{creatorId}))
+        </when>
+        <when test="tenantId != null and tenantId != ''">
+          and tenant_id = #{tenantId}
+        </when>
+        <when test="creatorId != null and creatorId != ''">
+          and creator_id = #{creatorId}
+        </when>
+      </choose>
+    </where>
+    order by create_time desc, id desc
+  </select>
+
+  <select id="selectTagById" parameterType="Long" resultMap="BaseResultMap">
+    <include refid="selectTagVo"/>
+    where id = #{id}
+  </select>
+
+  <insert id="insertTag" parameterType="cn.universal.persistence.entity.IoTOtaTag" useGeneratedKeys="true" keyProperty="id">
+    insert into iot_ota_tag
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tagCode != null and tagCode != ''">tag_code,</if>
+      <if test="tagName != null and tagName != ''">tag_name,</if>
+      <if test="color != null and color != ''">color,</if>
+      <if test="description != null and description != ''">description,</if>
+      <if test="creatorId != null and creatorId != ''">creator_id,</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+      create_time,
+      update_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tagCode != null and tagCode != ''">#{tagCode},</if>
+      <if test="tagName != null and tagName != ''">#{tagName},</if>
+      <if test="color != null and color != ''">#{color},</if>
+      <if test="description != null and description != ''">#{description},</if>
+      <if test="creatorId != null and creatorId != ''">#{creatorId},</if>
+      <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+      now(),
+      now()
+    </trim>
+  </insert>
+
+  <update id="updateTag" parameterType="cn.universal.persistence.entity.IoTOtaTag">
+    update iot_ota_tag
+    <set>
+      <if test="tagCode != null and tagCode != ''">tag_code = #{tagCode},</if>
+      <if test="tagName != null and tagName != ''">tag_name = #{tagName},</if>
+      <if test="color != null">color = #{color},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+      update_time = now()
+    </set>
+    where id = #{id}
+  </update>
+
+  <delete id="deleteTagById" parameterType="Long">
+    delete from iot_ota_tag where id = #{id}
+  </delete>
+
+</mapper>

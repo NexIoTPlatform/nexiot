@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.universal.persistence.mapper.IoTStandardProductMapper">
+  <resultMap id="BaseResultMap" type="cn.universal.persistence.entity.IoTStandardProduct">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="product_key" jdbcType="VARCHAR" property="productKey" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="photo_url" jdbcType="VARCHAR" property="photoUrl" />
+    <result column="metadata" jdbcType="OTHER" property="metadata"
+      typeHandler="cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler" />
+    <result column="status" jdbcType="SMALLINT" property="status" />
+    <result column="is_template" jdbcType="SMALLINT" property="isTemplate" />
+    <result column="use_count" jdbcType="INTEGER" property="useCount" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <resultMap id="ProductWithCategoryMap" type="cn.universal.persistence.entity.IoTStandardProduct" extends="BaseResultMap">
+    <result column="category_name" jdbcType="VARCHAR" property="categoryName" />
+    <result column="category_path" jdbcType="VARCHAR" property="categoryPath" />
+  </resultMap>
+  <sql id="selectProductVo">
+    select id, category_id, product_key, product_name, description, photo_url, 
+           metadata, status, is_template, use_count, tenant_id, create_by, create_time, update_by, update_time
+    from iot_standard_product
+  </sql>
+  <!-- 分类树最多三级：包含当前分类、子分类和孙分类，直接在 SQL 内过滤以保持分页准确。 -->
+  <sql id="categorySubtreeIds">
+    select node.id
+    from iot_standard_category node
+    left join iot_standard_category parent
+      on node.parent_id = parent.id and node.tenant_id = parent.tenant_id
+    left join iot_standard_category grandparent
+      on parent.parent_id = grandparent.id and parent.tenant_id = grandparent.tenant_id
+    where (node.id = #{categoryId} or parent.id = #{categoryId} or grandparent.id = #{categoryId})
+    <if test="tenantId != null and tenantId != ''">and node.tenant_id = #{tenantId}</if>
+  </sql>
+  <select id="selectProductList" parameterType="cn.universal.persistence.entity.IoTStandardProduct" resultMap="ProductWithCategoryMap" databaseId="dameng">
+    select p.id, p.category_id, p.product_key, p.product_name, p.description, p.photo_url,
+           p.metadata, p.status, p.tenant_id, p.create_by, p.create_time, p.update_by, p.update_time,
+           c.category_name
+    from iot_standard_product p
+    left join iot_standard_category c on p.category_id = c.id
+    <where>
+      <if test="categoryId != null">
+        and p.category_id in (<include refid="categorySubtreeIds" />)
+      </if>
+      <if test="productKey != null and productKey != ''">and p.product_key like concat('%', #{productKey}, '%')</if>
+      <if test="productName != null and productName != ''">and p.product_name like concat('%', #{productName}, '%')</if>
+      <if test="status != null">and p.status = #{status}</if>
+      <if test="tenantId != null and tenantId != ''">and p.tenant_id = #{tenantId}</if>
+    </where>
+    order by p.id desc
+  </select>
+  <select id="selectProductByCategoryId" resultMap="BaseResultMap" databaseId="dameng">
+    <include refid="selectProductVo" />
+    where category_id in (<include refid="categorySubtreeIds" />) and status = 1
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+    order by id desc
+  </select>
+  <select id="selectProductById" resultMap="ProductWithCategoryMap" databaseId="dameng">
+    select p.id, p.category_id, p.product_key, p.product_name, p.description, p.photo_url,
+           p.metadata, p.status, p.tenant_id, p.create_by, p.create_time, p.update_by, p.update_time,
+           c.category_name
+    from iot_standard_product p
+    left join iot_standard_category c on p.category_id = c.id
+    where p.id = #{id}
+    <if test="tenantId != null and tenantId != ''">and p.tenant_id = #{tenantId}</if>
+  </select>
+  <select id="selectProductByKey" resultMap="ProductWithCategoryMap" databaseId="dameng">
+    select p.id, p.category_id, p.product_key, p.product_name, p.description, p.photo_url,
+           p.metadata, p.status, p.tenant_id, p.create_by, p.create_time, p.update_by, p.update_time,
+           c.category_name
+    from iot_standard_product p
+    left join iot_standard_category c on p.category_id = c.id
+    where p.product_key = #{productKey}
+    <if test="tenantId != null and tenantId != ''">and p.tenant_id = #{tenantId}</if>
+  </select>
+  <insert id="insertProduct" parameterType="cn.universal.persistence.entity.IoTStandardProduct" useGeneratedKeys="true" keyProperty="id" databaseId="dameng">
+    insert into iot_standard_product
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="categoryId != null">category_id,</if>
+      <if test="productKey != null and productKey != ''">product_key,</if>
+      <if test="productName != null and productName != ''">product_name,</if>
+      <if test="description != null">description,</if>
+      <if test="photoUrl != null">photo_url,</if>
+      <if test="metadata != null">metadata,</if>
+      <if test="status != null">status,</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id,</if>
+      <if test="createBy != null and createBy != ''">create_by,</if>
+      create_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="categoryId != null">#{categoryId},</if>
+      <if test="productKey != null and productKey != ''">#{productKey},</if>
+      <if test="productName != null and productName != ''">#{productName},</if>
+      <if test="description != null">#{description},</if>
+      <if test="photoUrl != null">#{photoUrl},</if>
+      <if test="metadata != null">#{metadata, jdbcType=OTHER, typeHandler=cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler},</if>
+      <if test="status != null">#{status},</if>
+      <if test="tenantId != null and tenantId != ''">#{tenantId},</if>
+      <if test="createBy != null and createBy != ''">#{createBy},</if>
+      now()
+    </trim>
+  </insert>
+  <update id="updateProduct" parameterType="cn.universal.persistence.entity.IoTStandardProduct" databaseId="dameng">
+    update iot_standard_product
+    <trim prefix="SET" suffixOverrides=",">
+      <if test="categoryId != null">category_id = #{categoryId},</if>
+      <if test="productKey != null and productKey != ''">product_key = #{productKey},</if>
+      <if test="productName != null and productName != ''">product_name = #{productName},</if>
+      <if test="description != null">description = #{description},</if>
+      <if test="photoUrl != null">photo_url = #{photoUrl},</if>
+      <if test="metadata != null">metadata = #{metadata, jdbcType=OTHER, typeHandler=cn.universal.persistence.common.typehandler.PostgreSqlJsonbStringTypeHandler},</if>
+      <if test="status != null">status = #{status},</if>
+      <if test="tenantId != null and tenantId != ''">tenant_id = #{tenantId},</if>
+      <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+      update_time = now()
+    </trim>
+    where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </update>
+  <delete id="deleteProductById" databaseId="dameng">
+    delete from iot_standard_product where id = #{id}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </delete>
+  <delete id="deleteProductByIds" databaseId="dameng">
+    delete from iot_standard_product where id in
+    <foreach item="id" collection="ids" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </delete>
+  <select id="checkProductKeyUnique" resultType="int" databaseId="dameng">
+    select count(*) from iot_standard_product
+    where product_key = #{productKey}
+    <if test="excludeId != null">and id != #{excludeId}</if>
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+  <select id="countProductByCategoryId" resultType="int" databaseId="dameng">
+    select count(*) from iot_standard_product where category_id = #{categoryId}
+    <if test="tenantId != null and tenantId != ''">and tenant_id = #{tenantId}</if>
+  </select>
+  <select id="searchProductByKeyword" resultMap="ProductWithCategoryMap" databaseId="dameng">
+    select p.id, p.category_id, p.product_key, p.product_name, p.description, p.photo_url,
+           p.metadata, p.status, p.tenant_id, p.create_by, p.create_time, p.update_by, p.update_time,
+           c.category_name
+    from iot_standard_product p
+    left join iot_standard_category c on p.category_id = c.id
+    where p.status = 1
+    <if test="tenantId != null and tenantId != ''">and p.tenant_id = #{tenantId}</if>
+      and (p.product_key like concat('%', #{keyword}, '%')
+           or p.product_name like concat('%', #{keyword}, '%')
+           or p.description like concat('%', #{keyword}, '%'))
+    order by p.id desc
+    limit 50
+  </select>
+  <update id="updateTemplateStatus" databaseId="dameng">
+    UPDATE iot_standard_product
+    SET is_template = #{isTemplate},
+        update_time = NOW()
+    WHERE id = #{id}
+    <if test="tenantId != null and tenantId != ''">AND tenant_id = #{tenantId}</if>
+  </update>
+  <update id="incrementUseCount" databaseId="dameng">
+    UPDATE iot_standard_product
+    SET use_count = use_count + 1,
+        update_time = NOW()
+    WHERE id = #{id}
+    <if test="tenantId != null and tenantId != ''">AND tenant_id = #{tenantId}</if>
+  </update>
+  <select id="selectTemplateList" resultMap="ProductWithCategoryMap" databaseId="dameng">
+    SELECT p.id, p.category_id, p.product_key, p.product_name, p.description, p.photo_url,
+           p.metadata, p.status, p.is_template, p.use_count, p.tenant_id, p.create_by, p.create_time, 
+           p.update_by, p.update_time, c.category_name
+    FROM iot_standard_product p
+    LEFT JOIN iot_standard_category c ON p.category_id = c.id
+    WHERE p.is_template = 1 AND p.status = 1
+    <if test="tenantId != null and tenantId != ''">AND p.tenant_id = #{tenantId}</if>
+    ORDER BY p.use_count DESC, p.update_time DESC
+  </select>
+  <select id="selectPopularProducts" resultMap="ProductWithCategoryMap" databaseId="dameng">
+    SELECT p.id, p.category_id, p.product_key, p.product_name, p.description, p.photo_url,
+           p.metadata, p.status, p.is_template, p.use_count, p.tenant_id, p.create_by, p.create_time, 
+           p.update_by, p.update_time, c.category_name
+    FROM iot_standard_product p
+    LEFT JOIN iot_standard_category c ON p.category_id = c.id
+    WHERE p.status = 1
+    <if test="tenantId != null and tenantId != ''">AND p.tenant_id = #{tenantId}</if>
+    ORDER BY p.use_count DESC, p.update_time DESC
+    <if test="limit != null">
+      LIMIT #{limit}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,434 @@
+<!--
+  @file GiTable 组件
+  @description 增强型表格组件，支持全屏、列设置、斑马纹、边框等功能
+-->
+<template>
+  <div class="gi-table" :class="{ 'gi-table--fullscreen': isFullscreen }">
+    <!-- 表格头部区域 -->
+    <a-row justify="space-between" align="center" class="g-row-tool">
+      <!-- 左侧标题区域 -->
+      <a-space wrap>
+        <slot name="custom-title">
+          <div class="gi-table__title">{{ props.title }}</div>
+        </slot>
+      </a-space>
+
+      <!-- 表格操作按钮组 -->
+      <a-space wrap>
+        <slot name="custom-extra"></slot>
+        <!-- 斑马纹开关 -->
+        <a-tooltip content="斑马纹">
+          <a-switch v-model="stripe" size="small" type="round" />
+        </a-tooltip>
+
+        <!-- 刷新按钮 -->
+        <a-tooltip content="刷新">
+          <a-button size="mini" class="g-hover-btn" @click="handleRefresh">
+            <template #icon><icon-refresh :size="18" /></template>
+          </a-button>
+        </a-tooltip>
+
+        <!-- 全屏按钮 -->
+        <a-tooltip content="全屏">
+          <a-button size="mini" class="g-hover-btn" @click="toggleFullscreen">
+            <template #icon>
+              <icon-fullscreen v-if="!isFullscreen" :size="18" />
+              <icon-fullscreen-exit v-else :size="18" />
+            </template>
+          </a-button>
+        </a-tooltip>
+
+        <!-- 表格尺寸设置 -->
+        <a-dropdown @select="handleSizeChange">
+          <a-tooltip content="表格尺寸">
+            <a-button size="mini" class="g-hover-btn">
+              <template #icon>
+                <Icon icon="custom:table-size" :width="17" :height="17" />
+              </template>
+            </a-button>
+          </a-tooltip>
+          <template #content>
+            <a-doption v-for="item in TABLE_SIZE_OPTIONS" :key="item.value" :value="item.value"
+              :active="item.value === size">
+              {{ item.label }}
+            </a-doption>
+          </template>
+        </a-dropdown>
+
+        <!-- 列设置按钮 -->
+        <a-popover v-if="showSettingColumnBtn" trigger="click" position="br"
+          :content-style="{ minWidth: '160px', padding: '6px 8px 10px' }">
+          <a-button type="primary" size="mini">
+            <template #icon><icon-settings /></template>
+          </a-button>
+          <template #content>
+            <!-- 列拖拽排序区域 -->
+            <div class="gi-table__draggable">
+              <VueDraggable :model-value="currentSettingColumns" :animation="150"
+                @update:model-value="(val) => { settingColumnList = val as TableSettingColumnItem[] }">
+                <div v-for="item in currentSettingColumns" :key="item.key" class="gi-table__draggable-item">
+                  <div class="gi-table__draggable-item-move">
+                    <icon-drag-dot-vertical />
+                  </div>
+                  <a-checkbox v-model:model-value="item.show" :disabled="item.disabled">
+                    {{ item.title }}
+                  </a-checkbox>
+                  <div class="gi-table__draggable-item-fixed">
+                    <span class="gi-table__pin-btn" :class="{ 'is-active': item.fixedLeft }"
+                      @click.stop="toggleFixedLeft(item.key)">
+                      <icon-pushpin />
+                    </span>
+                    <span class="gi-table__pin-btn gi-table__pin-btn--right" :class="{ 'is-active': item.fixedRight }"
+                      @click.stop="toggleFixedRight(item.key)">
+                      <icon-pushpin />
+                    </span>
+                  </div>
+                </div>
+              </VueDraggable>
+            </div>
+            <a-divider :margin="6" />
+            <a-row justify="center">
+              <a-button type="primary" size="mini" long @click="resetSettingColumns">
+                <template #icon><icon-refresh /></template>
+                <template #default>重置</template>
+              </a-button>
+            </a-row>
+          </template>
+        </a-popover>
+      </a-space>
+    </a-row>
+
+    <!-- 表格主体区域 -->
+    <div class="gi-table__container">
+      <a-table ref="tableRef" v-bind="tableProps" :stripe="stripe" :size="size" :bordered="{ cell: props.defaultBordered }"
+        :columns="visibleColumns" :data="data">
+        <template v-for="key in slotKeys" :key="key" #[key]="scope">
+          <slot :key="key" :name="key" v-bind="scope" />
+        </template>
+      </a-table>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts" generic="T extends TableData">
+import type { DropdownInstance, TableColumnData, TableData, TableInstance } from '@arco-design/web-vue'
+import type { TableProps, TableSettingColumnItem } from './type'
+import { Icon } from '@iconify/vue'
+import { omit } from 'lodash-es'
+import { computed, ref, watch } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
+
+defineOptions({ name: 'GiTable' })
+
+// Props 默认值
+const props = withDefaults(defineProps<Props>(), {
+  title: '',
+  disabledColumnKeys: () => [],
+  data: () => [],
+  defaultStripe: false,
+  defaultBordered: true,
+  defaultSize: 'medium'
+})
+
+/** Emits 类型定义 */
+const emit = defineEmits<{
+  (e: 'refresh'): void
+}>()
+
+/** Slots 类型定义 */
+defineSlots<{
+  'th': (props: { column: TableColumnData }) => void
+  'thead': () => void
+  'empty': (props: { column: TableColumnData }) => void
+  'summary-cell': (props: { column: TableColumnData, record: T, rowIndex: number }) => void
+  'pagination-right': () => void
+  'pagination-left': () => void
+  'td': (props: { column: TableColumnData, record: T, rowIndex: number }) => void
+  'tr': (props: { record: T, rowIndex: number }) => void
+  'tbody': () => void
+  'drag-handle-icon': () => void
+  'footer': () => void
+  'expand-row': (props: { record: T }) => void
+  'expand-icon': (props: { record: T, expanded?: boolean }) => void
+  'columns': () => void
+  'custom-title': () => void
+  'custom-extra': () => void
+  [propsName: string]: (props: { key: string, record: T, column: TableColumnData, rowIndex: number }) => void
+}>()
+
+/** Props 类型定义 */
+interface Props extends TableProps {
+  /** 表格标题 */
+  title?: string
+  /** 禁止控制显示隐藏的列 */
+  disabledColumnKeys?: string[]
+  /** 表格数据 */
+  data?: T[]
+  /** 初始斑马纹状态 */
+  defaultStripe?: boolean
+  /** 初始单元格边框状态 */
+  defaultBordered?: boolean
+  /** 初始表格尺寸 */
+  defaultSize?: TableInstance['size']
+}
+
+const slots = useSlots()
+const attrs = useAttrs()
+
+/** 插槽键名列表（性能优化：避免模板中重复计算） */
+const slotKeys = computed(() => Object.keys(slots))
+
+/** 表格属性计算 */
+const tableProps = computed(() => {
+  return { ...attrs, ...omit(props, ['title', 'disabledColumnKeys', 'defaultStripe', 'defaultBordered', 'defaultSize']) }
+})
+
+/** 组件状态 */
+const tableRef = useTemplateRef('tableRef')
+const stripe = ref(props.defaultStripe)
+const size = ref<TableInstance['size']>(props.defaultSize)
+const isFullscreen = ref(false)
+
+/** 表格尺寸选项 */
+const TABLE_SIZE_OPTIONS = [
+  { label: '迷你', value: 'mini' },
+  { label: '小型', value: 'small' },
+  { label: '中等', value: 'medium' },
+  { label: '大型', value: 'large' }
+] as const
+
+/** 处理表格尺寸变更 */
+const handleSizeChange: DropdownInstance['onSelect'] = (value) => {
+  if (value) {
+    size.value = value as TableInstance['size']
+  }
+}
+
+/** 处理表格刷新 */
+const handleRefresh = () => {
+  emit('refresh')
+}
+
+/** 切换全屏状态 */
+const toggleFullscreen = () => {
+  isFullscreen.value = !isFullscreen.value
+}
+
+/** 列设置相关逻辑 */
+const showSettingColumnBtn = computed(() => {
+  const columns = Array.isArray(props.columns) ? props.columns : undefined
+  return Boolean(columns?.length)
+})
+
+/** 获取列的 key */
+const getColumnKey = (column: TableColumnData, index?: number) => {
+  if (column.dataIndex) return String(column.dataIndex)
+  if (typeof column.title === 'string' && column.title) return column.title
+  // 使用索引作为后备，确保唯一性
+  return `__column_${index ?? Date.now()}__`
+}
+
+/** 计算初始列设置列表 */
+const initialSettingColumns = computed<TableSettingColumnItem[]>(() => {
+  if (!props.columns) return []
+
+  const columns = Array.isArray(props.columns) ? props.columns : []
+  return columns.map((column, index) => {
+    const key = getColumnKey(column, index)
+    const fixed = column.fixed
+    return {
+      key,
+      title: typeof column.title === 'string' ? column.title : '',
+      show: true,
+      disabled: props.disabledColumnKeys.includes(key),
+      fixedLeft: fixed === 'left',
+      fixedRight: fixed === 'right'
+    }
+  })
+})
+
+/** 用户修改后的列设置列表 */
+const settingColumnList = ref<TableSettingColumnItem[]>([])
+
+/** 检查列结构是否匹配 */
+const isColumnStructureMatch = (userColumns: TableSettingColumnItem[], initialColumns: TableSettingColumnItem[]): boolean => {
+  if (userColumns.length === 0 || userColumns.length !== initialColumns.length) return false
+  const initialKeys = new Set(initialColumns.map((item) => item.key))
+  const userKeys = new Set(userColumns.map((item) => item.key))
+  return initialKeys.size === userKeys.size && [...initialKeys].every((key) => userKeys.has(key))
+}
+
+/** 列映射表（性能优化：避免在 visibleColumns 中重复创建） */
+const columnMap = computed(() => {
+  if (!props.columns) return new Map<string, TableColumnData>()
+  const columns = Array.isArray(props.columns) ? props.columns : []
+  return new Map(columns.map((col, index) => [getColumnKey(col, index), col]))
+})
+
+/** 当前使用的列设置列表（自动处理列结构变化） */
+const currentSettingColumns = computed(() => {
+  const isValid = isColumnStructureMatch(settingColumnList.value, initialSettingColumns.value)
+  return isValid ? settingColumnList.value : initialSettingColumns.value
+})
+
+/** 重置列设置 */
+const resetSettingColumns = () => {
+  settingColumnList.value = [...initialSettingColumns.value]
+}
+
+/** 确保列设置列表已初始化（首次点击或拖拽前可能为空） */
+const ensureSettingColumnList = () => {
+  if (settingColumnList.value.length === 0 && initialSettingColumns.value.length > 0) {
+    settingColumnList.value = initialSettingColumns.value.map((item) => ({ ...item }))
+  }
+}
+
+/** 切换列固定左侧：图标高亮且当前列固定到左侧 */
+const toggleFixedLeft = (key: string) => {
+  ensureSettingColumnList()
+  settingColumnList.value = settingColumnList.value.map((item) =>
+    item.key === key
+      ? { ...item, fixedLeft: !item.fixedLeft, fixedRight: false }
+      : item
+  )
+}
+
+/** 切换列固定右侧：图标高亮且当前列固定到右侧 */
+const toggleFixedRight = (key: string) => {
+  ensureSettingColumnList()
+  settingColumnList.value = settingColumnList.value.map((item) =>
+    item.key === key
+      ? { ...item, fixedRight: !item.fixedRight, fixedLeft: false }
+      : item
+  )
+}
+
+/** 监听 columns 变化，自动重置列设置 */
+watch(() => props.columns, () => {
+  // 列结构变化时，如果用户设置不匹配，自动重置
+  if (!isColumnStructureMatch(settingColumnList.value, initialSettingColumns.value)) {
+    resetSettingColumns()
+  }
+}, { deep: true })
+
+/** 计算显示的列（含固定列设置）：固定左 → 不固定 → 固定右 */
+const visibleColumns = computed(() => {
+  if (!props.columns) return []
+
+  const shown = currentSettingColumns.value.filter((item) => item.show)
+  const leftFixed: typeof shown = []
+  const noFixed: typeof shown = []
+  const rightFixed: typeof shown = []
+  for (const item of shown) {
+    if (item.fixedLeft) leftFixed.push(item)
+    else if (item.fixedRight) rightFixed.push(item)
+    else noFixed.push(item)
+  }
+  const ordered = [...leftFixed, ...noFixed, ...rightFixed]
+
+  return ordered
+    .map((item) => {
+      const col = columnMap.value.get(item.key)
+      if (!col) return null
+      // 以列配置为准：未勾选固定时不再回退到 props 的 fixed，以便用户能取消固定
+      const fixed = item.fixedRight ? 'right' : item.fixedLeft ? 'left' : undefined
+      return { ...col, fixed }
+    })
+    .filter(Boolean) as TableColumnData[]
+})
+
+defineExpose({ tableRef })
+</script>
+
+<style lang="scss" scoped>
+.gi-table {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-bg-1);
+
+  &--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 1001;
+    padding: var(--padding);
+  }
+
+  &__container {
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--color-text-1);
+  }
+
+  &__draggable {
+    box-sizing: border-box;
+    max-height: 250px;
+    padding: 1px 0;
+    overflow: hidden auto;
+  }
+
+  &__draggable-item {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--color-fill-2);
+    }
+
+    &-move {
+      padding: 0 2px;
+      cursor: move;
+    }
+
+    &-fixed {
+      display: flex;
+      flex-shrink: 0;
+      gap: 4px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    :deep(.arco-checkbox) {
+      flex: 1;
+      min-width: 0;
+      font-size: 12px;
+
+      .arco-checkbox-icon {
+        width: 14px;
+        height: 14px;
+      }
+    }
+  }
+
+  &__pin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    font-size: 14px;
+    color: var(--color-text-3);
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--color-text-2);
+    }
+
+    &.is-active {
+      color: rgb(var(--primary-6));
+    }
+
+    &--right {
+      transform: scaleX(-1);
+    }
+  }
+}
+</style>
