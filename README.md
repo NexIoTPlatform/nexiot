@@ -45,9 +45,9 @@
 | --- | --- |
 | 后端 | **Java 25**、Spring Boot 3.5、MyBatis、虚拟线程 |
 | 前端 | **Vue3 / TypeScript / Arco Design / Vite** |
-| 开源版默认数据库 | **PostgreSQL**，本地验收版本为 PostgreSQL 18.4 |
+| 开源版默认数据库 | **PostgreSQL**， PostgreSQL 18.4 |
 | 基础组件 | Redis、EMQX / MQTT Broker、Docker Compose |
-| 历史与日志存储 | PostgreSQL，以及保留的 MySQL、IoTDB、ClickHouse、InfluxDB、TDengine 等适配实现，按配置选择与验证 |
+| 历史与日志存储 | MySQL、IoTDB、ClickHouse、InfluxDB、TDengine 等适配实现，按配置选择与验证 |
 | 产品驱动 | WEB IDE、JAR 扩展及产品级编解码、在线调试、历史源码管理 |
 
 | 🏗️ 驱动与数据流 | 🚀 部署架构 |
