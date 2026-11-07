@@ -171,6 +171,12 @@ npm run dev -- --port 8000
 | ![首页](__MACOSX/shot/20261107/21-video.png)  | ![点位模版](__MACOSX/shot/20261107/24-videox.png)    |
 | ![产品](__MACOSX/shot/20261107/21-unview.png)  | ![magic调试](__MACOSX/shot/20261107/23-videos.png) |
 
+#### 📡 Mac/Win 双客户端
+
+支持Mac/Win,支持硬解、低延迟
+
+![点位模版](__MACOSX/shot/20261107/80-pc01.png)
+
 #### 📡 告警中心
 
 告警中心上线：秒级到人、有据可查、自动恢复
